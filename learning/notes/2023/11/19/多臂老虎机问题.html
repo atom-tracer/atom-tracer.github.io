@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>多臂老虎机问题 | Step far.</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="多臂老虎机问题" />
+<meta name="author" content="DragonK" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="关键词 试错型学习 探索与利用 问题定义 在多臂老虎机（multi-armed bandit，MAB）问题（见图 2-1）中，有一个拥有K根拉杆的老虎机，拉动每一根拉杆都对应一个关于奖励的概率分布R。 我们每次拉动其中一根拉杆，就可以从该拉杆对应的奖励概率分布中获得一个奖励 。我们在各根拉杆的奖励概率分布未知的情况下，从头开始尝试，目标是在操作T次拉杆后获得尽可能高的累积奖励。 由于奖励的概率分布是未知的，因此我们需要在“探索拉杆的获奖概率”和“根据经验选择获奖最多的拉杆”中进行权衡。“采用怎样的操作策略才能使获得的累积奖励最高”便是多臂老虎机问题。 要素形式化描述 多臂老虎机问题可以表示为一个元组$\langle \mathcal{A},\mathcal{R} \rangle$，其中 $\mathcal{A}$是动作集合，包含K个元素（总共有K个老虎机） $\mathcal{R}$是奖励概率分布，也就是说每个老虎机的产出对应一个奖励概率分布（而不是固定的）。 多臂老虎机的目标是最大化一段时间步T内累计的奖励。 \(max \sum^{T}_{t=1}r_{t},r_{t} \backsim \mathcal{R}(·|a_{t})\) 累计懊悔 对于某个动作a，存在一个期望奖励，即其概率分布均值。那么存在一个期望最大的拉杆，表示为$Q^{*}$。 为了更加直观、方便地观察拉动一根拉杆的期望奖励离最优拉杆期望奖励的差距，我们引入懊悔（regret）概念。懊悔定义为拉动当前拉杆的动作a与最优拉杆的期望奖励差，即$R(a)=Q^{*}-Q(a)$。累计懊悔为$\sigma_{R}=\sum^{T}{t=1}R(a{t})$，即一次完整的T步决策完成后累计的懊悔总量。 MAB问题的目标为最大化累积奖励，等价于最小化累积懊悔。 估计期望奖励 由于只拉动一次拉杆获得的奖励存在随机性，所以需要多次拉动一根拉杆，然后计算得到的多次奖励的期望。（增量式更新） 平衡探索与利用：算法实现 基本算法框架 class Solver: &quot;&quot;&quot; 多臂老虎机算法基本框架 &quot;&quot;&quot; def __init__(self, bandit): self.bandit = bandit self.counts = np.zeros(self.bandit.K) # 每根拉杆的尝试次数 self.regret = 0. # 当前步的累积懊悔 self.actions = [] # 维护一个列表,记录每一步的动作 self.regrets = [] # 维护一个列表,记录每一步的累积懊悔 def update_regret(self, k): # 计算累积懊悔并保存,k为本次动作选择的拉杆的编号 self.regret += self.bandit.best_prob - self.bandit.probs[k] self.regrets.append(self.regret) def run_one_step(self): # 返回当前动作选择哪一根拉杆,由每个具体的策略实现 raise NotImplementedError def run(self, num_steps): # 运行一定次数,num_steps为总运行次数 for _ in range(num_steps): k = self.run_one_step() self.counts[k] += 1 self.actions.append(k) self.update_regret(k) 在多臂老虎机问题中，一个经典的问题就是探索与利用的平衡问题。 探索（exploration）是指尝试拉动更多可能的拉杆，这根拉杆不一定会获得最大的奖励，但这种方案能够摸清楚所有拉杆的获奖情况。例如，对于一个10臂老虎机，我们要把所有的拉杆都拉动一下才知道哪根拉杆可能获得最大的奖励。 利用（exploitation）是指拉动已知期望奖励最大的那根拉杆，由于已知的信息仅仅来自有限次的交互观测，所以当前的最优拉杆不一定是全局最优的。 于是在多臂老虎机问题中，设计策略时就需要平衡探索和利用的次数，使得累积奖励最大化。一个比较常用的思路是在开始时做比较多的探索，在对每根拉杆都有比较准确的估计后，再进行利用。目前已有一些比较经典的算法来解决这个问题，例如上置信界算法和汤普森采样算法等，接下来将分别介绍这几种算法。 $\epsilon$-贪心算法 在原来的完全贪婪算法上添加噪声，每次以$1-\epsilon$概率选择目前为止奖励最大的那根拉杆（利用），$\epsilon$概率随机选择一根拉杆（探索）。 随着探索次数的不断增加，我们对各个动作的奖励估计得越来越准，此时我们就没必要继续花大力气进行探索。所以在$\epsilon$-贪婪算法的具体实现中，我们可以令$\epsilon$随时间衰减，即探索的概率将会不断降低。 但是$\epsilon$不会在有限时间内衰减至0。因为基于有限步数观测的完全贪婪算法仍然是一个局部信息的贪婪算法，永远距离最优解有一个固定的差距。 固定$\epsilon$的懊悔： $\epsilon$与时间呈反比的懊悔： 后者明显更优。 上置信界算法 第一根拉杆只被拉动过一次，得到的奖励为0。 第二根拉杆被拉动过很多次，我们对它的奖励分布已经有了大致的把握。 问题是要不要继续尝试第一根。 我们可以使用一种基于不确定性的策略来综合考虑现有的期望奖励估值和不确定性，其核心问题是如何估计不确定性。 上置信界（upper confidence bound，UCB）算法是一种经典的基于不确定性的策略算法，它的思想用到了一个非常著名的数学原理：霍夫丁不等式（Hoeffding’s inequality） 在概率论中，霍夫丁不等式给出了随机变量的和与其期望值偏差的概率上限，该不等式被Wassily Hoeffding于1963年提出并证明。霍夫丁不等式是Azuma-Hoeffding不等式的特例。 令$X_1，\dots，X_n$为独立的随机变量，且$X_i\in[a,b],i=1，\dots，n$。这些随机变量的经验均值可表示为：$\bar{X}=\frac{X_1+\dots+X_n}{n}\$。 霍夫丁不等式叙述如下： \(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le exp(-\frac{2n^2t^2}{\begin{matrix} \sum_{i=1}^n (b_i-a_i)^2 \end{matrix}})\\\) 对于伯努利分布来说随机变量的上下界是1和0，所以： \(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le e^{-2nt^{2}}\\\) 其中$t=\hat{U_{t}}(a)$代表不确定性度量。给定一个概率$p=e^{-2N_{t}(a)U_{t}(a)^{2}}$，根据不等式（反向）可以得到$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$至少以概率$1-p$成立。 当p很小的时候$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$就以很大概率成立。所以$\hat{Q_{t}}(a)+\hat{U_{t}}(a)$便是期望奖励的上界。 这里给定p之后，就可以解得$\hat{U_{t}}(a)=\sqrt{\frac{-log \ p}{2N_{t}(a)}}$。 总结：事先设定一个概率p。UCB算法在每次选择拉杆前，先估计每根拉杆的期望奖励的上界，使得拉动每根拉杆的期望奖励只有一个较小的概率p超过这个上界，接着选出期望奖励上界最大的拉杆，从而选择最有可能获得最大期望奖励的拉杆。 实现：设置$p=\frac{1}{t}$，为拉动每根拉杆的次数+1（防止分母为0），并设定一个系数c来控制不确定性的比重。 （似乎一般，不过没关系） 汤普森采样算法 假设拉动每根拉杆的奖励服从一个特定的概率分布，然后根据拉动每根拉杆的期望奖励来进行选择。 但是由于计算所有拉杆的期望奖励的代价比较高，汤普森采样算法使用采样的方式，即根据当前每个动作a的奖励概率分布进行一轮采样，得到一组各根拉杆的奖励样本，再选择样本中奖励最大的动作。可以看出，汤普森采样是一种计算所有拉杆的最高奖励概率的蒙特卡洛采样方法。 在实际情况中，我们通常用 Beta 分布对当前每个动作的奖励概率分布进行建模。具体来说，若某拉杆被选择k次，其中$m_{1}$次奖励为1，$m_{2}$次奖励为0，则该拉杆的奖励服从参数为$(m_{1}+1,m_{2}+1)$的 Beta分布。 总结 $\epsilon$-贪婪算法的累积懊悔是随时间线性增长的，而另外 3 种算法（ $\epsilon$-衰减贪婪算法、上置信界算法、汤普森采样算法）的累积懊悔都是随时间次线性增长的（具体为对数形式增长）。 多臂老虎机的每次交互的结果和以往的动作无关，所以可看作无状态的强化学习（stateless reinforcement learning）。" />
+<meta property="og:description" content="关键词 试错型学习 探索与利用 问题定义 在多臂老虎机（multi-armed bandit，MAB）问题（见图 2-1）中，有一个拥有K根拉杆的老虎机，拉动每一根拉杆都对应一个关于奖励的概率分布R。 我们每次拉动其中一根拉杆，就可以从该拉杆对应的奖励概率分布中获得一个奖励 。我们在各根拉杆的奖励概率分布未知的情况下，从头开始尝试，目标是在操作T次拉杆后获得尽可能高的累积奖励。 由于奖励的概率分布是未知的，因此我们需要在“探索拉杆的获奖概率”和“根据经验选择获奖最多的拉杆”中进行权衡。“采用怎样的操作策略才能使获得的累积奖励最高”便是多臂老虎机问题。 要素形式化描述 多臂老虎机问题可以表示为一个元组$\langle \mathcal{A},\mathcal{R} \rangle$，其中 $\mathcal{A}$是动作集合，包含K个元素（总共有K个老虎机） $\mathcal{R}$是奖励概率分布，也就是说每个老虎机的产出对应一个奖励概率分布（而不是固定的）。 多臂老虎机的目标是最大化一段时间步T内累计的奖励。 \(max \sum^{T}_{t=1}r_{t},r_{t} \backsim \mathcal{R}(·|a_{t})\) 累计懊悔 对于某个动作a，存在一个期望奖励，即其概率分布均值。那么存在一个期望最大的拉杆，表示为$Q^{*}$。 为了更加直观、方便地观察拉动一根拉杆的期望奖励离最优拉杆期望奖励的差距，我们引入懊悔（regret）概念。懊悔定义为拉动当前拉杆的动作a与最优拉杆的期望奖励差，即$R(a)=Q^{*}-Q(a)$。累计懊悔为$\sigma_{R}=\sum^{T}{t=1}R(a{t})$，即一次完整的T步决策完成后累计的懊悔总量。 MAB问题的目标为最大化累积奖励，等价于最小化累积懊悔。 估计期望奖励 由于只拉动一次拉杆获得的奖励存在随机性，所以需要多次拉动一根拉杆，然后计算得到的多次奖励的期望。（增量式更新） 平衡探索与利用：算法实现 基本算法框架 class Solver: &quot;&quot;&quot; 多臂老虎机算法基本框架 &quot;&quot;&quot; def __init__(self, bandit): self.bandit = bandit self.counts = np.zeros(self.bandit.K) # 每根拉杆的尝试次数 self.regret = 0. # 当前步的累积懊悔 self.actions = [] # 维护一个列表,记录每一步的动作 self.regrets = [] # 维护一个列表,记录每一步的累积懊悔 def update_regret(self, k): # 计算累积懊悔并保存,k为本次动作选择的拉杆的编号 self.regret += self.bandit.best_prob - self.bandit.probs[k] self.regrets.append(self.regret) def run_one_step(self): # 返回当前动作选择哪一根拉杆,由每个具体的策略实现 raise NotImplementedError def run(self, num_steps): # 运行一定次数,num_steps为总运行次数 for _ in range(num_steps): k = self.run_one_step() self.counts[k] += 1 self.actions.append(k) self.update_regret(k) 在多臂老虎机问题中，一个经典的问题就是探索与利用的平衡问题。 探索（exploration）是指尝试拉动更多可能的拉杆，这根拉杆不一定会获得最大的奖励，但这种方案能够摸清楚所有拉杆的获奖情况。例如，对于一个10臂老虎机，我们要把所有的拉杆都拉动一下才知道哪根拉杆可能获得最大的奖励。 利用（exploitation）是指拉动已知期望奖励最大的那根拉杆，由于已知的信息仅仅来自有限次的交互观测，所以当前的最优拉杆不一定是全局最优的。 于是在多臂老虎机问题中，设计策略时就需要平衡探索和利用的次数，使得累积奖励最大化。一个比较常用的思路是在开始时做比较多的探索，在对每根拉杆都有比较准确的估计后，再进行利用。目前已有一些比较经典的算法来解决这个问题，例如上置信界算法和汤普森采样算法等，接下来将分别介绍这几种算法。 $\epsilon$-贪心算法 在原来的完全贪婪算法上添加噪声，每次以$1-\epsilon$概率选择目前为止奖励最大的那根拉杆（利用），$\epsilon$概率随机选择一根拉杆（探索）。 随着探索次数的不断增加，我们对各个动作的奖励估计得越来越准，此时我们就没必要继续花大力气进行探索。所以在$\epsilon$-贪婪算法的具体实现中，我们可以令$\epsilon$随时间衰减，即探索的概率将会不断降低。 但是$\epsilon$不会在有限时间内衰减至0。因为基于有限步数观测的完全贪婪算法仍然是一个局部信息的贪婪算法，永远距离最优解有一个固定的差距。 固定$\epsilon$的懊悔： $\epsilon$与时间呈反比的懊悔： 后者明显更优。 上置信界算法 第一根拉杆只被拉动过一次，得到的奖励为0。 第二根拉杆被拉动过很多次，我们对它的奖励分布已经有了大致的把握。 问题是要不要继续尝试第一根。 我们可以使用一种基于不确定性的策略来综合考虑现有的期望奖励估值和不确定性，其核心问题是如何估计不确定性。 上置信界（upper confidence bound，UCB）算法是一种经典的基于不确定性的策略算法，它的思想用到了一个非常著名的数学原理：霍夫丁不等式（Hoeffding’s inequality） 在概率论中，霍夫丁不等式给出了随机变量的和与其期望值偏差的概率上限，该不等式被Wassily Hoeffding于1963年提出并证明。霍夫丁不等式是Azuma-Hoeffding不等式的特例。 令$X_1，\dots，X_n$为独立的随机变量，且$X_i\in[a,b],i=1，\dots，n$。这些随机变量的经验均值可表示为：$\bar{X}=\frac{X_1+\dots+X_n}{n}\$。 霍夫丁不等式叙述如下： \(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le exp(-\frac{2n^2t^2}{\begin{matrix} \sum_{i=1}^n (b_i-a_i)^2 \end{matrix}})\\\) 对于伯努利分布来说随机变量的上下界是1和0，所以： \(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le e^{-2nt^{2}}\\\) 其中$t=\hat{U_{t}}(a)$代表不确定性度量。给定一个概率$p=e^{-2N_{t}(a)U_{t}(a)^{2}}$，根据不等式（反向）可以得到$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$至少以概率$1-p$成立。 当p很小的时候$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$就以很大概率成立。所以$\hat{Q_{t}}(a)+\hat{U_{t}}(a)$便是期望奖励的上界。 这里给定p之后，就可以解得$\hat{U_{t}}(a)=\sqrt{\frac{-log \ p}{2N_{t}(a)}}$。 总结：事先设定一个概率p。UCB算法在每次选择拉杆前，先估计每根拉杆的期望奖励的上界，使得拉动每根拉杆的期望奖励只有一个较小的概率p超过这个上界，接着选出期望奖励上界最大的拉杆，从而选择最有可能获得最大期望奖励的拉杆。 实现：设置$p=\frac{1}{t}$，为拉动每根拉杆的次数+1（防止分母为0），并设定一个系数c来控制不确定性的比重。 （似乎一般，不过没关系） 汤普森采样算法 假设拉动每根拉杆的奖励服从一个特定的概率分布，然后根据拉动每根拉杆的期望奖励来进行选择。 但是由于计算所有拉杆的期望奖励的代价比较高，汤普森采样算法使用采样的方式，即根据当前每个动作a的奖励概率分布进行一轮采样，得到一组各根拉杆的奖励样本，再选择样本中奖励最大的动作。可以看出，汤普森采样是一种计算所有拉杆的最高奖励概率的蒙特卡洛采样方法。 在实际情况中，我们通常用 Beta 分布对当前每个动作的奖励概率分布进行建模。具体来说，若某拉杆被选择k次，其中$m_{1}$次奖励为1，$m_{2}$次奖励为0，则该拉杆的奖励服从参数为$(m_{1}+1,m_{2}+1)$的 Beta分布。 总结 $\epsilon$-贪婪算法的累积懊悔是随时间线性增长的，而另外 3 种算法（ $\epsilon$-衰减贪婪算法、上置信界算法、汤普森采样算法）的累积懊悔都是随时间次线性增长的（具体为对数形式增长）。 多臂老虎机的每次交互的结果和以往的动作无关，所以可看作无状态的强化学习（stateless reinforcement learning）。" />
+<link rel="canonical" href="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html" />
+<meta property="og:url" content="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html" />
+<meta property="og:site_name" content="Step far." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-11-19T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="多臂老虎机问题" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DragonK"},"dateModified":"2023-11-19T00:00:00+00:00","datePublished":"2023-11-19T00:00:00+00:00","description":"关键词 试错型学习 探索与利用 问题定义 在多臂老虎机（multi-armed bandit，MAB）问题（见图 2-1）中，有一个拥有K根拉杆的老虎机，拉动每一根拉杆都对应一个关于奖励的概率分布R。 我们每次拉动其中一根拉杆，就可以从该拉杆对应的奖励概率分布中获得一个奖励 。我们在各根拉杆的奖励概率分布未知的情况下，从头开始尝试，目标是在操作T次拉杆后获得尽可能高的累积奖励。 由于奖励的概率分布是未知的，因此我们需要在“探索拉杆的获奖概率”和“根据经验选择获奖最多的拉杆”中进行权衡。“采用怎样的操作策略才能使获得的累积奖励最高”便是多臂老虎机问题。 要素形式化描述 多臂老虎机问题可以表示为一个元组$\\langle \\mathcal{A},\\mathcal{R} \\rangle$，其中 $\\mathcal{A}$是动作集合，包含K个元素（总共有K个老虎机） $\\mathcal{R}$是奖励概率分布，也就是说每个老虎机的产出对应一个奖励概率分布（而不是固定的）。 多臂老虎机的目标是最大化一段时间步T内累计的奖励。 \\(max \\sum^{T}_{t=1}r_{t},r_{t} \\backsim \\mathcal{R}(·|a_{t})\\) 累计懊悔 对于某个动作a，存在一个期望奖励，即其概率分布均值。那么存在一个期望最大的拉杆，表示为$Q^{*}$。 为了更加直观、方便地观察拉动一根拉杆的期望奖励离最优拉杆期望奖励的差距，我们引入懊悔（regret）概念。懊悔定义为拉动当前拉杆的动作a与最优拉杆的期望奖励差，即$R(a)=Q^{*}-Q(a)$。累计懊悔为$\\sigma_{R}=\\sum^{T}{t=1}R(a{t})$，即一次完整的T步决策完成后累计的懊悔总量。 MAB问题的目标为最大化累积奖励，等价于最小化累积懊悔。 估计期望奖励 由于只拉动一次拉杆获得的奖励存在随机性，所以需要多次拉动一根拉杆，然后计算得到的多次奖励的期望。（增量式更新） 平衡探索与利用：算法实现 基本算法框架 class Solver: &quot;&quot;&quot; 多臂老虎机算法基本框架 &quot;&quot;&quot; def __init__(self, bandit): self.bandit = bandit self.counts = np.zeros(self.bandit.K) # 每根拉杆的尝试次数 self.regret = 0. # 当前步的累积懊悔 self.actions = [] # 维护一个列表,记录每一步的动作 self.regrets = [] # 维护一个列表,记录每一步的累积懊悔 def update_regret(self, k): # 计算累积懊悔并保存,k为本次动作选择的拉杆的编号 self.regret += self.bandit.best_prob - self.bandit.probs[k] self.regrets.append(self.regret) def run_one_step(self): # 返回当前动作选择哪一根拉杆,由每个具体的策略实现 raise NotImplementedError def run(self, num_steps): # 运行一定次数,num_steps为总运行次数 for _ in range(num_steps): k = self.run_one_step() self.counts[k] += 1 self.actions.append(k) self.update_regret(k) 在多臂老虎机问题中，一个经典的问题就是探索与利用的平衡问题。 探索（exploration）是指尝试拉动更多可能的拉杆，这根拉杆不一定会获得最大的奖励，但这种方案能够摸清楚所有拉杆的获奖情况。例如，对于一个10臂老虎机，我们要把所有的拉杆都拉动一下才知道哪根拉杆可能获得最大的奖励。 利用（exploitation）是指拉动已知期望奖励最大的那根拉杆，由于已知的信息仅仅来自有限次的交互观测，所以当前的最优拉杆不一定是全局最优的。 于是在多臂老虎机问题中，设计策略时就需要平衡探索和利用的次数，使得累积奖励最大化。一个比较常用的思路是在开始时做比较多的探索，在对每根拉杆都有比较准确的估计后，再进行利用。目前已有一些比较经典的算法来解决这个问题，例如上置信界算法和汤普森采样算法等，接下来将分别介绍这几种算法。 $\\epsilon$-贪心算法 在原来的完全贪婪算法上添加噪声，每次以$1-\\epsilon$概率选择目前为止奖励最大的那根拉杆（利用），$\\epsilon$概率随机选择一根拉杆（探索）。 随着探索次数的不断增加，我们对各个动作的奖励估计得越来越准，此时我们就没必要继续花大力气进行探索。所以在$\\epsilon$-贪婪算法的具体实现中，我们可以令$\\epsilon$随时间衰减，即探索的概率将会不断降低。 但是$\\epsilon$不会在有限时间内衰减至0。因为基于有限步数观测的完全贪婪算法仍然是一个局部信息的贪婪算法，永远距离最优解有一个固定的差距。 固定$\\epsilon$的懊悔： $\\epsilon$与时间呈反比的懊悔： 后者明显更优。 上置信界算法 第一根拉杆只被拉动过一次，得到的奖励为0。 第二根拉杆被拉动过很多次，我们对它的奖励分布已经有了大致的把握。 问题是要不要继续尝试第一根。 我们可以使用一种基于不确定性的策略来综合考虑现有的期望奖励估值和不确定性，其核心问题是如何估计不确定性。 上置信界（upper confidence bound，UCB）算法是一种经典的基于不确定性的策略算法，它的思想用到了一个非常著名的数学原理：霍夫丁不等式（Hoeffding’s inequality） 在概率论中，霍夫丁不等式给出了随机变量的和与其期望值偏差的概率上限，该不等式被Wassily Hoeffding于1963年提出并证明。霍夫丁不等式是Azuma-Hoeffding不等式的特例。 令$X_1，\\dots，X_n$为独立的随机变量，且$X_i\\in[a,b],i=1，\\dots，n$。这些随机变量的经验均值可表示为：$\\bar{X}=\\frac{X_1+\\dots+X_n}{n}\\$。 霍夫丁不等式叙述如下： \\(\\forall{t&gt;0}，\\quad P(\\bar{X}-E[\\bar{X}]\\ge t)\\le exp(-\\frac{2n^2t^2}{\\begin{matrix} \\sum_{i=1}^n (b_i-a_i)^2 \\end{matrix}})\\\\\\) 对于伯努利分布来说随机变量的上下界是1和0，所以： \\(\\forall{t&gt;0}，\\quad P(\\bar{X}-E[\\bar{X}]\\ge t)\\le e^{-2nt^{2}}\\\\\\) 其中$t=\\hat{U_{t}}(a)$代表不确定性度量。给定一个概率$p=e^{-2N_{t}(a)U_{t}(a)^{2}}$，根据不等式（反向）可以得到$Q_{t}(a)&lt;\\hat{Q_{t}}(a)+\\hat{U_{t}}(a)$至少以概率$1-p$成立。 当p很小的时候$Q_{t}(a)&lt;\\hat{Q_{t}}(a)+\\hat{U_{t}}(a)$就以很大概率成立。所以$\\hat{Q_{t}}(a)+\\hat{U_{t}}(a)$便是期望奖励的上界。 这里给定p之后，就可以解得$\\hat{U_{t}}(a)=\\sqrt{\\frac{-log \\ p}{2N_{t}(a)}}$。 总结：事先设定一个概率p。UCB算法在每次选择拉杆前，先估计每根拉杆的期望奖励的上界，使得拉动每根拉杆的期望奖励只有一个较小的概率p超过这个上界，接着选出期望奖励上界最大的拉杆，从而选择最有可能获得最大期望奖励的拉杆。 实现：设置$p=\\frac{1}{t}$，为拉动每根拉杆的次数+1（防止分母为0），并设定一个系数c来控制不确定性的比重。 （似乎一般，不过没关系） 汤普森采样算法 假设拉动每根拉杆的奖励服从一个特定的概率分布，然后根据拉动每根拉杆的期望奖励来进行选择。 但是由于计算所有拉杆的期望奖励的代价比较高，汤普森采样算法使用采样的方式，即根据当前每个动作a的奖励概率分布进行一轮采样，得到一组各根拉杆的奖励样本，再选择样本中奖励最大的动作。可以看出，汤普森采样是一种计算所有拉杆的最高奖励概率的蒙特卡洛采样方法。 在实际情况中，我们通常用 Beta 分布对当前每个动作的奖励概率分布进行建模。具体来说，若某拉杆被选择k次，其中$m_{1}$次奖励为1，$m_{2}$次奖励为0，则该拉杆的奖励服从参数为$(m_{1}+1,m_{2}+1)$的 Beta分布。 总结 $\\epsilon$-贪婪算法的累积懊悔是随时间线性增长的，而另外 3 种算法（ $\\epsilon$-衰减贪婪算法、上置信界算法、汤普森采样算法）的累积懊悔都是随时间次线性增长的（具体为对数形式增长）。 多臂老虎机的每次交互的结果和以往的动作无关，所以可看作无状态的强化学习（stateless reinforcement learning）。","headline":"多臂老虎机问题","mainEntityOfPage":{"@type":"WebPage","@id":"/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html"},"url":"/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Step far." /><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"
+        async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe-lightbox.umd.min.js" async></script>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe.umd.min.js" async></script>
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/photoswipe.min.css"
+  rel="stylesheet"
+/>
+<style>
+  .pswp .pswp__container .pswp__img {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initPhotoSwipe() {
+    let customOptions = {};
+
+    try {
+      const data = ``.replaceAll("=>", ":");
+      customOptions = JSON.parse(data);
+    } catch (e) {
+      console.info("Invalid custom photo previewer options! " + e.message);
+    }
+
+    // Define object and gallery options
+    const options = Object.assign(
+      {
+        gallery: "section.main",
+        children: "a.photo-swipe",
+        photo_scale: 2,
+        // dynamic import is not supported in UMD version
+        pswpModule: PhotoSwipe,
+      },
+      customOptions
+    );
+
+    const galleryEl = document.querySelector(options.gallery);
+    if (!galleryEl) {
+      return;
+    }
+
+    const imgEls = [];
+    const els = galleryEl.querySelectorAll("img:not(.emoji)");
+    els.forEach((el) => {
+      if (el.src.trim() == "") {
+        return;
+      }
+      if (!imgEls.includes(el)) {
+        imgEls.push(el);
+      }
+    });
+
+    if (imgEls.length === 0) {
+      return;
+    }
+
+    imgEls.forEach((imgEl) => {
+      imgEl.outerHTML = `
+      <a class="photo-swipe"
+        href="${imgEl.src}"
+        data-pswp-width="${
+          Math.max(imgEl.naturalWidth, imgEl.width) * options.photo_scale
+        }"
+        data-pswp-height="${
+          Math.max(imgEl.naturalHeight, imgEl.height) * options.photo_scale
+        }"
+        data-pswp-caption="${imgEl.getAttribute("caption") || imgEl.alt}"
+        target="_blank">
+        ${imgEl.outerHTML}
+      </a>`;
+    });
+
+    // Initialize PhotoSwipe 5
+    var lightbox = new PhotoSwipeLightbox(options);
+
+    lightbox.init();
+  }
+
+  window.addEventListener("load", initPhotoSwipe);
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner"><span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Step far." src="" onerror="this.style.display='none'">
+  Step far.
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger"><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+</span></div>
+        </nav></div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">多臂老虎机问题</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <div class="post-meta">
+    <time class="dt-published" datetime="2023-11-19T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 19, 2023
+    </time>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div><div class="post-tags"><a class="post-tag" href="/tags.html#Reinforce_Learning LAMDA">#Reinforce_Learning LAMDA</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="关键词">关键词</h2>
+
+<ul>
+  <li>试错型学习</li>
+  <li>探索与利用</li>
+</ul>
+
+<h2 id="问题定义">问题定义</h2>
+
+<p>在多臂老虎机（multi-armed bandit，MAB）问题（见图 2-1）中，有一个拥有K根拉杆的老虎机，拉动每一根拉杆都对应一个关于奖励的概率分布R。</p>
+
+<p>我们每次拉动其中一根拉杆，就可以从该拉杆对应的奖励概率分布中获得一个奖励 。我们在各根拉杆的奖励概率分布未知的情况下，从头开始尝试，目标是在操作T次拉杆后获得尽可能高的累积奖励。</p>
+
+<p>由于奖励的概率分布是未知的，因此我们需要在“探索拉杆的获奖概率”和“根据经验选择获奖最多的拉杆”中进行权衡。“采用怎样的操作策略才能使获得的累积奖励最高”便是多臂老虎机问题。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/640.8908144b.png" alt="img" /></p>
+
+<h2 id="要素形式化描述">要素形式化描述</h2>
+
+<p>多臂老虎机问题可以表示为一个元组$\langle \mathcal{A},\mathcal{R} \rangle$，其中</p>
+
+<ul>
+  <li>$\mathcal{A}$是动作集合，包含K个元素（总共有K个老虎机）</li>
+  <li>$\mathcal{R}$是奖励概率分布，也就是说每个老虎机的产出对应一个奖励概率分布（而不是固定的）。</li>
+</ul>
+
+<p>多臂老虎机的目标是最大化一段时间步T内累计的奖励。
+\(max \sum^{T}_{t=1}r_{t},r_{t} \backsim \mathcal{R}(·|a_{t})\)</p>
+
+<h2 id="累计懊悔">累计懊悔</h2>
+
+<p>对于某个动作a，存在一个期望奖励，即其概率分布均值。那么存在一个期望最大的拉杆，表示为$Q^{*}$。</p>
+
+<p>为了更加直观、方便地观察拉动一根拉杆的期望奖励离最优拉杆期望奖励的差距，我们引入<strong>懊悔</strong>（regret）概念。懊悔定义为拉动当前拉杆的动作a与最优拉杆的期望奖励差，即$R(a)=Q^{*}-Q(a)$。累计懊悔为$\sigma_{R}=\sum^{T}<em>{t=1}R(a</em>{t})$，即一次完整的T步决策完成后累计的懊悔总量。</p>
+
+<p>MAB问题的目标为最大化累积奖励，等价于最小化累积懊悔。</p>
+
+<h2 id="估计期望奖励">估计期望奖励</h2>
+
+<p>由于只拉动一次拉杆获得的奖励存在随机性，所以需要多次拉动一根拉杆，然后计算得到的多次奖励的期望。（<strong>增量式更新</strong>）</p>
+
+<h2 id="平衡探索与利用算法实现">平衡探索与利用：算法实现</h2>
+
+<p><strong>基本算法框架</strong></p>
+
+<pre><code class="language-Python">class Solver:
+    """ 多臂老虎机算法基本框架 """
+    def __init__(self, bandit):
+        self.bandit = bandit
+        self.counts = np.zeros(self.bandit.K)  # 每根拉杆的尝试次数
+        self.regret = 0.  # 当前步的累积懊悔
+        self.actions = []  # 维护一个列表,记录每一步的动作
+        self.regrets = []  # 维护一个列表,记录每一步的累积懊悔
+
+    def update_regret(self, k):
+        # 计算累积懊悔并保存,k为本次动作选择的拉杆的编号
+        self.regret += self.bandit.best_prob - self.bandit.probs[k]
+        self.regrets.append(self.regret)
+
+    def run_one_step(self):
+        # 返回当前动作选择哪一根拉杆,由每个具体的策略实现
+        raise NotImplementedError
+
+    def run(self, num_steps):
+        # 运行一定次数,num_steps为总运行次数
+        for _ in range(num_steps):
+            k = self.run_one_step()
+            self.counts[k] += 1
+            self.actions.append(k)
+            self.update_regret(k)
+</code></pre>
+
+<p>在多臂老虎机问题中，一个经典的问题就是探索与利用的平衡问题。</p>
+
+<p><strong>探索</strong>（exploration）是指尝试拉动更多可能的拉杆，这根拉杆不一定会获得最大的奖励，但这种方案能够摸清楚所有拉杆的获奖情况。例如，对于一个10臂老虎机，我们要把所有的拉杆都拉动一下才知道哪根拉杆可能获得最大的奖励。</p>
+
+<p><strong>利用</strong>（exploitation）是指拉动已知期望奖励最大的那根拉杆，由于已知的信息仅仅来自有限次的交互观测，所以当前的最优拉杆不一定是全局最优的。</p>
+
+<p>于是在多臂老虎机问题中，设计策略时就需要平衡探索和利用的次数，使得累积奖励最大化。一个比较常用的思路是在开始时做比较多的探索，在对每根拉杆都有比较准确的估计后，再进行利用。目前已有一些比较经典的算法来解决这个问题，例如上置信界算法和汤普森采样算法等，接下来将分别介绍这几种算法。</p>
+
+<h3 id="epsilon-贪心算法">$\epsilon$-贪心算法</h3>
+
+<p>在原来的完全贪婪算法上添加噪声，每次以$1-\epsilon$概率选择目前为止奖励最大的那根拉杆（<strong>利用</strong>），$\epsilon$概率随机选择一根拉杆（<strong>探索</strong>）。</p>
+
+<p>随着探索次数的不断增加，我们对各个动作的奖励估计得越来越准，此时我们就没必要继续花大力气进行探索。所以在$\epsilon$-贪婪算法的具体实现中，我们可以令$\epsilon$随时间衰减，即探索的概率将会不断降低。</p>
+
+<p>但是$\epsilon$不会在有限时间内衰减至0。因为基于<strong>有限步数</strong>观测的完全贪婪算法仍然是一个局部信息的贪婪算法，永远距离最优解有一个固定的差距。</p>
+
+<p>固定$\epsilon$的懊悔：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_4_2.4825c3f7.png" alt="img" /></p>
+
+<p>$\epsilon$与时间呈反比的懊悔：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_4_3.dd308d2c.png" alt="img" /></p>
+
+<p>后者明显更优。</p>
+
+<h3 id="上置信界算法">上置信界算法</h3>
+
+<ul>
+  <li>第一根拉杆只被拉动过一次，得到的奖励为0。</li>
+  <li>第二根拉杆被拉动过很多次，我们对它的奖励分布已经有了大致的把握。</li>
+</ul>
+
+<p>问题是要不要继续尝试第一根。</p>
+
+<p>我们可以使用一种基于不确定性的策略来综合考虑现有的期望奖励估值和不确定性，其核心问题是如何估计不确定性。</p>
+
+<p><strong>上置信界</strong>（upper confidence bound，UCB）算法是一种经典的基于不确定性的策略算法，它的思想用到了一个非常著名的数学原理：<strong>霍夫丁不等式</strong>（Hoeffding’s inequality）</p>
+
+<p>在概率论中，霍夫丁不等式给出了随机变量的和与其期望值偏差的概率上限，该不等式被Wassily Hoeffding于1963年提出并证明。霍夫丁不等式是Azuma-Hoeffding不等式的特例。</p>
+
+<p>令$X_1，\dots，X_n$为独立的随机变量，且$X_i\in[a,b],i=1，\dots，n$。这些随机变量的经验均值可表示为：$\bar{X}=\frac{X_1+\dots+X_n}{n}\$。</p>
+
+<p>霍夫丁不等式叙述如下：
+\(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le exp(-\frac{2n^2t^2}{\begin{matrix} \sum_{i=1}^n (b_i-a_i)^2 \end{matrix}})\\\)
+对于伯努利分布来说随机变量的上下界是1和0，所以：
+\(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le e^{-2nt^{2}}\\\)
+其中$t=\hat{U_{t}}(a)$代表不确定性度量。给定一个概率$p=e^{-2N_{t}(a)U_{t}(a)^{2}}$，根据不等式（反向）可以得到$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$至少以概率$1-p$成立。 当p很小的时候$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$就以很大概率成立。所以$\hat{Q_{t}}(a)+\hat{U_{t}}(a)$便是<strong>期望奖励的上界</strong>。</p>
+
+<p>这里给定p之后，就可以解得$\hat{U_{t}}(a)=\sqrt{\frac{-log \ p}{2N_{t}(a)}}$。</p>
+
+<p>总结：事先设定一个概率p。UCB算法在每次选择拉杆前，先估计每根拉杆的期望奖励的上界，使得拉动每根拉杆的期望奖励只有一个较小的概率p超过这个上界，接着选出期望奖励上界最大的拉杆，从而选择最有可能获得最大期望奖励的拉杆。</p>
+
+<p>实现：设置$p=\frac{1}{t}$，为拉动每根拉杆的次数+1（防止分母为0），并设定一个系数c来控制不确定性的比重。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_5.53e4e9e1.png" alt="img" /></p>
+
+<p>（似乎一般，不过没关系）</p>
+
+<h3 id="汤普森采样算法">汤普森采样算法</h3>
+
+<p>假设拉动每根拉杆的奖励服从一个特定的概率分布，然后根据拉动每根拉杆的期望奖励来进行选择。</p>
+
+<p>但是由于计算所有拉杆的期望奖励的代价比较高，汤普森采样算法使用采样的方式，即根据当前每个动作a的奖励概率分布进行一轮采样，得到一组各根拉杆的奖励样本，再选择样本中奖励最大的动作。可以看出，汤普森采样是一种计算所有拉杆的最高奖励概率的蒙特卡洛采样方法。</p>
+
+<p>在实际情况中，我们通常用 Beta 分布对当前每个动作的奖励概率分布进行建模。具体来说，若某拉杆被选择k次，其中$m_{1}$次奖励为1，$m_{2}$次奖励为0，则该拉杆的奖励服从参数为$(m_{1}+1,m_{2}+1)$的 Beta分布。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/641.c16a3dee.png" alt="img" /></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_6.45dec2db.png" alt="img" /></p>
+
+<h2 id="总结">总结</h2>
+
+<p>$\epsilon$-贪婪算法的累积懊悔是随时间线性增长的，而另外 3 种算法（ $\epsilon$-衰减贪婪算法、上置信界算法、汤普森采样算法）的累积懊悔都是随时间次线性增长的（具体为对数形式增长）。</p>
+
+<p>多臂老虎机的每次交互的结果和以往的动作无关，所以可看作<strong>无状态的强化学习</strong>（stateless reinforcement learning）。</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav"><a class="previous" href="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html" title="CH6 运算方法">CH6 运算方法</a><a class="next" href="/research/notes/2023/11/19/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html" title="强化学习基础">强化学习基础</a></div><div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li class="">
+          <a class="post-link" href="/learning/notes/2023/11/19/%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E7%AE%97%E6%B3%95.html" title="时序差分算法">
+            时序差分算法<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html" title="CH2 数字逻辑基础">
+            CH2 数字逻辑基础<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/research/notes/2023/11/19/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html" title="强化学习基础">
+            强化学习基础<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html" title="CH6 运算方法">
+            CH6 运算方法<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li></ul>
+    </div><div class="post-comments"></div></section>
+</div>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner"><div>Unpublished Work <span class="copyleft">&copy;</span> 2017-2024 DragonK</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

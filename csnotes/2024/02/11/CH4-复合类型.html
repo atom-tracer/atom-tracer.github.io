@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CH4 复合类型 | Step far.</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="CH4 复合类型" />
+<meta name="author" content="DragonK" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CH4 复合类型 字符串的输入 cin使用空白（空格、制表符和换行符）来确定字符串的结束位置，这意味着cin在获取字符数组输入时只读取一个单词。读取该单词后，cin将该字符串放到数组中，并自动在结尾添加空字符。 读取一行 面向行的输入：getline() getline()函数读取整行，它使用通过回车键输入的换行符来确定输入结尾。 例如，假设要使用getline()将姓名读入到一个包含20个元素的name数组中。可以使用这样的函数调用： cin.getline (name,20); 这将把一行读入到name数组中，如果这行包含的字符不超过19个。 它通过换行符来确定行尾，但不保存换行符（也就是说它将从缓冲区里读取到换行符并丢弃）。 另外，getline函数返回当前cin对象，可以连续调用： cin.getline(namel,Arsize).getline(name2,Arsize); 面向行的输入：get() istream类（cin是一个istream对象！）有另一个名为get()的成员函数，该函数有几种变体。其中一种变体的工作方式与getline()类似，它们接受的参数相同，解释参数的方式也相同，并且都读取到行尾。 get并不再读取并丢弃换行符，而是将其留在输入队列中。假设我们连续两次调用get(): cin.get (name,Arsize); cin.get(dessert,Arsize);//a problem 由于第一次调用后，换行符将留在输入队列中，因此第二次调用时看到的第一个字符便是换行符。因此get()认为已到达行尾，而没有发现任何可读取的内容。如果不借助于帮助，get()将不能跨过该换行符。 get有另一种变体：使用不带任何参数的cin.get()调用可读取下一个字符（即使是换行符）： cin.get (name,Arsize);//read first line cin.get();//read newline cin.get(dessert,Arsize);//read second line get也返回一个cin对象，也可以连续使用： cin.get(name,Arsize).get();//concatenate member functions 为什么要使用get(),而不是getline()呢？ 首先，老式实现没有getline()。 其次，get()使输入更仔细。 例如，假设用get()将一行读入数组中。如何知道停止读取的原因是由于已经读取了整行，而不是由于数组已填满呢？查看下一个输入字符，如果是换行符，说明已读取了整行；否则，说明该行中还有其他输入。 总之，getline()使用起来简单一些，但get()使得检查错误更简单些。可以用其中的任何一个来读取一行输入。 空行 当get()（不是getline()）读取空行后将设置失效位(failbit)。这意味着接下来的输入将被阻断，但可以用下面的命令来恢复输入： cin.clear(); 溢出 另一个潜在的问题是，输入字符串可能比分配的空间长。 如果输入行包含的字符数比指定的多，则getline()和get()将把余下的字符留在输入队列中，而getline()还会设置失效位，并关闭后面的输入。 string类 需要注意的是，需要从cin中读取到一个string类的方式如下： getline(cin,str); 这表明这里的getline不是一个类方法。这个getline也是遇到换行符停止，并丢弃它。 其他形式的字符串字面值 除char类型外，C++还有类型wchar_t，而C++11新增了类型char16_t和char32_t。对于这些类型的字符串字面值，C++分别使用前缀L、u和U表示，下面是一个如何使用这些前缀的例子： wchar_t title[]=L&quot;Chief Astrogator&quot;;//.w_char &#39;string char16_t name[]=u&quot;Felonia Ripova&quot;;//char 16 string char32_t car[]U&quot;Humber Super Snipe&quot;;//char 32 string char16_t和char是两种不同的字符类型，它们的主要区别在于它们的大小和用途： char：这是最基本的字符类型，通常用于存储ASCII字符。在大多数系统中，char的大小是8位（1字节）。这意味着它可以直接表示ASCII字符集中的字符，但对于更大的字符集（如Unicode），一个char可能不足以表示一个字符。 char16_t：这是一种16位（2字节）的字符类型，通常用于存储UTF-16编码的Unicode字符。这意味着它可以表示Unicode字符集中的大多数字符，包括ASCII字符和许多非ASCII字符。 下面是一个例子，说明了char和char16_t的区别： #include &lt;iostream&gt; int main() { char c = &#39;A&#39;; // ASCII character std::cout &lt;&lt; &quot;char: &quot; &lt;&lt; c &lt;&lt; &quot;\n&quot;; // Character &#39;LATIN SMALL LETTER A WITH GRAVE&#39; (U+00E0) in UTF-16 char16_t c16 = u&#39;\u00E0&#39;; std::cout &lt;&lt; &quot;char16_t: &quot; &lt;&lt; c16 &lt;&lt; &quot;\n&quot;; return 0; } 在这个例子中，char变量c存储了一个ASCII字符&#39;A&#39;，而char16_t变量c16存储了一个Unicode字符&#39;LATIN SMALL LETTER A WITH GRAVE&#39;（U+00E0）。注意，这个Unicode字符是不能用一个char来表示的，因为它的编码超出了char的范围。 注意：在打印char16_t类型的字符时，可能会出现问题，因为标准的C++ I/O库并不直接支持char16_t和char32_t。如果你需要处理char16_t或char32_t的字符串，你可能需要使用专门用于处理这些类型的库或函数。 C++11还支持Unicode字符编码方案UTF-8。在这种方案中，根据编码的数字值，字符可能存储为1-4个八位组。C++使用前缀u8来表示这种类型的字符串字面值。 C+11新增的另一种类型是原始(raw)字符串。在原始字符串中，字符表示的就是自己，例如；序列\n 不表示换行符，而表示两个常规字符斜杠和，因此在屏幕上显示时，将显示这两个字符。 当然，既然可在字符串字面量包含”，就不能再使用它来表示字符串的开头和末尾。因此，原始字符串将&quot;(和)&quot;用作定界符，并使用前缀R来标识原始字符串： cout.&lt;&lt;R&quot;(Jim &quot;King&quot;Tutt uses&quot;\n&quot;instead.of.endl.)&quot;&lt;&lt;&#39;\n&#39;; 上述代码将显示如下内容： Jim &quot;King&quot; Tutt uses \n instead of endl. 如果使用标准字符串字面值；·将需编写如下代码： cout&lt;&lt;&quot;Jim \King(&quot;Tutt uses\&quot;n\&quot;instead of endl.&quot;&lt;&lt;&#39;\n&#39;; 输入原始字符串时，按回车键不仅会移到下一行，还将在原始字符串中添加回车字符。 如果要在原始字符串中包含)”，该如何办呢？ 原始字符串语法允许您在表示字符串开头的”和(之间添加其他字符，这意味着表示字符串结尾的”和）之间也必须包含这些字符。 cout &lt;R&quot;+*(&quot;(Who wouldn&#39;t?)&quot;,she whispered.)+*&quot;&lt;&lt;endl; 将显示如下内容： &quot;(Who wouldn&#39;t?)&quot;,she whispered. anonymous union 通常的struct里定义union： struct widget { char brand[20]; union id { long id_num; char id_char[20]; }id_val; }; widget prize; 这样就得如此访问： prize.id_val.id_num 匿名共用体(anonymous union)没有名称，成员将成为位于相同地址处的变量。显然，每次只有一 个成员是当前的成员： struct widget { char brand[20]; union id { long id_num; char id_char[20]; } }; widget prize; 由于共用体是匿名的，因此id_num和id_char被视为prize的两个成员，它们的地址相同，所以不需 要中间标识符id_val。程序员负责确定当前哪个成员是活动的。 枚举enum enum spectrum {red,orange,yellow,green,blue,violet,indigo,ultraviolet}; 这条语句完成两项工作: 让spectrum成为新类型的名称：spectrum被称为枚举(enumeration),就像struct变量被称为结构一样。 将red、orange、yellow等作为符号常量，它们对应整数值0~7。这些常量叫作枚举量(enumerator)。 它的特性： 只能将定义时使用的枚举量赋值给枚举变量 在使用强制类型转换时，可以将一个有效的int值赋给枚举变量 band spectrum(3); //typecast 3 to type spectrum 只要这个int值在枚举的取值范围内（2的幂），赋值语句就是合法的，但是后续操作可能不合法。 可以通过设置锚点的方式显式设置枚举量的值： enum bigstep(first,second 100,third); 这里，first在默认情况下为0。后面没有被初始化的枚举量的值将比其前面的枚举量大1。因此，third的值为101。 enum可以自动提升为int，但反过来不行。 enum没有定义操作运算符，与运算符放在一起时会提升为int。 指针 使用new创建与释放 不要使用delete来释放不是new分配的内存。 不要使用delete释放同一个内存块两次。 如果使用ncw[]为数组分配内存，则应使用delete[]来释放。 如果使用new[]为一个实体分配内存，则应使用delete(没有方括号)来释放。 所以，在类的成员变量种，如果创建长度为1的char数组，最好使用str=new char[1]而不是str=new char！ 这样无论长度是多少，都不需要再修改析构函数。 对空指针应用delete是安全的。 int psome new int [10];//get a block of 10 ints delete [] psome; I/O 一般来说，如果给cout提供一个指针，它将打印地址。但如果指针的类型为char*,则cout将显示指 向的字符串。如果要显示的是字符串的地址，则必须将这种指针强制转换为另一种指针类型，如int*因此，ps显示为字符串“fox”,而(int*)ps显示为该字符串的地址。 ps =animal; //set ps to point to-string cout&lt;&lt;animal&lt;&lt;&quot;at&quot;&lt;&lt;(int*)animal&lt;&lt;endl; cout&lt;&lt;ps&lt;&lt;&quot;at&quot;&lt;(int*t)ps&lt;&lt;endl; 它将生成下面的输出： fox at 0x0065fd30 fox at 0x0065fd30 使用指针访问结构体成员 比较棘手的一步是访问成员。创建动态结构时，不能将成员运算符句点用于结构名，因为这种结构没 有名称，只是知道它的地址。C++专门为这种情况提供了一个运算符：箭头成员运算符(-&gt;)。 例如ps-&gt;price。 另一种方式：(*ps).price" />
+<meta property="og:description" content="CH4 复合类型 字符串的输入 cin使用空白（空格、制表符和换行符）来确定字符串的结束位置，这意味着cin在获取字符数组输入时只读取一个单词。读取该单词后，cin将该字符串放到数组中，并自动在结尾添加空字符。 读取一行 面向行的输入：getline() getline()函数读取整行，它使用通过回车键输入的换行符来确定输入结尾。 例如，假设要使用getline()将姓名读入到一个包含20个元素的name数组中。可以使用这样的函数调用： cin.getline (name,20); 这将把一行读入到name数组中，如果这行包含的字符不超过19个。 它通过换行符来确定行尾，但不保存换行符（也就是说它将从缓冲区里读取到换行符并丢弃）。 另外，getline函数返回当前cin对象，可以连续调用： cin.getline(namel,Arsize).getline(name2,Arsize); 面向行的输入：get() istream类（cin是一个istream对象！）有另一个名为get()的成员函数，该函数有几种变体。其中一种变体的工作方式与getline()类似，它们接受的参数相同，解释参数的方式也相同，并且都读取到行尾。 get并不再读取并丢弃换行符，而是将其留在输入队列中。假设我们连续两次调用get(): cin.get (name,Arsize); cin.get(dessert,Arsize);//a problem 由于第一次调用后，换行符将留在输入队列中，因此第二次调用时看到的第一个字符便是换行符。因此get()认为已到达行尾，而没有发现任何可读取的内容。如果不借助于帮助，get()将不能跨过该换行符。 get有另一种变体：使用不带任何参数的cin.get()调用可读取下一个字符（即使是换行符）： cin.get (name,Arsize);//read first line cin.get();//read newline cin.get(dessert,Arsize);//read second line get也返回一个cin对象，也可以连续使用： cin.get(name,Arsize).get();//concatenate member functions 为什么要使用get(),而不是getline()呢？ 首先，老式实现没有getline()。 其次，get()使输入更仔细。 例如，假设用get()将一行读入数组中。如何知道停止读取的原因是由于已经读取了整行，而不是由于数组已填满呢？查看下一个输入字符，如果是换行符，说明已读取了整行；否则，说明该行中还有其他输入。 总之，getline()使用起来简单一些，但get()使得检查错误更简单些。可以用其中的任何一个来读取一行输入。 空行 当get()（不是getline()）读取空行后将设置失效位(failbit)。这意味着接下来的输入将被阻断，但可以用下面的命令来恢复输入： cin.clear(); 溢出 另一个潜在的问题是，输入字符串可能比分配的空间长。 如果输入行包含的字符数比指定的多，则getline()和get()将把余下的字符留在输入队列中，而getline()还会设置失效位，并关闭后面的输入。 string类 需要注意的是，需要从cin中读取到一个string类的方式如下： getline(cin,str); 这表明这里的getline不是一个类方法。这个getline也是遇到换行符停止，并丢弃它。 其他形式的字符串字面值 除char类型外，C++还有类型wchar_t，而C++11新增了类型char16_t和char32_t。对于这些类型的字符串字面值，C++分别使用前缀L、u和U表示，下面是一个如何使用这些前缀的例子： wchar_t title[]=L&quot;Chief Astrogator&quot;;//.w_char &#39;string char16_t name[]=u&quot;Felonia Ripova&quot;;//char 16 string char32_t car[]U&quot;Humber Super Snipe&quot;;//char 32 string char16_t和char是两种不同的字符类型，它们的主要区别在于它们的大小和用途： char：这是最基本的字符类型，通常用于存储ASCII字符。在大多数系统中，char的大小是8位（1字节）。这意味着它可以直接表示ASCII字符集中的字符，但对于更大的字符集（如Unicode），一个char可能不足以表示一个字符。 char16_t：这是一种16位（2字节）的字符类型，通常用于存储UTF-16编码的Unicode字符。这意味着它可以表示Unicode字符集中的大多数字符，包括ASCII字符和许多非ASCII字符。 下面是一个例子，说明了char和char16_t的区别： #include &lt;iostream&gt; int main() { char c = &#39;A&#39;; // ASCII character std::cout &lt;&lt; &quot;char: &quot; &lt;&lt; c &lt;&lt; &quot;\n&quot;; // Character &#39;LATIN SMALL LETTER A WITH GRAVE&#39; (U+00E0) in UTF-16 char16_t c16 = u&#39;\u00E0&#39;; std::cout &lt;&lt; &quot;char16_t: &quot; &lt;&lt; c16 &lt;&lt; &quot;\n&quot;; return 0; } 在这个例子中，char变量c存储了一个ASCII字符&#39;A&#39;，而char16_t变量c16存储了一个Unicode字符&#39;LATIN SMALL LETTER A WITH GRAVE&#39;（U+00E0）。注意，这个Unicode字符是不能用一个char来表示的，因为它的编码超出了char的范围。 注意：在打印char16_t类型的字符时，可能会出现问题，因为标准的C++ I/O库并不直接支持char16_t和char32_t。如果你需要处理char16_t或char32_t的字符串，你可能需要使用专门用于处理这些类型的库或函数。 C++11还支持Unicode字符编码方案UTF-8。在这种方案中，根据编码的数字值，字符可能存储为1-4个八位组。C++使用前缀u8来表示这种类型的字符串字面值。 C+11新增的另一种类型是原始(raw)字符串。在原始字符串中，字符表示的就是自己，例如；序列\n 不表示换行符，而表示两个常规字符斜杠和，因此在屏幕上显示时，将显示这两个字符。 当然，既然可在字符串字面量包含”，就不能再使用它来表示字符串的开头和末尾。因此，原始字符串将&quot;(和)&quot;用作定界符，并使用前缀R来标识原始字符串： cout.&lt;&lt;R&quot;(Jim &quot;King&quot;Tutt uses&quot;\n&quot;instead.of.endl.)&quot;&lt;&lt;&#39;\n&#39;; 上述代码将显示如下内容： Jim &quot;King&quot; Tutt uses \n instead of endl. 如果使用标准字符串字面值；·将需编写如下代码： cout&lt;&lt;&quot;Jim \King(&quot;Tutt uses\&quot;n\&quot;instead of endl.&quot;&lt;&lt;&#39;\n&#39;; 输入原始字符串时，按回车键不仅会移到下一行，还将在原始字符串中添加回车字符。 如果要在原始字符串中包含)”，该如何办呢？ 原始字符串语法允许您在表示字符串开头的”和(之间添加其他字符，这意味着表示字符串结尾的”和）之间也必须包含这些字符。 cout &lt;R&quot;+*(&quot;(Who wouldn&#39;t?)&quot;,she whispered.)+*&quot;&lt;&lt;endl; 将显示如下内容： &quot;(Who wouldn&#39;t?)&quot;,she whispered. anonymous union 通常的struct里定义union： struct widget { char brand[20]; union id { long id_num; char id_char[20]; }id_val; }; widget prize; 这样就得如此访问： prize.id_val.id_num 匿名共用体(anonymous union)没有名称，成员将成为位于相同地址处的变量。显然，每次只有一 个成员是当前的成员： struct widget { char brand[20]; union id { long id_num; char id_char[20]; } }; widget prize; 由于共用体是匿名的，因此id_num和id_char被视为prize的两个成员，它们的地址相同，所以不需 要中间标识符id_val。程序员负责确定当前哪个成员是活动的。 枚举enum enum spectrum {red,orange,yellow,green,blue,violet,indigo,ultraviolet}; 这条语句完成两项工作: 让spectrum成为新类型的名称：spectrum被称为枚举(enumeration),就像struct变量被称为结构一样。 将red、orange、yellow等作为符号常量，它们对应整数值0~7。这些常量叫作枚举量(enumerator)。 它的特性： 只能将定义时使用的枚举量赋值给枚举变量 在使用强制类型转换时，可以将一个有效的int值赋给枚举变量 band spectrum(3); //typecast 3 to type spectrum 只要这个int值在枚举的取值范围内（2的幂），赋值语句就是合法的，但是后续操作可能不合法。 可以通过设置锚点的方式显式设置枚举量的值： enum bigstep(first,second 100,third); 这里，first在默认情况下为0。后面没有被初始化的枚举量的值将比其前面的枚举量大1。因此，third的值为101。 enum可以自动提升为int，但反过来不行。 enum没有定义操作运算符，与运算符放在一起时会提升为int。 指针 使用new创建与释放 不要使用delete来释放不是new分配的内存。 不要使用delete释放同一个内存块两次。 如果使用ncw[]为数组分配内存，则应使用delete[]来释放。 如果使用new[]为一个实体分配内存，则应使用delete(没有方括号)来释放。 所以，在类的成员变量种，如果创建长度为1的char数组，最好使用str=new char[1]而不是str=new char！ 这样无论长度是多少，都不需要再修改析构函数。 对空指针应用delete是安全的。 int psome new int [10];//get a block of 10 ints delete [] psome; I/O 一般来说，如果给cout提供一个指针，它将打印地址。但如果指针的类型为char*,则cout将显示指 向的字符串。如果要显示的是字符串的地址，则必须将这种指针强制转换为另一种指针类型，如int*因此，ps显示为字符串“fox”,而(int*)ps显示为该字符串的地址。 ps =animal; //set ps to point to-string cout&lt;&lt;animal&lt;&lt;&quot;at&quot;&lt;&lt;(int*)animal&lt;&lt;endl; cout&lt;&lt;ps&lt;&lt;&quot;at&quot;&lt;(int*t)ps&lt;&lt;endl; 它将生成下面的输出： fox at 0x0065fd30 fox at 0x0065fd30 使用指针访问结构体成员 比较棘手的一步是访问成员。创建动态结构时，不能将成员运算符句点用于结构名，因为这种结构没 有名称，只是知道它的地址。C++专门为这种情况提供了一个运算符：箭头成员运算符(-&gt;)。 例如ps-&gt;price。 另一种方式：(*ps).price" />
+<link rel="canonical" href="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html" />
+<meta property="og:url" content="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html" />
+<meta property="og:site_name" content="Step far." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-11T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CH4 复合类型" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DragonK"},"dateModified":"2024-02-11T00:00:00+00:00","datePublished":"2024-02-11T00:00:00+00:00","description":"CH4 复合类型 字符串的输入 cin使用空白（空格、制表符和换行符）来确定字符串的结束位置，这意味着cin在获取字符数组输入时只读取一个单词。读取该单词后，cin将该字符串放到数组中，并自动在结尾添加空字符。 读取一行 面向行的输入：getline() getline()函数读取整行，它使用通过回车键输入的换行符来确定输入结尾。 例如，假设要使用getline()将姓名读入到一个包含20个元素的name数组中。可以使用这样的函数调用： cin.getline (name,20); 这将把一行读入到name数组中，如果这行包含的字符不超过19个。 它通过换行符来确定行尾，但不保存换行符（也就是说它将从缓冲区里读取到换行符并丢弃）。 另外，getline函数返回当前cin对象，可以连续调用： cin.getline(namel,Arsize).getline(name2,Arsize); 面向行的输入：get() istream类（cin是一个istream对象！）有另一个名为get()的成员函数，该函数有几种变体。其中一种变体的工作方式与getline()类似，它们接受的参数相同，解释参数的方式也相同，并且都读取到行尾。 get并不再读取并丢弃换行符，而是将其留在输入队列中。假设我们连续两次调用get(): cin.get (name,Arsize); cin.get(dessert,Arsize);//a problem 由于第一次调用后，换行符将留在输入队列中，因此第二次调用时看到的第一个字符便是换行符。因此get()认为已到达行尾，而没有发现任何可读取的内容。如果不借助于帮助，get()将不能跨过该换行符。 get有另一种变体：使用不带任何参数的cin.get()调用可读取下一个字符（即使是换行符）： cin.get (name,Arsize);//read first line cin.get();//read newline cin.get(dessert,Arsize);//read second line get也返回一个cin对象，也可以连续使用： cin.get(name,Arsize).get();//concatenate member functions 为什么要使用get(),而不是getline()呢？ 首先，老式实现没有getline()。 其次，get()使输入更仔细。 例如，假设用get()将一行读入数组中。如何知道停止读取的原因是由于已经读取了整行，而不是由于数组已填满呢？查看下一个输入字符，如果是换行符，说明已读取了整行；否则，说明该行中还有其他输入。 总之，getline()使用起来简单一些，但get()使得检查错误更简单些。可以用其中的任何一个来读取一行输入。 空行 当get()（不是getline()）读取空行后将设置失效位(failbit)。这意味着接下来的输入将被阻断，但可以用下面的命令来恢复输入： cin.clear(); 溢出 另一个潜在的问题是，输入字符串可能比分配的空间长。 如果输入行包含的字符数比指定的多，则getline()和get()将把余下的字符留在输入队列中，而getline()还会设置失效位，并关闭后面的输入。 string类 需要注意的是，需要从cin中读取到一个string类的方式如下： getline(cin,str); 这表明这里的getline不是一个类方法。这个getline也是遇到换行符停止，并丢弃它。 其他形式的字符串字面值 除char类型外，C++还有类型wchar_t，而C++11新增了类型char16_t和char32_t。对于这些类型的字符串字面值，C++分别使用前缀L、u和U表示，下面是一个如何使用这些前缀的例子： wchar_t title[]=L&quot;Chief Astrogator&quot;;//.w_char &#39;string char16_t name[]=u&quot;Felonia Ripova&quot;;//char 16 string char32_t car[]U&quot;Humber Super Snipe&quot;;//char 32 string char16_t和char是两种不同的字符类型，它们的主要区别在于它们的大小和用途： char：这是最基本的字符类型，通常用于存储ASCII字符。在大多数系统中，char的大小是8位（1字节）。这意味着它可以直接表示ASCII字符集中的字符，但对于更大的字符集（如Unicode），一个char可能不足以表示一个字符。 char16_t：这是一种16位（2字节）的字符类型，通常用于存储UTF-16编码的Unicode字符。这意味着它可以表示Unicode字符集中的大多数字符，包括ASCII字符和许多非ASCII字符。 下面是一个例子，说明了char和char16_t的区别： #include &lt;iostream&gt; int main() { char c = &#39;A&#39;; // ASCII character std::cout &lt;&lt; &quot;char: &quot; &lt;&lt; c &lt;&lt; &quot;\\n&quot;; // Character &#39;LATIN SMALL LETTER A WITH GRAVE&#39; (U+00E0) in UTF-16 char16_t c16 = u&#39;\\u00E0&#39;; std::cout &lt;&lt; &quot;char16_t: &quot; &lt;&lt; c16 &lt;&lt; &quot;\\n&quot;; return 0; } 在这个例子中，char变量c存储了一个ASCII字符&#39;A&#39;，而char16_t变量c16存储了一个Unicode字符&#39;LATIN SMALL LETTER A WITH GRAVE&#39;（U+00E0）。注意，这个Unicode字符是不能用一个char来表示的，因为它的编码超出了char的范围。 注意：在打印char16_t类型的字符时，可能会出现问题，因为标准的C++ I/O库并不直接支持char16_t和char32_t。如果你需要处理char16_t或char32_t的字符串，你可能需要使用专门用于处理这些类型的库或函数。 C++11还支持Unicode字符编码方案UTF-8。在这种方案中，根据编码的数字值，字符可能存储为1-4个八位组。C++使用前缀u8来表示这种类型的字符串字面值。 C+11新增的另一种类型是原始(raw)字符串。在原始字符串中，字符表示的就是自己，例如；序列\\n 不表示换行符，而表示两个常规字符斜杠和，因此在屏幕上显示时，将显示这两个字符。 当然，既然可在字符串字面量包含”，就不能再使用它来表示字符串的开头和末尾。因此，原始字符串将&quot;(和)&quot;用作定界符，并使用前缀R来标识原始字符串： cout.&lt;&lt;R&quot;(Jim &quot;King&quot;Tutt uses&quot;\\n&quot;instead.of.endl.)&quot;&lt;&lt;&#39;\\n&#39;; 上述代码将显示如下内容： Jim &quot;King&quot; Tutt uses \\n instead of endl. 如果使用标准字符串字面值；·将需编写如下代码： cout&lt;&lt;&quot;Jim \\King(&quot;Tutt uses\\&quot;n\\&quot;instead of endl.&quot;&lt;&lt;&#39;\\n&#39;; 输入原始字符串时，按回车键不仅会移到下一行，还将在原始字符串中添加回车字符。 如果要在原始字符串中包含)”，该如何办呢？ 原始字符串语法允许您在表示字符串开头的”和(之间添加其他字符，这意味着表示字符串结尾的”和）之间也必须包含这些字符。 cout &lt;R&quot;+*(&quot;(Who wouldn&#39;t?)&quot;,she whispered.)+*&quot;&lt;&lt;endl; 将显示如下内容： &quot;(Who wouldn&#39;t?)&quot;,she whispered. anonymous union 通常的struct里定义union： struct widget { char brand[20]; union id { long id_num; char id_char[20]; }id_val; }; widget prize; 这样就得如此访问： prize.id_val.id_num 匿名共用体(anonymous union)没有名称，成员将成为位于相同地址处的变量。显然，每次只有一 个成员是当前的成员： struct widget { char brand[20]; union id { long id_num; char id_char[20]; } }; widget prize; 由于共用体是匿名的，因此id_num和id_char被视为prize的两个成员，它们的地址相同，所以不需 要中间标识符id_val。程序员负责确定当前哪个成员是活动的。 枚举enum enum spectrum {red,orange,yellow,green,blue,violet,indigo,ultraviolet}; 这条语句完成两项工作: 让spectrum成为新类型的名称：spectrum被称为枚举(enumeration),就像struct变量被称为结构一样。 将red、orange、yellow等作为符号常量，它们对应整数值0~7。这些常量叫作枚举量(enumerator)。 它的特性： 只能将定义时使用的枚举量赋值给枚举变量 在使用强制类型转换时，可以将一个有效的int值赋给枚举变量 band spectrum(3); //typecast 3 to type spectrum 只要这个int值在枚举的取值范围内（2的幂），赋值语句就是合法的，但是后续操作可能不合法。 可以通过设置锚点的方式显式设置枚举量的值： enum bigstep(first,second 100,third); 这里，first在默认情况下为0。后面没有被初始化的枚举量的值将比其前面的枚举量大1。因此，third的值为101。 enum可以自动提升为int，但反过来不行。 enum没有定义操作运算符，与运算符放在一起时会提升为int。 指针 使用new创建与释放 不要使用delete来释放不是new分配的内存。 不要使用delete释放同一个内存块两次。 如果使用ncw[]为数组分配内存，则应使用delete[]来释放。 如果使用new[]为一个实体分配内存，则应使用delete(没有方括号)来释放。 所以，在类的成员变量种，如果创建长度为1的char数组，最好使用str=new char[1]而不是str=new char！ 这样无论长度是多少，都不需要再修改析构函数。 对空指针应用delete是安全的。 int psome new int [10];//get a block of 10 ints delete [] psome; I/O 一般来说，如果给cout提供一个指针，它将打印地址。但如果指针的类型为char*,则cout将显示指 向的字符串。如果要显示的是字符串的地址，则必须将这种指针强制转换为另一种指针类型，如int*因此，ps显示为字符串“fox”,而(int*)ps显示为该字符串的地址。 ps =animal; //set ps to point to-string cout&lt;&lt;animal&lt;&lt;&quot;at&quot;&lt;&lt;(int*)animal&lt;&lt;endl; cout&lt;&lt;ps&lt;&lt;&quot;at&quot;&lt;(int*t)ps&lt;&lt;endl; 它将生成下面的输出： fox at 0x0065fd30 fox at 0x0065fd30 使用指针访问结构体成员 比较棘手的一步是访问成员。创建动态结构时，不能将成员运算符句点用于结构名，因为这种结构没 有名称，只是知道它的地址。C++专门为这种情况提供了一个运算符：箭头成员运算符(-&gt;)。 例如ps-&gt;price。 另一种方式：(*ps).price","headline":"CH4 复合类型","mainEntityOfPage":{"@type":"WebPage","@id":"/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html"},"url":"/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Step far." /><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"
+        async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe-lightbox.umd.min.js" async></script>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe.umd.min.js" async></script>
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/photoswipe.min.css"
+  rel="stylesheet"
+/>
+<style>
+  .pswp .pswp__container .pswp__img {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initPhotoSwipe() {
+    let customOptions = {};
+
+    try {
+      const data = ``.replaceAll("=>", ":");
+      customOptions = JSON.parse(data);
+    } catch (e) {
+      console.info("Invalid custom photo previewer options! " + e.message);
+    }
+
+    // Define object and gallery options
+    const options = Object.assign(
+      {
+        gallery: "section.main",
+        children: "a.photo-swipe",
+        photo_scale: 2,
+        // dynamic import is not supported in UMD version
+        pswpModule: PhotoSwipe,
+      },
+      customOptions
+    );
+
+    const galleryEl = document.querySelector(options.gallery);
+    if (!galleryEl) {
+      return;
+    }
+
+    const imgEls = [];
+    const els = galleryEl.querySelectorAll("img:not(.emoji)");
+    els.forEach((el) => {
+      if (el.src.trim() == "") {
+        return;
+      }
+      if (!imgEls.includes(el)) {
+        imgEls.push(el);
+      }
+    });
+
+    if (imgEls.length === 0) {
+      return;
+    }
+
+    imgEls.forEach((imgEl) => {
+      imgEl.outerHTML = `
+      <a class="photo-swipe"
+        href="${imgEl.src}"
+        data-pswp-width="${
+          Math.max(imgEl.naturalWidth, imgEl.width) * options.photo_scale
+        }"
+        data-pswp-height="${
+          Math.max(imgEl.naturalHeight, imgEl.height) * options.photo_scale
+        }"
+        data-pswp-caption="${imgEl.getAttribute("caption") || imgEl.alt}"
+        target="_blank">
+        ${imgEl.outerHTML}
+      </a>`;
+    });
+
+    // Initialize PhotoSwipe 5
+    var lightbox = new PhotoSwipeLightbox(options);
+
+    lightbox.init();
+  }
+
+  window.addEventListener("load", initPhotoSwipe);
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner"><span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Step far." src="" onerror="this.style.display='none'">
+  Step far.
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger"><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+</span></div>
+        </nav></div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CH4 复合类型</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <div class="post-meta">
+    <time class="dt-published" datetime="2024-02-11T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 11, 2024
+    </time>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+  </div><div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="ch4-复合类型">CH4 复合类型</h2>
+
+<h3 id="字符串的输入">字符串的输入</h3>
+
+<p><strong>cin使用空白（空格、制表符和换行符）来确定字符串的结束位置，这意味着cin在获取字符数组输入时只读取一个单词。</strong>读取该单词后，cin将该字符串放到数组中，并自动在结尾添加空字符。</p>
+
+<p><strong>读取一行</strong></p>
+
+<ul>
+  <li>
+    <p><strong>面向行的输入：getline()</strong></p>
+
+    <ul>
+      <li>
+        <p>getline()函数读取整行，它使用通过回车键输入的<strong>换行符</strong>来确定输入结尾。</p>
+      </li>
+      <li>
+        <p>例如，假设要使用getline()将姓名读入到一个包含20个元素的name数组中。可以使用这样的函数调用：
+<code class="language-plaintext highlighter-rouge">cin.getline (name,20);</code>
+这将把一行读入到name数组中，如果这行包含的字符不超过<strong>19</strong>个。</p>
+      </li>
+      <li>
+        <p><strong>它通过换行符来确定行尾，但不保存换行符（也就是说它将从缓冲区里读取到换行符并丢弃）。</strong></p>
+
+        <p>另外，getline函数返回当前cin对象，可以连续调用： <code class="language-plaintext highlighter-rouge">cin.getline(namel,Arsize).getline(name2,Arsize);</code></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>面向行的输入：get()</strong></p>
+
+    <p>istream类<strong>（cin是一个istream对象！）</strong>有另一个名为get()的成员函数，该函数有几种变体。其中一种变体的工作方式与getline()类似，它们接受的参数相同，解释参数的方式也相同，并且都读取到行尾。</p>
+
+    <ul>
+      <li>get并不再读取并丢弃换行符，而是将其留在输入队列中。假设我们连续两次调用get():</li>
+    </ul>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cin.get (name,Arsize);
+cin.get(dessert,Arsize);//a problem
+</code></pre></div>    </div>
+
+    <p>由于第一次调用后，换行符将留在输入队列中，因此第二次调用时看到的第一个字符便是换行符。因此get()认为已到达行尾，而没有发现任何可读取的内容。如果不借助于帮助，get()将不能跨过该换行符。</p>
+
+    <ul>
+      <li>
+        <p>get有另一种变体：使用不带任何参数的cin.get()调用可读取下一个字符（即使是换行符）：</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cin.get (name,Arsize);//read first line
+cin.get();//read newline
+cin.get(dessert,Arsize);//read second line
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>get也返回一个cin对象，也可以连续使用：</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cin.get(name,Arsize).get();//concatenate member functions
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>为什么要使用get(),而不是getline()呢？</p>
+
+<ul>
+  <li>
+    <p>首先，老式实现没有getline()。</p>
+  </li>
+  <li>
+    <p>其次，get()使输入更仔细。</p>
+
+    <p>例如，假设用get()将一行读入数组中。<strong>如何知道停止读取的原因是由于已经读取了整行，而不是由于数组已填满呢？</strong>查看下一个输入字符，如果是换行符，说明已读取了整行；否则，说明该行中还有其他输入。</p>
+  </li>
+</ul>
+
+<p>总之，getline()使用起来简单一些，但get()使得检查错误更简单些。可以用其中的任何一个来读取一行输入。</p>
+
+<p><strong>空行</strong></p>
+
+<p>当get()（不是getline()）读取空行后将设置失效位(failbit)。这意味着接下来的输入将被阻断，但可以用下面的命令来恢复输入：</p>
+
+<p><code class="language-plaintext highlighter-rouge">cin.clear();</code></p>
+
+<p><strong>溢出</strong></p>
+
+<p>另一个潜在的问题是，输入字符串可能比分配的空间长。</p>
+
+<p>如果输入行包含的字符数比指定的多，则getline()和get()将把余下的字符留在输入队列中，而getline()还会设置失效位，并关闭后面的输入。</p>
+
+<h3 id="string类">string类</h3>
+
+<p>需要注意的是，需要从cin中读取到一个string类的方式如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>getline(cin,str);
+</code></pre></div></div>
+
+<p>这表明这里的getline不是一个类方法。这个getline也是遇到换行符停止，并丢弃它。</p>
+
+<h3 id="其他形式的字符串字面值">其他形式的字符串字面值</h3>
+
+<p>除char类型外，C++还有类型wchar_t，而C++11新增了类型char16_t和char32_t。对于这些类型的字符串字面值，C++分别使用前缀L、u和U表示，下面是一个如何使用这些前缀的例子：</p>
+
+<pre><code class="language-C++">wchar_t title[]=L"Chief Astrogator";//.w_char 'string
+char16_t name[]=u"Felonia Ripova";//char 16 string
+char32_t car[]U"Humber Super Snipe";//char 32 string
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">char16_t</code>和<code class="language-plaintext highlighter-rouge">char</code>是两种不同的字符类型，它们的主要区别在于它们的大小和用途：</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">char</code>：这是最基本的字符类型，通常用于存储ASCII字符。在大多数系统中，<code class="language-plaintext highlighter-rouge">char</code>的大小是8位（1字节）。这意味着它可以直接表示ASCII字符集中的字符，但对于更大的字符集（如Unicode），一个<code class="language-plaintext highlighter-rouge">char</code>可能不足以表示一个字符。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">char16_t</code>：这是一种16位（2字节）的字符类型，通常用于存储UTF-16编码的Unicode字符。这意味着它可以表示Unicode字符集中的大多数字符，包括ASCII字符和许多非ASCII字符。</p>
+  </li>
+</ul>
+
+<p>下面是一个例子，说明了<code class="language-plaintext highlighter-rouge">char</code>和<code class="language-plaintext highlighter-rouge">char16_t</code>的区别：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="sc">'A'</span><span class="p">;</span> <span class="c1">// ASCII character</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"char: "</span> <span class="o">&lt;&lt;</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="c1">// Character 'LATIN SMALL LETTER A WITH GRAVE' (U+00E0) in UTF-16</span>
+    <span class="kt">char16_t</span> <span class="n">c16</span> <span class="o">=</span> <span class="n">u</span><span class="err">'\</span><span class="n">u00E0</span><span class="err">'</span><span class="p">;</span> 
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"char16_t: "</span> <span class="o">&lt;&lt;</span> <span class="n">c16</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在这个例子中，<code class="language-plaintext highlighter-rouge">char</code>变量<code class="language-plaintext highlighter-rouge">c</code>存储了一个ASCII字符<code class="language-plaintext highlighter-rouge">'A'</code>，而<code class="language-plaintext highlighter-rouge">char16_t</code>变量<code class="language-plaintext highlighter-rouge">c16</code>存储了一个Unicode字符<code class="language-plaintext highlighter-rouge">'LATIN SMALL LETTER A WITH GRAVE'</code>（U+00E0）。<strong>注意，这个Unicode字符是不能用一个<code class="language-plaintext highlighter-rouge">char</code>来表示的，因为它的编码超出了<code class="language-plaintext highlighter-rouge">char</code>的范围。</strong></p>
+
+<p>注意：在打印<code class="language-plaintext highlighter-rouge">char16_t</code>类型的字符时，可能会出现问题，因为标准的C++ I/O库并不直接支持<code class="language-plaintext highlighter-rouge">char16_t</code>和<code class="language-plaintext highlighter-rouge">char32_t</code>。如果你需要处理<code class="language-plaintext highlighter-rouge">char16_t</code>或<code class="language-plaintext highlighter-rouge">char32_t</code>的字符串，你可能需要使用专门用于处理这些类型的库或函数。</p>
+
+<hr />
+
+<p>C++11还支持Unicode字符编码方案UTF-8。在这种方案中，根据编码的数字值，字符可能存储为1-4个八位组。C++使用前缀u8来表示这种类型的字符串字面值。</p>
+
+<p>C+11新增的另一种类型是<strong>原始(raw)字符串。</strong>在原始字符串中，字符表示的就是自己，例如；序列\n
+不表示换行符，而表示两个常规字符斜杠和，因此在屏幕上显示时，将显示这两个字符。</p>
+
+<p>当然，既然可在字符串字面量包含”，就不能再使用它来表示字符串的开头和末尾。因此，原始字符串将<code class="language-plaintext highlighter-rouge">"(</code>和<code class="language-plaintext highlighter-rouge">)"</code>用作定界符，并使用前缀R来标识原始字符串：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cout.&lt;&lt;R"(Jim "King"Tutt uses"\n"instead.of.endl.)"&lt;&lt;'\n';
+上述代码将显示如下内容：
+Jim "King" Tutt uses \n instead of endl.
+如果使用标准字符串字面值；·将需编写如下代码：
+cout&lt;&lt;"Jim \King("Tutt uses\"n\"instead of endl."&lt;&lt;'\n';
+</code></pre></div></div>
+
+<p><strong>输入原始字符串时，按回车键不仅会移到下一行，还将在原始字符串中添加回车字符。</strong></p>
+
+<p>如果要在原始字符串中包含<code class="language-plaintext highlighter-rouge">)”</code>，该如何办呢？</p>
+
+<p>原始字符串语法允许您在表示字符串开头的”和(之间添加其他字符，这意味着表示字符串结尾的”和）之间也必须包含这些字符。</p>
+
+<pre><code class="language-C++">cout &lt;R"+*("(Who wouldn't?)",she whispered.)+*"&lt;&lt;endl;
+将显示如下内容：
+"(Who wouldn't?)",she whispered.
+</code></pre>
+
+<h3 id="anonymous-union">anonymous union</h3>
+
+<p>通常的struct里定义union：</p>
+
+<pre><code class="language-C++">struct widget
+{
+	char brand[20];
+    union id
+    {
+        long id_num;
+        char id_char[20];
+    }id_val;
+};
+widget prize;
+</code></pre>
+
+<p>这样就得如此访问：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>prize.id_val.id_num
+</code></pre></div></div>
+
+<p>匿名共用体(anonymous union)没有名称，成员将成为位于相同地址处的变量。显然，每次只有一
+个成员是当前的成员：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>struct widget
+{
+	char brand[20];
+    union id
+    {
+        long id_num;
+        char id_char[20];
+    }
+};
+widget prize;
+</code></pre></div></div>
+
+<p><strong>由于共用体是匿名的，因此id_num和id_char被视为prize的两个成员，它们的地址相同，所以不需</strong>
+<strong>要中间标识符id_val。</strong>程序员负责确定当前哪个成员是活动的。</p>
+
+<h3 id="枚举enum">枚举enum</h3>
+
+<p><code class="language-plaintext highlighter-rouge">enum spectrum {red,orange,yellow,green,blue,violet,indigo,ultraviolet};</code></p>
+
+<p>这条语句完成两项工作:</p>
+
+<ul>
+  <li>让spectrum成为新类型的名称：spectrum被称为枚举(enumeration),就像struct变量被称为结构一样。</li>
+  <li>将red、orange、yellow等作为符号常量，它们对应整数值0~7。这些常量叫作枚举量(enumerator)。</li>
+</ul>
+
+<p>它的特性：</p>
+
+<ul>
+  <li>
+    <p>只能将定义时使用的枚举量赋值给枚举变量</p>
+  </li>
+  <li>
+    <p>在使用强制类型转换时，可以将一个有效的int值赋给枚举变量</p>
+
+    <p><code class="language-plaintext highlighter-rouge">band spectrum(3); //typecast 3 to type spectrum</code></p>
+
+    <p><strong>只要这个int值在枚举的取值范围内（2的幂），赋值语句就是合法的，</strong>但是后续操作可能不合法。</p>
+  </li>
+  <li>
+    <p>可以通过设置锚点的方式显式设置枚举量的值：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">enum bigstep(first,second 100,third);</code></p>
+
+    <p>这里，first在默认情况下为0。后面没有被初始化的枚举量的值将比其前面的枚举量大1。因此，third的值为101。</p>
+  </li>
+  <li>
+    <p>enum可以自动提升为int，但反过来不行。</p>
+  </li>
+  <li>
+    <p>enum没有定义操作运算符，与运算符放在一起时会提升为int。</p>
+  </li>
+</ul>
+
+<h3 id="指针">指针</h3>
+
+<p><strong>使用new创建与释放</strong></p>
+
+<ul>
+  <li>
+    <p>不要使用delete来释放不是new分配的内存。</p>
+  </li>
+  <li>
+    <p>不要使用delete释放同一个内存块两次。</p>
+  </li>
+  <li>
+    <p>如果使用ncw[]为数组分配内存，则应使用delete[]来释放。</p>
+  </li>
+  <li>
+    <p>如果使用new[]为一个实体分配内存，则应使用delete(没有方括号)来释放。</p>
+
+    <p>所以，在类的成员变量种，如果创建长度为1的char数组，最好使用<code class="language-plaintext highlighter-rouge">str=new char[1]</code>而不是<code class="language-plaintext highlighter-rouge">str=new char</code>！</p>
+
+    <p>这样无论长度是多少，都不需要再修改析构函数。</p>
+  </li>
+  <li>
+    <p>对空指针应用delete是安全的。</p>
+  </li>
+</ul>
+
+<pre><code class="language-C++">int psome new int [10];//get a block of 10 ints
+delete [] psome;
+</code></pre>
+
+<p><strong>I/O</strong></p>
+
+<p>一般来说，如果给cout提供一个指针，它将打印地址。但如果指针的类型为char*,则cout将显示指
+向的字符串。如果要显示的是字符串的地址，则必须将这种指针强制转换为另一种指针类型，如int*因此，ps显示为字符串“fox”,而(int*)ps显示为该字符串的地址。</p>
+
+<pre><code class="language-C++">ps =animal; //set ps to point to-string
+cout&lt;&lt;animal&lt;&lt;"at"&lt;&lt;(int*)animal&lt;&lt;endl;
+cout&lt;&lt;ps&lt;&lt;"at"&lt;(int*t)ps&lt;&lt;endl;
+它将生成下面的输出：
+fox at 0x0065fd30
+fox at 0x0065fd30
+</code></pre>
+
+<p><strong>使用指针访问结构体成员</strong></p>
+
+<p>比较棘手的一步是访问成员。创建动态结构时，不能将成员运算符句点用于结构名，因为这种结构没
+有名称，只是知道它的地址。C++专门为这种情况提供了一个运算符：箭头成员运算符(-&gt;)。</p>
+
+<p>例如<code class="language-plaintext highlighter-rouge">ps-&gt;price</code>。</p>
+
+<p>另一种方式：<code class="language-plaintext highlighter-rouge">(*ps).price</code></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav"><a class="previous" href="/csnotes/2024/02/11/CH13-%E7%B1%BB%E7%BB%A7%E6%89%BF.html" title="CH13 类继承">CH13 类继承</a><a class="next" href="/csnotes/2024/02/11/CH5-%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" title="CH5 表达式">CH5 表达式</a></div><div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH7-%E5%87%BD%E6%95%B0.html" title="CH7 函数">
+            CH7 函数<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" title="CH3 组合逻辑电路">
+            CH3 组合逻辑电路<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH9-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4.html" title="CH9 内存模型和名称空间">
+            CH9 内存模型和名称空间<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/lecturenotes/2023/10/12/CH4-%E6%97%B6%E5%BA%8F%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" title="CH4 时序逻辑电路">
+            CH4 时序逻辑电路<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li></ul>
+    </div><div class="post-comments"></div></section>
+</div>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner"><div>Unpublished Work <span class="copyleft">&copy;</span> 2017-2024 DragonK</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

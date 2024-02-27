@@ -1,0 +1,2335 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-02-27T17:16:34+00:00</updated><id>/feed.xml</id><title type="html">Step far.</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>DragonK</name></author><entry><title type="html">CH10 对象和类</title><link href="/csnotes/2024/02/11/CH10-%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB.html" rel="alternate" type="text/html" title="CH10 对象和类" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH10%20%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB</id><content type="html" xml:base="/csnotes/2024/02/11/CH10-%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB.html"><![CDATA[<h2 id="ch10-对象和类">CH10 对象和类</h2>
+
+<h3 id="类定义和类声明">类定义和类声明</h3>
+
+<p>通常，C++程序员将接口（类定义）放在头文件中，并将实现（类方法的代码）放在源代码中。</p>
+
+<p>一般在头文件中指的是类声明，需要注意：</p>
+
+<ul>
+  <li>所有成员的<strong>声明</strong>都必须在类的内部（头文件中），包括数据成员和方法成员。
+    <ul>
+      <li>也就是说，不能在外部实现一个没有在类定义时出现过的方法。</li>
+    </ul>
+  </li>
+  <li>在声明时便可加入成员方法的实现，<strong>这种定义位于类声明中的函数都将自动成为内联函数。（适用于短小函数）</strong>
+    <ul>
+      <li>在类声明中定义方法等同于用原型替换方法定义，然后在类声明的后面将定义改写为内联函数。（这和下面在外部使用inline定义成员函数的作用<strong>等价</strong>）</li>
+    </ul>
+  </li>
+  <li>在类的外部定义成员函数时需要同时提供类名和函数名：<code class="language-plaintext highlighter-rouge">Stock::set_tot()</code>。
+    <ul>
+      <li>在外部定义时也可以通过使用inline关键字使其成为内联函数。</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>内联函数的特殊规则要求在每个使用它们的文件中都对其进行定义。</strong></p>
+
+<p>确保内联定义对多文件程序中的所有文件都可用的、最简便的方法是：将内联定义放在定义类的头文件中（有些开发系统包含智能链接程序，允许将内联定义放在一个独立的实现文件)。</p>
+
+<h3 id="const成员函数">const成员函数</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const Stock land Stock("Kludgehorn Properties");
+land.show ();
+</code></pre></div></div>
+
+<p>对于当前的C++来说，编译器将拒绝第二行，因为show()的代码无法确保调用对象不被修改。</p>
+
+<p>以前可以通过将函数参数声明为const引用或指向const指针来解决这个问题，但这里show()没有参数，所以不行。</p>
+
+<p>需要一种新的语法来保证函数不会修改调用对象：将const关键字放在括号后面：</p>
+
+<ul>
+  <li>声明：<code class="language-plaintext highlighter-rouge">void show() const;//promises not to change invoking object</code></li>
+  <li>定义：<code class="language-plaintext highlighter-rouge">void stock::show()const; /promises not to change invoking object</code></li>
+</ul>
+
+<h3 id="构造与析构">构造与析构</h3>
+
+<h4 id="构造函数">构造函数</h4>
+
+<ul>
+  <li>
+    <p><strong>构造函数没有返回值（原型中）</strong></p>
+  </li>
+  <li>
+    <p>手动为类定义了构造函数后，程序员就必须为它提供默认构造函数<strong>（最好定义一个没有参数的构造函数）</strong>。</p>
+  </li>
+  <li>
+    <p>使用构造函数有两种方式</p>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Stock garment ("Furry Mason",50,2.5);</code></li>
+      <li><code class="language-plaintext highlighter-rouge">Stock *pstock new Stock("Electroshock Games",18,19.0);</code></li>
+    </ul>
+  </li>
+  <li>
+    <p>定义了析构函数之后，可以用列表初始化（C++11）</p>
+
+    <p>假设Boz0类的构造函数的原型如下：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">Bozo(const char* fname,const char* Iname);//constructor prototype</code></p>
+
+    <p>则可以使用它来初始化新对象：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">Bozo fufu {"Fufu","ODweeb"};//short form</code></p>
+  </li>
+  <li>
+    <p>如果有多个构造函数，都必须以相同方式使用new<strong>（因为只有一个析构函数，而所有的构造函数都必须与它兼容）</strong></p>
+  </li>
+</ul>
+
+<h4 id="析构函数">析构函数</h4>
+
+<ul>
+  <li>析构函数不接受任何参数，名称固定，不要显式调用，可以手动编写。</li>
+</ul>
+
+<h3 id="this指针">this指针</h3>
+
+<ul>
+  <li>成员方法中，this是一个指针，指向当前对象实例。</li>
+  <li>在涉及到返回值时需要注意：
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">return *this</code>是对this指针的解引用。<strong>它意味着将当前对象的引用返回。</strong></li>
+      <li><code class="language-plaintext highlighter-rouge">return this</code>是返回this指针，<strong>它返回当前对象的地址。</strong></li>
+    </ul>
+  </li>
+</ul>
+
+<p>平常直接调用方法时：</p>
+
+<p><code class="language-plaintext highlighter-rouge">stock.show()</code></p>
+
+<p>也可以将stock看作一个名称（或引用变量），而不是指针（因为指针需要使用<code class="language-plaintext highlighter-rouge">stock-&gt;show()</code>）</p>
+
+<h3 id="作用域">作用域</h3>
+
+<h4 id="作用域为类的常量">作用域为类的常量</h4>
+
+<p>有两种方式：</p>
+
+<ul>
+  <li>
+    <p>在类中声明一个枚举<strong>（创建符号常量）</strong></p>
+
+    <pre><code class="language-C++">class Bakery
+{
+    private:
+    enum {Months=12};
+    double costs [Months];
+	...
+</code></pre>
+
+    <p>这种方式并不会创建一个值为30的变量，<strong>只是在作用域为整个类的代码中遇到它时，编译器将用30来替换它。</strong></p>
+  </li>
+  <li>
+    <p>使用static关键字</p>
+
+    <pre><code class="language-C++">class Bakery
+{
+    private:
+    static const int Months=12;
+    double costs [Months];
+    ...
+</code></pre>
+
+    <p>该常量将与其他<strong>静态变量存储在一起</strong>，而不是存储在对象中。</p>
+  </li>
+</ul>
+
+<h4 id="作用域内枚举">作用域内枚举</h4>
+
+<p>传统的枚举存在一些问题，一其电之一是两个枚举定义中的枚举量可能发生冲突。假设有一个处理鸡蛋和T恤的项目，其中可能包含类似下面这样的代码：</p>
+
+<pre><code class="language-C++">enum egg {Small,Medium,Large,Jumbo};
+enum t_shirt {Small,Medium,Large,xlarge};
+</code></pre>
+
+<p>这将无法通过编译，因为egg Small和t-shirt Small位于相同的作用域内，它们将发生冲突。为避免这
+种问题，C+11提供了一种新枚举，其枚举量的作用域为类。这种枚举的声明类似于下面这样：</p>
+
+<pre><code class="language-C++">enum class egg {Small,Medium,Large,Jumbo};
+enum class t_shirt {Small,Medium,Large,xlarge};
+</code></pre>
+
+<p>也可使用关键字struct代替class。无论使用哪种方式，都需要使用枚举名来限定枚举量：</p>
+
+<pre><code class="language-C++">egg choice = egg::large;//the Large-enumerator of the egg enum
+t_shirt Floyd = t_shirt:Large; //the Large-enumerator of the t shirt enum
+</code></pre>
+
+<p>枚举量的作用域为类后，不同枚举定义中的枚举量就不会发生名称冲突了。</p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH10 对象和类 类定义和类声明 通常，C++程序员将接口（类定义）放在头文件中，并将实现（类方法的代码）放在源代码中。 一般在头文件中指的是类声明，需要注意： 所有成员的声明都必须在类的内部（头文件中），包括数据成员和方法成员。 也就是说，不能在外部实现一个没有在类定义时出现过的方法。 在声明时便可加入成员方法的实现，这种定义位于类声明中的函数都将自动成为内联函数。（适用于短小函数） 在类声明中定义方法等同于用原型替换方法定义，然后在类声明的后面将定义改写为内联函数。（这和下面在外部使用inline定义成员函数的作用等价） 在类的外部定义成员函数时需要同时提供类名和函数名：Stock::set_tot()。 在外部定义时也可以通过使用inline关键字使其成为内联函数。 内联函数的特殊规则要求在每个使用它们的文件中都对其进行定义。 确保内联定义对多文件程序中的所有文件都可用的、最简便的方法是：将内联定义放在定义类的头文件中（有些开发系统包含智能链接程序，允许将内联定义放在一个独立的实现文件)。 const成员函数 const Stock land Stock("Kludgehorn Properties"); land.show (); 对于当前的C++来说，编译器将拒绝第二行，因为show()的代码无法确保调用对象不被修改。 以前可以通过将函数参数声明为const引用或指向const指针来解决这个问题，但这里show()没有参数，所以不行。 需要一种新的语法来保证函数不会修改调用对象：将const关键字放在括号后面： 声明：void show() const;//promises not to change invoking object 定义：void stock::show()const; /promises not to change invoking object 构造与析构 构造函数 构造函数没有返回值（原型中） 手动为类定义了构造函数后，程序员就必须为它提供默认构造函数（最好定义一个没有参数的构造函数）。 使用构造函数有两种方式 Stock garment ("Furry Mason",50,2.5); Stock *pstock new Stock("Electroshock Games",18,19.0); 定义了析构函数之后，可以用列表初始化（C++11） 假设Boz0类的构造函数的原型如下： Bozo(const char* fname,const char* Iname);//constructor prototype 则可以使用它来初始化新对象： Bozo fufu {"Fufu","ODweeb"};//short form 如果有多个构造函数，都必须以相同方式使用new（因为只有一个析构函数，而所有的构造函数都必须与它兼容） 析构函数 析构函数不接受任何参数，名称固定，不要显式调用，可以手动编写。 this指针 成员方法中，this是一个指针，指向当前对象实例。 在涉及到返回值时需要注意： return *this是对this指针的解引用。它意味着将当前对象的引用返回。 return this是返回this指针，它返回当前对象的地址。 平常直接调用方法时： stock.show() 也可以将stock看作一个名称（或引用变量），而不是指针（因为指针需要使用stock-&gt;show()） 作用域 作用域为类的常量 有两种方式： 在类中声明一个枚举（创建符号常量） class Bakery { private: enum {Months=12}; double costs [Months]; ... 这种方式并不会创建一个值为30的变量，只是在作用域为整个类的代码中遇到它时，编译器将用30来替换它。 使用static关键字 class Bakery { private: static const int Months=12; double costs [Months]; ... 该常量将与其他静态变量存储在一起，而不是存储在对象中。 作用域内枚举 传统的枚举存在一些问题，一其电之一是两个枚举定义中的枚举量可能发生冲突。假设有一个处理鸡蛋和T恤的项目，其中可能包含类似下面这样的代码： enum egg {Small,Medium,Large,Jumbo}; enum t_shirt {Small,Medium,Large,xlarge}; 这将无法通过编译，因为egg Small和t-shirt Small位于相同的作用域内，它们将发生冲突。为避免这 种问题，C+11提供了一种新枚举，其枚举量的作用域为类。这种枚举的声明类似于下面这样： enum class egg {Small,Medium,Large,Jumbo}; enum class t_shirt {Small,Medium,Large,xlarge}; 也可使用关键字struct代替class。无论使用哪种方式，都需要使用枚举名来限定枚举量： egg choice = egg::large;//the Large-enumerator of the egg enum t_shirt Floyd = t_shirt:Large; //the Large-enumerator of the t shirt enum 枚举量的作用域为类后，不同枚举定义中的枚举量就不会发生名称冲突了。]]></summary></entry><entry><title type="html">CH11 使用类</title><link href="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html" rel="alternate" type="text/html" title="CH11 使用类" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH11%20%E4%BD%BF%E7%94%A8%E7%B1%BB</id><content type="html" xml:base="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html"><![CDATA[<h2 id="ch11-使用类">CH11 使用类</h2>
+
+<h3 id="运算符重载">运算符重载</h3>
+
+<h4 id="基本">基本</h4>
+
+<ul>
+  <li><strong>只能重载部分的、已经存在的运算符。</strong></li>
+  <li>重载方式就像定义了一个特殊成员函数，<strong>因为这个运算符也是由对象调用的。</strong></li>
+  <li>不同的运算符的运算顺序不同。<strong>一般而言，左侧的操作数是调用对象。</strong></li>
+  <li>最好同时提供const和非const版本的运算符重载。因为const对象不能使用非const版本的重载运算符<strong>（即便这个重载运算符没有改变什么，但是计算机不相信你）</strong>。</li>
+</ul>
+
+<p>例如，添加加法运算符：</p>
+
+<pre><code class="language-C++">class Time
+{
+private:
+    int hours;
+    int minutes;
+public:
+    Time();
+    Time (int h,int m=0);
+    void AddMin(int m)
+    void AddHr(int h):
+    void Reset(int h=0,int m=0)
+    Time operator+(const Time &amp;t) const;
+    void Show() const;
+}
+        
+Time Time::operator+(const Time &amp;t) const
+{
+    Time sum;
+    sum.minutes = minutes+t.minutes;
+    sum.hours=hours+t.hours+sum.minutes/60;
+    sum.minutes %= 60:
+    return sum;
+}
+</code></pre>
+
+<p>注意，重载运算符是要返回一个对象的，返回时会发生一个复制。</p>
+
+<p>使用：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">total = coding.operator+(fixing);//function notation</code></li>
+  <li><code class="language-plaintext highlighter-rouge">total =coding +fixing;</code></li>
+</ul>
+
+<h4 id="重载限制">重载限制</h4>
+
+<ul>
+  <li><strong>重载后的运算符必须至少有一个操作数是用户定义的类型</strong>，这将防止用户为标准类型重载运算符。</li>
+  <li>使用运算符时不能违反运算符原来的句法规则。例如，不能将求模运算符(%)重载成使用一个操作数。</li>
+  <li>不能修改运算符的优先级（<strong>或者说，运算符优先级不会变</strong>）。因此，如果将加号运算符重载成将两个类相加，则新的运算符与原来的加号具有相同的优先级。</li>
+  <li><strong>不能创建新运算符。</strong>例如，不能定义operator*()函数来表示求幂。</li>
+  <li><strong>不能重载特定运算符。</strong></li>
+  <li>大多数运算符都可以通过成员或非成员函数进行重载，但下面的运算符只能通过成员函数进行重载：<code class="language-plaintext highlighter-rouge">=,(),[],-&gt;</code></li>
+</ul>
+
+<h4 id="使用中括号表示法访问字符">使用中括号表示法访问字符</h4>
+
+<p>在C++中，两个中括号组成一个中括号运算符，可以使用方法operator[]()来重载该运算符。</p>
+
+<p>对于中括号运算符，一个操作数位于第一个中括号的前面，另一个操作数位于两个中括号之间。</p>
+
+<p>对于一个自定义的String类，可以这么实现方法：</p>
+
+<pre><code class="language-C++">char &amp; String::operator[](int i)
+{
+    return str[i];
+}
+</code></pre>
+
+<p>这样的话，语句：</p>
+
+<pre><code class="language-C++">cout&lt;&lt;opera[4];
+</code></pre>
+
+<p>将被转换为：</p>
+
+<pre><code class="language-C++">cout&lt;&lt;opera.oeprator[4];
+</code></pre>
+
+<p>而且像这样返回值声明为char&amp;，就可以像这样给元素赋值：</p>
+
+<pre><code class="language-C++">String means("might");
+means[0]='r';
+</code></pre>
+
+<h3 id="友元">友元</h3>
+
+<p>友元有3种：</p>
+
+<ul>
+  <li>友元函数</li>
+  <li>友元类</li>
+  <li>友元成员函数</li>
+</ul>
+
+<h4 id="为何需要友元">为何需要友元？</h4>
+
+<p>考虑一个函数：</p>
+
+<pre><code class="language-C++">Time Time:operator*(double mult)const
+{
+    Time result;
+    long totalminutes = hours*mult*60+minutes*mult;
+    result.hours=totalminutes/60;
+    result.minutes=totalminutes%60;
+    return result;
+}
+</code></pre>
+
+<p>它只能适用于<code class="language-plaintext highlighter-rouge">Time A=B*2.75</code>。如果需要使用<code class="language-plaintext highlighter-rouge">Time A=2.75*B</code>，这么一来就需要定义一个<strong>非成员函数</strong><code class="language-plaintext highlighter-rouge">Time operator*(double m,const Time &amp;t);</code>。</p>
+
+<p><strong>然而这会引发一个问题：非成员函数不能直接访问类的私有数据，至少常规非成员函数不能访问。</strong></p>
+
+<p>然而，有一类特殊的非成员函数可以访间类的私有成员，它们被称为友元函数。</p>
+
+<h4 id="创建友元">创建友元</h4>
+
+<p>创建友元函数的第一步是将其<strong>原型</strong>放在<strong>类声明</strong>中，并在原型声明前加上关键字friend：</p>
+
+<pre><code class="language-C++">friend Time operator*(double m,const Time t);//goes in class declaration
+</code></pre>
+
+<p>该原型意味着下面两点：</p>
+
+<ul>
+  <li>虽然operator()函数是在类声明中声明的，但<strong>它不是成员函数，因此不能使用成员运算符来调用。</strong></li>
+  <li>虽然operator*()函数不是成员函数，但它<strong>与成员函数的访问权限相同。</strong></li>
+  <li><strong>只是具有成员函数的访问权限，但代表它位于类作用域内。</strong></li>
+</ul>
+
+<h4 id="友元还是非友元">友元还是非友元？</h4>
+
+<p><strong>常用的友元：重载«运算符</strong></p>
+
+<p>如果有一个自定义对象<code class="language-plaintext highlighter-rouge">trip</code>，那么理论上如果要实现<code class="language-plaintext highlighter-rouge">cout&lt;&lt;trip</code>，需要在cout，也就是要修改iostream文件，然而这是个危险的注意，也会在标准接口上浪费时间。</p>
+
+<p>所以一种方法是：通过使用友元函数，可以像下面这样重载运算符：</p>
+
+<pre><code class="language-C++">ostream&amp; operator&lt;&lt;(ostream os,const Time t)
+{
+	os&lt;&lt;t.hours&lt;&lt;"hours,"&lt;&lt;t.minutes&lt;&lt;"minutes";
+    return os;
+}
+</code></pre>
+
+<p>表面看来，它必须同时是这两个类的友元。然而：</p>
+
+<ul>
+  <li>operator«()直接访问Time对象的各个成员，所以必须是Time类的友元</li>
+  <li>operator«()自始至终将ostream对象作为一个整体使用，<strong>不直接访问ostream对象的私有成员，所以不必是ostream的友元。</strong></li>
+</ul>
+
+<p>所以声明为Time类的友元后，可以直接使用<code class="language-plaintext highlighter-rouge">cout&lt;&lt;trip</code>了。</p>
+
+<p><strong>另外，调用cout«trip应使用cout对象本身，而不是它的拷贝，因此该函数按引用（而不是按值）来传递该对象。</strong></p>
+
+<h4 id="成员函数还是非成员函数">成员函数还是非成员函数？</h4>
+
+<p>考虑一个双目运算符+。</p>
+
+<p><strong>在类内重载运算符时+时，参数列表中只需要一个参数（就是另一个操作数）。</strong>这是因为另一个操作数通过this指针隐式传递。</p>
+
+<p><strong>如果重载运算符不是成员函数，那么参数列表需要两个参数（按顺序，两个操作数都要）。</strong></p>
+
+<h3 id="类的自动转换">类的自动转换</h3>
+
+<h4 id="构造函数中的转换">构造函数中的转换</h4>
+
+<pre><code class="language-C++">Stonewt myCat;//create a Stonewt object
+mycat=19.6;//use Stonewt(double)to convert 19.6 to Stonewt
+</code></pre>
+
+<p>上述代码怎样才会成立呢？需要转换。而且只有接受一个参数的构造函数才能作为转换函数。</p>
+
+<ul>
+  <li>
+    <p>Stonewt有一个接受一个参数的构造函数：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">Stonewt (double 1bs);//template for double-to-Stonewt conversion</code></p>
+  </li>
+  <li>
+    <p>Stonewt有一个接受多个参数的构造函数，但是仅第一个参数没有默认值，其他参数都有默认值：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">Stonewt (int stn,double 1bs);//not a conversion function</code></p>
+  </li>
+  <li>
+    <p>Stonewt有符合上述形式，但类型不完全符合的构造函数。如果有不存在二义性的转换，则可实现二步转换：</p>
+
+    <pre><code class="language-C++">Stonewt (double lbe);//declaration
+Stonewt myCat;
+myCat=19;
+</code></pre>
+  </li>
+</ul>
+
+<p>以上转换属于隐式转换，显示转换（即显式强制类型转换）如下：</p>
+
+<pre><code class="language-C++">Stonewt myCat;//create a Stonewt object
+myCat = 19.6;//not valid if Stonewt(double)is declared as explicit
+mycat=Stonewt(19.6);//ok,an explicit conversion
+mycat=(Stonewt)19.6;//ok,old form for explicit typecast
+</code></pre>
+
+<h5 id="关键字explict">关键字explict</h5>
+
+<p>C++新增的关键字explict用于关闭自动转换特性。</p>
+
+<pre><code class="language-C++">explicit Stonewt (double lbs);//no implicit conversions allowed
+</code></pre>
+
+<p>如果在声明/定义（某个）构造函数时使用了explict关键字，那么隐式类型转换将失效，但是显式转换仍然可用。</p>
+
+<h4 id="转换函数">转换函数</h4>
+
+<p>构造函数只用于从某种类型到类类型的转换。</p>
+
+<p>要进行相反的转换，必须使用特殊的C++运算符函数——转换函数。</p>
+
+<p>定义转换函数就像重载运算符一样。可以如下定义转换函数：</p>
+
+<pre><code class="language-C++">class Stonewt
+{
+private:
+    ...
+public:
+    operator int() const;
+    operator double() const;
+}
+
+//defination below
+Stonewt::operator int() const
+{
+    return int(pounds+0.5);
+}
+Stonewt::operator double() const
+{
+    return pounds;
+}
+</code></pre>
+
+<p>当类定义了两种或更多的转换时，<strong>必须</strong>用显式强制类型转换来指出要使用哪个转换函数。</p>
+
+<p>在定义了加法运算符的友元函数的情况下，如果提供了Stonewt(double)构造函数，则也可以这样做：</p>
+
+<pre><code class="language-C++">Stonewt jennyst (9,12);
+double kennyD=176.0;
+Stonewt total;
+total=jennyst+kennyD;
+</code></pre>
+
+<p>但只有友元函数允许这样做：</p>
+
+<pre><code class="language-C++">Stonewt jennyst (9,12);
+double pennyD=146.0;
+Stonewt total;
+total=pennyD+jennyst;
+</code></pre>
+
+<p>为什么？</p>
+
+<p>因为第一个代码块中实际上调用了<code class="language-plaintext highlighter-rouge">jennySt.operator+</code> ，它是类内运算符的重载，所以可以访问同类的private成员。但是第二个代码块中penny是double类型，它会尝试调用<code class="language-plaintext highlighter-rouge">operator+(jennySt,bennySt)</code>，并将double隐式转换为StoneWt类型。它不是类成员函数，但是要访问private成员，所以在声明友元的情况下才能这么做。</p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH11 使用类 运算符重载 基本 只能重载部分的、已经存在的运算符。 重载方式就像定义了一个特殊成员函数，因为这个运算符也是由对象调用的。 不同的运算符的运算顺序不同。一般而言，左侧的操作数是调用对象。 最好同时提供const和非const版本的运算符重载。因为const对象不能使用非const版本的重载运算符（即便这个重载运算符没有改变什么，但是计算机不相信你）。 例如，添加加法运算符： class Time { private: int hours; int minutes; public: Time(); Time (int h,int m=0); void AddMin(int m) void AddHr(int h): void Reset(int h=0,int m=0) Time operator+(const Time &amp;t) const; void Show() const; } Time Time::operator+(const Time &amp;t) const { Time sum; sum.minutes = minutes+t.minutes; sum.hours=hours+t.hours+sum.minutes/60; sum.minutes %= 60: return sum; } 注意，重载运算符是要返回一个对象的，返回时会发生一个复制。 使用： total = coding.operator+(fixing);//function notation total =coding +fixing; 重载限制 重载后的运算符必须至少有一个操作数是用户定义的类型，这将防止用户为标准类型重载运算符。 使用运算符时不能违反运算符原来的句法规则。例如，不能将求模运算符(%)重载成使用一个操作数。 不能修改运算符的优先级（或者说，运算符优先级不会变）。因此，如果将加号运算符重载成将两个类相加，则新的运算符与原来的加号具有相同的优先级。 不能创建新运算符。例如，不能定义operator*()函数来表示求幂。 不能重载特定运算符。 大多数运算符都可以通过成员或非成员函数进行重载，但下面的运算符只能通过成员函数进行重载：=,(),[],-&gt; 使用中括号表示法访问字符 在C++中，两个中括号组成一个中括号运算符，可以使用方法operator[]()来重载该运算符。 对于中括号运算符，一个操作数位于第一个中括号的前面，另一个操作数位于两个中括号之间。 对于一个自定义的String类，可以这么实现方法： char &amp; String::operator[](int i) { return str[i]; } 这样的话，语句： cout&lt;&lt;opera[4]; 将被转换为： cout&lt;&lt;opera.oeprator[4]; 而且像这样返回值声明为char&amp;，就可以像这样给元素赋值： String means("might"); means[0]='r'; 友元 友元有3种： 友元函数 友元类 友元成员函数 为何需要友元？ 考虑一个函数： Time Time:operator*(double mult)const { Time result; long totalminutes = hours*mult*60+minutes*mult; result.hours=totalminutes/60; result.minutes=totalminutes%60; return result; } 它只能适用于Time A=B*2.75。如果需要使用Time A=2.75*B，这么一来就需要定义一个非成员函数Time operator*(double m,const Time &amp;t);。 然而这会引发一个问题：非成员函数不能直接访问类的私有数据，至少常规非成员函数不能访问。 然而，有一类特殊的非成员函数可以访间类的私有成员，它们被称为友元函数。 创建友元 创建友元函数的第一步是将其原型放在类声明中，并在原型声明前加上关键字friend： friend Time operator*(double m,const Time t);//goes in class declaration 该原型意味着下面两点： 虽然operator()函数是在类声明中声明的，但它不是成员函数，因此不能使用成员运算符来调用。 虽然operator*()函数不是成员函数，但它与成员函数的访问权限相同。 只是具有成员函数的访问权限，但代表它位于类作用域内。 友元还是非友元？ 常用的友元：重载«运算符 如果有一个自定义对象trip，那么理论上如果要实现cout&lt;&lt;trip，需要在cout，也就是要修改iostream文件，然而这是个危险的注意，也会在标准接口上浪费时间。 所以一种方法是：通过使用友元函数，可以像下面这样重载运算符： ostream&amp; operator&lt;&lt;(ostream os,const Time t) { os&lt;&lt;t.hours&lt;&lt;"hours,"&lt;&lt;t.minutes&lt;&lt;"minutes"; return os; } 表面看来，它必须同时是这两个类的友元。然而： operator«()直接访问Time对象的各个成员，所以必须是Time类的友元 operator«()自始至终将ostream对象作为一个整体使用，不直接访问ostream对象的私有成员，所以不必是ostream的友元。 所以声明为Time类的友元后，可以直接使用cout&lt;&lt;trip了。 另外，调用cout«trip应使用cout对象本身，而不是它的拷贝，因此该函数按引用（而不是按值）来传递该对象。 成员函数还是非成员函数？ 考虑一个双目运算符+。 在类内重载运算符时+时，参数列表中只需要一个参数（就是另一个操作数）。这是因为另一个操作数通过this指针隐式传递。 如果重载运算符不是成员函数，那么参数列表需要两个参数（按顺序，两个操作数都要）。 类的自动转换 构造函数中的转换 Stonewt myCat;//create a Stonewt object mycat=19.6;//use Stonewt(double)to convert 19.6 to Stonewt 上述代码怎样才会成立呢？需要转换。而且只有接受一个参数的构造函数才能作为转换函数。 Stonewt有一个接受一个参数的构造函数： Stonewt (double 1bs);//template for double-to-Stonewt conversion Stonewt有一个接受多个参数的构造函数，但是仅第一个参数没有默认值，其他参数都有默认值： Stonewt (int stn,double 1bs);//not a conversion function Stonewt有符合上述形式，但类型不完全符合的构造函数。如果有不存在二义性的转换，则可实现二步转换： Stonewt (double lbe);//declaration Stonewt myCat; myCat=19; 以上转换属于隐式转换，显示转换（即显式强制类型转换）如下： Stonewt myCat;//create a Stonewt object myCat = 19.6;//not valid if Stonewt(double)is declared as explicit mycat=Stonewt(19.6);//ok,an explicit conversion mycat=(Stonewt)19.6;//ok,old form for explicit typecast 关键字explict C++新增的关键字explict用于关闭自动转换特性。 explicit Stonewt (double lbs);//no implicit conversions allowed 如果在声明/定义（某个）构造函数时使用了explict关键字，那么隐式类型转换将失效，但是显式转换仍然可用。 转换函数 构造函数只用于从某种类型到类类型的转换。 要进行相反的转换，必须使用特殊的C++运算符函数——转换函数。 定义转换函数就像重载运算符一样。可以如下定义转换函数： class Stonewt { private: ... public: operator int() const; operator double() const; } //defination below Stonewt::operator int() const { return int(pounds+0.5); } Stonewt::operator double() const { return pounds; } 当类定义了两种或更多的转换时，必须用显式强制类型转换来指出要使用哪个转换函数。 在定义了加法运算符的友元函数的情况下，如果提供了Stonewt(double)构造函数，则也可以这样做： Stonewt jennyst (9,12); double kennyD=176.0; Stonewt total; total=jennyst+kennyD; 但只有友元函数允许这样做： Stonewt jennyst (9,12); double pennyD=146.0; Stonewt total; total=pennyD+jennyst; 为什么？ 因为第一个代码块中实际上调用了jennySt.operator+ ，它是类内运算符的重载，所以可以访问同类的private成员。但是第二个代码块中penny是double类型，它会尝试调用operator+(jennySt,bennySt)，并将double隐式转换为StoneWt类型。它不是类成员函数，但是要访问private成员，所以在声明友元的情况下才能这么做。]]></summary></entry><entry><title type="html">CH12 类和动态内存分配</title><link href="/csnotes/2024/02/11/CH12-%E7%B1%BB%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.html" rel="alternate" type="text/html" title="CH12 类和动态内存分配" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH12%20%E7%B1%BB%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D</id><content type="html" xml:base="/csnotes/2024/02/11/CH12-%E7%B1%BB%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.html"><![CDATA[<h2 id="ch12-类和动态内存分配">CH12 类和动态内存分配</h2>
+
+<h3 id="动态内存和类">动态内存和类</h3>
+
+<p>静态数据成员的初始化使用作用域运算符来指出静态成员所属的类。</p>
+
+<p>类的静态成员初始化只能在方法文件中进行。这是因为类声明位于头文件中，程序可能将头文件包括在其他几个文件中。</p>
+
+<p><strong>如果在头文件中进行初始化，将出现多个初始化语句副本，从而引发错误。</strong></p>
+
+<p>对于不能在类声明中初始化静态数据成员的一种例外情况（见第10章）是，静态数据成员为整型或枚举型const。</p>
+
+<h4 id="特殊成员函数">特殊成员函数</h4>
+
+<p>具体地说，C+自动提供了下面这些成员函数：</p>
+
+<ul>
+  <li>默认构造函数，如果没有定义任何构造函数：</li>
+  <li>默认析构函数，如果没有定义；</li>
+  <li>复制构造函数，如果没有定义：</li>
+  <li>赋值运算符，如果没有定义：</li>
+  <li>地址运算符，如果没有定义。</li>
+  <li>移动构造函数（C++11新增）</li>
+  <li>移动赋值运算符（C++11新增）</li>
+</ul>
+
+<h5 id="复制构造函数">复制构造函数</h5>
+
+<p>复制构造函数用于将一个对象复制到新创建的对象中。也就是说，它用于初始化过程中（包括按值传递参数)，而不是常规的赋值过程中。类的复制构造函数原型通常如下：</p>
+
+<pre><code class="language-C++">Class_name(const Class_name &amp;)
+</code></pre>
+
+<p>它接受一个指向类对象的常量引用作为参数。</p>
+
+<p><strong>何时调用？</strong></p>
+
+<ul>
+  <li><strong>新建一个对象并将其初始化为同类现有对象时。</strong></li>
+  <li><strong>每当程序生成了对象副本时（按值传递对象或函数返回对象）。</strong></li>
+</ul>
+
+<p>对于第一种，最常见的情况是将新对象显式地初始化为现有的对象。</p>
+
+<p>下面4种声明都将调用复制构造函数：</p>
+
+<pre><code class="language-C++">StringBad ditto(motto);//calls stringBad(const stringBad &amp;)
+stringBad metoo=motto;//calls stringBad (const StringBad &amp;)
+StringBad also=stringBad (motto);//calls StringBad (const stringBad &amp;)
+StringBad * pStringBad=new stringBad (motto);//callsStringBad(const StringBad &amp;)
+</code></pre>
+
+<p>其中中间的2种声明可能会使用复制构造函数直接创建metoo和also，也可能使用复制构造函数生成
+一个临时对象，然后将临时对象的内容赋给metoo和also，这取决于具体的实现。</p>
+
+<p>最后一种声明使用motto初始化一个匿名对象，并将新对象的地址赋给pstring指针。</p>
+
+<p>对于第二种，具体地说，<strong>当函数按值传递对象或函数返回对象时，都将使用复制构造函数。</strong></p>
+
+<p>记住，按值传递意味着创建原始变量的一个副本。编译器生成临时对象时，也将使用复制构造函数。</p>
+
+<hr />
+
+<p><strong>默认的复制构造函数的功能</strong></p>
+
+<ul>
+  <li>默认的复制构造函数逐个复制非静态成员（成员复制也称为浅复制），复制的是成员的<strong>值</strong>（也就是说指针会只复制地址）。</li>
+  <li>如果成员本身就是类对象，则将使用这个类的复制构造函数来复制成员对象。</li>
+  <li>静态函数不受影响，因为它们属于整个类，而不是各个对象。</li>
+</ul>
+
+<p>下图说明了隐式复制构造函数执行的操作。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20240207181739191.png" alt="image-20240207181739191" /></p>
+
+<p><strong>默认复制构造函数中的浅复制可能引发什么问题？</strong></p>
+
+<p>如果以下条件满足：</p>
+
+<ul>
+  <li>
+    <p>在默认构造函数中，使用new创建了一个成员数据</p>
+  </li>
+  <li>析构函数中销毁了它</li>
+  <li>复制构造函数使用了默认的版本，或者自定义版本中没有再new一个</li>
+  <li>将这个成员按值传递了（也就是说，把那个成员数据的指针进行了浅层拷贝）</li>
+</ul>
+
+<p><strong>由于按值传递，所以函数调用完毕后析构函数会被调用。</strong></p>
+
+<p><strong>析构完毕后（函数调用完毕后）的时候那个指针指向的区域就不能用了，最初的那个对象的这个成员也不能使用了。</strong></p>
+
+<p>所以一个可靠的解决办法是：显式定义一个复制构造函数，并进行深层复制。</p>
+
+<h5 id="赋值运算符">赋值运算符</h5>
+
+<p>C++允许类对象赋值，这是通过自动为类重载赋值运算符实现的。这种运算符的原型如下：</p>
+
+<p><code class="language-plaintext highlighter-rouge">StringBad &amp; StringBad::operator=(const StringBad &amp;)</code></p>
+
+<p>它接受并返回一个指向类对象的引用。</p>
+
+<p>将己有的对象赋给另一个对象时，将使用重载的赋值运算符：</p>
+
+<pre><code class="language-C++">StringBad headline1("Celery Stalks at Midnight");
+...
+StringBad knot;
+knot=headline1;
+</code></pre>
+
+<p>初始化对象时，<strong>并不一定</strong>会使用赋值运算符:</p>
+
+<pre><code class="language-C++">StringBad metoo=knot;
+</code></pre>
+
+<p>所以也需要提供赋值运算符（进行深度复制）定义。</p>
+
+<p><strong>这里还需要注意内存释放：在某些情况下，如果不需要被赋值对象原来的动态数据，应在赋值运算符重载中将其释放掉。</strong></p>
+
+<h5 id="二者对比">二者对比</h5>
+
+<p><strong>自定义的实现差别</strong></p>
+
+<ul>
+  <li>由于目标对象可能用了以前分配的数据，所以函数应使用delete[]来释放这些数据</li>
+  <li>函数应当避免将对象赋给自身：否则，给对象重新赋值前，释放内存操作可能删除对象的内容。</li>
+  <li>函数返回一个指向调用对象的引用</li>
+</ul>
+
+<p><strong>使用场景差别</strong></p>
+
+<ol>
+  <li><strong>复制构造函数</strong>：当创建一个新对象并用另一个已存在的对象初始化时，会调用复制构造函数。以下是一些常见的复制构造函数的使用场景：
+    <ul>
+      <li>直接初始化：<code class="language-plaintext highlighter-rouge">MyClass obj1 = obj2;</code> 这里<code class="language-plaintext highlighter-rouge">obj2</code>是一个已存在的对象，<code class="language-plaintext highlighter-rouge">obj1</code>是新创建的对象。</li>
+      <li>作为函数参数按值传递：<code class="language-plaintext highlighter-rouge">void func(MyClass obj);</code> 当调用<code class="language-plaintext highlighter-rouge">func(obj2);</code>时，<code class="language-plaintext highlighter-rouge">obj2</code>会被复制给<code class="language-plaintext highlighter-rouge">obj</code>，此时会调用复制构造函数。</li>
+      <li>作为函数返回值：如果一个函数的返回类型是类类型，并且返回的是按值返回的，那么会调用复制构造函数。</li>
+    </ul>
+  </li>
+  <li><strong>赋值运算符</strong>：当两个已经创建的对象进行赋值操作时，会调用赋值运算符。例如：<code class="language-plaintext highlighter-rouge">obj1 = obj2;</code> 这里<code class="language-plaintext highlighter-rouge">obj1</code>和<code class="language-plaintext highlighter-rouge">obj2</code>都是已经存在的对象。</li>
+</ol>
+
+<h4 id="静态类成员函数">静态类成员函数</h4>
+
+<p>可以将成员函数声明为静态的（函数声明必须包含关键字static,但如果函数定义是独立的，则其中不能包含关键字static)，这样做有两个重要的后果：</p>
+
+<ul>
+  <li>不能通过对象调用静态成员函数，也不能使用this指针。</li>
+  <li>由于静态成员函数不与特定的对象相关联，因此只能使用静态数据成员。</li>
+</ul>
+
+<h3 id="有关返回对象">有关返回对象</h3>
+
+<p>当成员函数或独立的函数返回对象时，有几种返回方式可供选择。可以返回指向对象的引用、指向对象的const引用或const对象。</p>
+
+<h4 id="返回指向const对象的引用">返回指向const对象的引用</h4>
+
+<pre><code class="language-C++">const Vector &amp; Max(const Vector &amp; v1,const Vector &amp; v2)
+{
+    if(v1.magval()&gt;v2.magval())
+        return v1;
+    else
+        return v2;
+}
+</code></pre>
+
+<ul>
+  <li>返回引用，可以提高效率。</li>
+  <li>返回对象将会调用复制构造函数，而返回引用不会。</li>
+  <li>传入参数v1和v2都被声明为const引用，因此返回类型必须为const。</li>
+  <li><strong>虽然这个函数的返回类型为const，其返回值只是不能作为左值，但其可以被赋值给一个非const对象并可以在后续作为左值。</strong></li>
+</ul>
+
+<h4 id="返回指向非const对象的引用">返回指向非const对象的引用</h4>
+
+<p>两种常见的返回非const对象情形是：</p>
+
+<ul>
+  <li>
+    <p><strong>重载赋值运算符（提高效率）</strong></p>
+
+    <pre><code class="language-C++">String s1("Good stuff");
+String s2,s3;
+s3=s2=s1;
+</code></pre>
+
+    <p>通过返回引用（而不是返回值），可避免该函数调用String的复制构造函数来创建一个新的String对象。</p>
+  </li>
+  <li>
+    <p><strong>重载与cout一起使用的«运算符。(必须这么做！)</strong></p>
+
+    <p>用于串接输出。</p>
+
+    <p>String s1(“Good stuff”);
+cout &lt;s1 &lt;”is coming!”;</p>
+
+    <pre><code class="language-C++">String s1("Good stuff");
+cout&lt;&lt;s1&lt;&lt;"is coming!";
+</code></pre>
+
+    <p>返回类型必须是ostream&amp;,而不能仅仅是ostream。如果使用返回类型ostream，将要求调用ostream类的复制构造函数，而ostream没有公有的复制构造函数。</p>
+  </li>
+</ul>
+
+<h4 id="返回对象">返回对象</h4>
+
+<p><strong>如果被返回的对象是被调用函数中的局部变量，则不应按引用方式返回它。</strong></p>
+
+<p>因为在被调用函数执完毕时，局部对象将调用其析构函数。也就是说，当控制权回到调用函数时，引用指向的对象将不再存在。</p>
+
+<p>这种情况下会调用复制构造函数。</p>
+
+<h4 id="返回const对象">返回const对象</h4>
+
+<p>有一些抽象的行为：</p>
+
+<pre><code class="language-C++">force1+force2=net;
+cout&lt;&lt;(force1+force2=net).magval()&lt;&lt;endl;
+</code></pre>
+
+<p>如果不希望发生这种不合适的行为，可以声明为const。</p>
+
+<h3 id="复习各种技术的应用场景">复习各种技术的应用场景</h3>
+
+<h4 id="重载运算符">重载«运算符</h4>
+
+<p>重新定义«运算符，以便将它和cout一起用来显示对象的内容。</p>
+
+<h4 id="转换函数">转换函数</h4>
+
+<p>要将单个值转换为类类型，需要创建原型如下所示的类构造函数：</p>
+
+<p><code class="language-plaintext highlighter-rouge">c_name{type_name value};</code></p>
+
+<p>其中c_name为类名，type_name是要转换的类型的名称。</p>
+
+<p>要将类转换为其他类型，需要创建原型如下所示的类成员函数：</p>
+
+<p><code class="language-plaintext highlighter-rouge">operator type_name ();</code></p>
+
+<p>虽然该函数没有声明返回类型，但应返回所需类型的值。</p>
+
+<p>使用转换函数时要小心。可以在声明构造函数时使用关键字explicit，以防止它被用于隐式转换。</p>
+
+<h4 id="其构造函数使用new的类">其构造函数使用new的类</h4>
+
+<ul>
+  <li>
+    <p>对于指向的内存是由new分配的所有类成员，都应在类的析构函数中对其使用delete，该运算符将释放分配的内存。</p>
+  </li>
+  <li>
+    <p>如果析构函数通过对指针类成员使用delete来释放内存，则每个构造函数都应当使用new来初始化指针，或将它设置为空指铣。</p>
+  </li>
+  <li>
+    <p>构造函数中要么使用new[]，要么使用new，而不能混用。如果构造函数使用的是new[]，则析构函数应使用delete[]，如果构造函数使用的是new，则析构函数应便用delete。</p>
+  </li>
+  <li>
+    <p>应定义一个分配内存（而不是将指针指向已有内存）的复制构造函数。这样程序将能够将类对象
+初始化为另一个类对象。</p>
+  </li>
+  <li>
+    <p>应定义一个重载赋值运算符的类成员函数，其函数定义如下（其中c_pointer是c_name的类成员
+类型为指向type_name的指针）。下面的示例假设使用new[]来初始化变量c_pointer：</p>
+
+    <pre><code class="language-C++">c_name &amp; c_name::operator=(const c_name &amp; cn)
+{
+    if(this==&amp;cn)
+        return *this;
+    delete [] c_pointer;//注意释放旧的内存！
+    c_pointer = new type_name[size];
+    ...
+    return *this;
+}
+</code></pre>
+  </li>
+</ul>
+
+<p>##</p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH12 类和动态内存分配 动态内存和类 静态数据成员的初始化使用作用域运算符来指出静态成员所属的类。 类的静态成员初始化只能在方法文件中进行。这是因为类声明位于头文件中，程序可能将头文件包括在其他几个文件中。 如果在头文件中进行初始化，将出现多个初始化语句副本，从而引发错误。 对于不能在类声明中初始化静态数据成员的一种例外情况（见第10章）是，静态数据成员为整型或枚举型const。 特殊成员函数 具体地说，C+自动提供了下面这些成员函数： 默认构造函数，如果没有定义任何构造函数： 默认析构函数，如果没有定义； 复制构造函数，如果没有定义： 赋值运算符，如果没有定义： 地址运算符，如果没有定义。 移动构造函数（C++11新增） 移动赋值运算符（C++11新增） 复制构造函数 复制构造函数用于将一个对象复制到新创建的对象中。也就是说，它用于初始化过程中（包括按值传递参数)，而不是常规的赋值过程中。类的复制构造函数原型通常如下： Class_name(const Class_name &amp;) 它接受一个指向类对象的常量引用作为参数。 何时调用？ 新建一个对象并将其初始化为同类现有对象时。 每当程序生成了对象副本时（按值传递对象或函数返回对象）。 对于第一种，最常见的情况是将新对象显式地初始化为现有的对象。 下面4种声明都将调用复制构造函数： StringBad ditto(motto);//calls stringBad(const stringBad &amp;) stringBad metoo=motto;//calls stringBad (const StringBad &amp;) StringBad also=stringBad (motto);//calls StringBad (const stringBad &amp;) StringBad * pStringBad=new stringBad (motto);//callsStringBad(const StringBad &amp;) 其中中间的2种声明可能会使用复制构造函数直接创建metoo和also，也可能使用复制构造函数生成 一个临时对象，然后将临时对象的内容赋给metoo和also，这取决于具体的实现。 最后一种声明使用motto初始化一个匿名对象，并将新对象的地址赋给pstring指针。 对于第二种，具体地说，当函数按值传递对象或函数返回对象时，都将使用复制构造函数。 记住，按值传递意味着创建原始变量的一个副本。编译器生成临时对象时，也将使用复制构造函数。 默认的复制构造函数的功能 默认的复制构造函数逐个复制非静态成员（成员复制也称为浅复制），复制的是成员的值（也就是说指针会只复制地址）。 如果成员本身就是类对象，则将使用这个类的复制构造函数来复制成员对象。 静态函数不受影响，因为它们属于整个类，而不是各个对象。 下图说明了隐式复制构造函数执行的操作。 默认复制构造函数中的浅复制可能引发什么问题？ 如果以下条件满足： 在默认构造函数中，使用new创建了一个成员数据 析构函数中销毁了它 复制构造函数使用了默认的版本，或者自定义版本中没有再new一个 将这个成员按值传递了（也就是说，把那个成员数据的指针进行了浅层拷贝） 由于按值传递，所以函数调用完毕后析构函数会被调用。 析构完毕后（函数调用完毕后）的时候那个指针指向的区域就不能用了，最初的那个对象的这个成员也不能使用了。 所以一个可靠的解决办法是：显式定义一个复制构造函数，并进行深层复制。 赋值运算符 C++允许类对象赋值，这是通过自动为类重载赋值运算符实现的。这种运算符的原型如下： StringBad &amp; StringBad::operator=(const StringBad &amp;) 它接受并返回一个指向类对象的引用。 将己有的对象赋给另一个对象时，将使用重载的赋值运算符： StringBad headline1("Celery Stalks at Midnight"); ... StringBad knot; knot=headline1; 初始化对象时，并不一定会使用赋值运算符: StringBad metoo=knot; 所以也需要提供赋值运算符（进行深度复制）定义。 这里还需要注意内存释放：在某些情况下，如果不需要被赋值对象原来的动态数据，应在赋值运算符重载中将其释放掉。 二者对比 自定义的实现差别 由于目标对象可能用了以前分配的数据，所以函数应使用delete[]来释放这些数据 函数应当避免将对象赋给自身：否则，给对象重新赋值前，释放内存操作可能删除对象的内容。 函数返回一个指向调用对象的引用 使用场景差别 复制构造函数：当创建一个新对象并用另一个已存在的对象初始化时，会调用复制构造函数。以下是一些常见的复制构造函数的使用场景： 直接初始化：MyClass obj1 = obj2; 这里obj2是一个已存在的对象，obj1是新创建的对象。 作为函数参数按值传递：void func(MyClass obj); 当调用func(obj2);时，obj2会被复制给obj，此时会调用复制构造函数。 作为函数返回值：如果一个函数的返回类型是类类型，并且返回的是按值返回的，那么会调用复制构造函数。 赋值运算符：当两个已经创建的对象进行赋值操作时，会调用赋值运算符。例如：obj1 = obj2; 这里obj1和obj2都是已经存在的对象。 静态类成员函数 可以将成员函数声明为静态的（函数声明必须包含关键字static,但如果函数定义是独立的，则其中不能包含关键字static)，这样做有两个重要的后果： 不能通过对象调用静态成员函数，也不能使用this指针。 由于静态成员函数不与特定的对象相关联，因此只能使用静态数据成员。 有关返回对象 当成员函数或独立的函数返回对象时，有几种返回方式可供选择。可以返回指向对象的引用、指向对象的const引用或const对象。 返回指向const对象的引用 const Vector &amp; Max(const Vector &amp; v1,const Vector &amp; v2) { if(v1.magval()&gt;v2.magval()) return v1; else return v2; } 返回引用，可以提高效率。 返回对象将会调用复制构造函数，而返回引用不会。 传入参数v1和v2都被声明为const引用，因此返回类型必须为const。 虽然这个函数的返回类型为const，其返回值只是不能作为左值，但其可以被赋值给一个非const对象并可以在后续作为左值。 返回指向非const对象的引用 两种常见的返回非const对象情形是： 重载赋值运算符（提高效率） String s1("Good stuff"); String s2,s3; s3=s2=s1; 通过返回引用（而不是返回值），可避免该函数调用String的复制构造函数来创建一个新的String对象。 重载与cout一起使用的«运算符。(必须这么做！) 用于串接输出。 String s1(“Good stuff”); cout &lt;s1 &lt;”is coming!”; String s1("Good stuff"); cout&lt;&lt;s1&lt;&lt;"is coming!"; 返回类型必须是ostream&amp;,而不能仅仅是ostream。如果使用返回类型ostream，将要求调用ostream类的复制构造函数，而ostream没有公有的复制构造函数。 返回对象 如果被返回的对象是被调用函数中的局部变量，则不应按引用方式返回它。 因为在被调用函数执完毕时，局部对象将调用其析构函数。也就是说，当控制权回到调用函数时，引用指向的对象将不再存在。 这种情况下会调用复制构造函数。 返回const对象 有一些抽象的行为： force1+force2=net; cout&lt;&lt;(force1+force2=net).magval()&lt;&lt;endl; 如果不希望发生这种不合适的行为，可以声明为const。 复习各种技术的应用场景 重载«运算符 重新定义«运算符，以便将它和cout一起用来显示对象的内容。 转换函数 要将单个值转换为类类型，需要创建原型如下所示的类构造函数： c_name{type_name value}; 其中c_name为类名，type_name是要转换的类型的名称。 要将类转换为其他类型，需要创建原型如下所示的类成员函数： operator type_name (); 虽然该函数没有声明返回类型，但应返回所需类型的值。 使用转换函数时要小心。可以在声明构造函数时使用关键字explicit，以防止它被用于隐式转换。 其构造函数使用new的类 对于指向的内存是由new分配的所有类成员，都应在类的析构函数中对其使用delete，该运算符将释放分配的内存。 如果析构函数通过对指针类成员使用delete来释放内存，则每个构造函数都应当使用new来初始化指针，或将它设置为空指铣。 构造函数中要么使用new[]，要么使用new，而不能混用。如果构造函数使用的是new[]，则析构函数应使用delete[]，如果构造函数使用的是new，则析构函数应便用delete。 应定义一个分配内存（而不是将指针指向已有内存）的复制构造函数。这样程序将能够将类对象 初始化为另一个类对象。 应定义一个重载赋值运算符的类成员函数，其函数定义如下（其中c_pointer是c_name的类成员 类型为指向type_name的指针）。下面的示例假设使用new[]来初始化变量c_pointer： c_name &amp; c_name::operator=(const c_name &amp; cn) { if(this==&amp;cn) return *this; delete [] c_pointer;//注意释放旧的内存！ c_pointer = new type_name[size]; ... return *this; } ##]]></summary></entry><entry><title type="html">CH13 类继承</title><link href="/csnotes/2024/02/11/CH13-%E7%B1%BB%E7%BB%A7%E6%89%BF.html" rel="alternate" type="text/html" title="CH13 类继承" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH13%20%E7%B1%BB%E7%BB%A7%E6%89%BF</id><content type="html" xml:base="/csnotes/2024/02/11/CH13-%E7%B1%BB%E7%BB%A7%E6%89%BF.html"><![CDATA[<h2 id="ch13-类继承">CH13 类继承</h2>
+
+<p>面向对象编程的主要目的之是提供可重用的代码。</p>
+
+<p>C++提供了比修改代码更好的方法来扩展和修改类。这种方法叫作类继承，它能够从已有的类派生出新的类，而派生类继承了原有类（称为基类）的特征，包括方法。</p>
+
+<p>下面是可以通过继承完成的一些工作：</p>
+
+<ul>
+  <li>可以在已有类的基础上添加功能。例如，对于数组类，可以添加数学运算。</li>
+  <li>可以给类添加数据。例如，对于字符串类，可以派生出一个类，一并添加指定字符串显示颜色的数据成员。</li>
+  <li>可以修改类方法的行为。例如，对于代表提供给飞机乘客的服务的Passenger类，可以派生出提供更高级别服务的FirstClassPassenger类。</li>
+</ul>
+
+<h3 id="简单的基类及其派生">简单的基类及其派生</h3>
+
+<pre><code class="language-C++">class RatedPlayer: public TableTennisPlayer
+{
+    ...
+}
+</code></pre>
+
+<ul>
+  <li>冒号指出RatedPlayer类的基类是TableTennisplayer类。</li>
+  <li>public表明TableTennisPlayer是个<strong>公有基类</strong>，这被称为公有派生。</li>
+  <li>使用公有派生，基类的公有成员将成为派生类的公有成员：基类的私有部分也将成为派生类的一部分，但只能通过基类的公有和保护方法访问（稍后将介绍保护成员）。</li>
+</ul>
+
+<p>上述代码完成了哪些工作呢？Ratedplayer对象将具有以下特征：</p>
+
+<ul>
+  <li>派生类对象存储了基类的数据成员（派生类继承了基类的实现）：</li>
+  <li>派生类对象可以使用基类的方法（派生类继承了基类的接口）。</li>
+</ul>
+
+<p>需要在继承特性中添加什么呢？</p>
+
+<ul>
+  <li>派生类需要自己的构造函数。</li>
+  <li>派生类可以根据需要添加额外的数据成员和成员函数。</li>
+</ul>
+
+<h4 id="构造函数访问权限的考虑">构造函数：访问权限的考虑</h4>
+
+<p>派生类不能直接访问基类的私有成员，而必须通过基类提供的公有方法进行访问。</p>
+
+<p>创建派生类对象时，程序首先创建基类对象。这意味着基类对象应当在程序进入派生类构造函数之前被创建。</p>
+
+<p>上面所说的工作由<strong>成员初始化列表语法</strong>来完成。</p>
+
+<p>显式的：</p>
+
+<pre><code class="language-C++">RatedPlayer::RatedPlayer(unsigned int r,const string&amp; fn,const string&amp; ln,bool ht):TableTennisPlayer(fn,ln,ht)
+{
+    rating=r;
+}
+</code></pre>
+
+<p>隐式的：</p>
+
+<pre><code class="language-C++">RatedPlayer::RatedPlayer(unsigned int r,const string&amp; fn,const string&amp; ln,bool ht)
+{
+    rating=r;
+}
+//这种省略成员初始化列表实际上等价于：
+RatedPlayer::RatedPlayer(unsigned int r,const string&amp; fn,const string&amp; ln,bool ht):TableTennisPlayer()
+{
+    rating=r;
+}
+</code></pre>
+
+<p>这是因为：必须首先创建基类对象，如果不调用基类构造函数，程序将使用默认的基类构造函数。</p>
+
+<p><strong>所以，在任何情况下最好提供一个无参数的默认构造函数！</strong></p>
+
+<p>如果传入参数是类引用：</p>
+
+<pre><code class="language-C++">RatedPlayer::RatedPlayer(unsigned int r,const TableTennisPlayer&amp; tp):TableTennisPlayer(tp)
+{
+    rating=r;
+}
+</code></pre>
+
+<p>由王tp的类型为<code class="language-plaintext highlighter-rouge">TableTennisPlayer&amp;</code>，因此将调用基类的<strong>复制构造函数</strong>（这个浅复制是可以接受的，因为没有使用new）。</p>
+
+<p>基类没有定义复制构造函数，如果需要使用复制构造函数但又没有定义，编译器将自动生成一个。</p>
+
+<hr />
+
+<p>此外，可以把基类也看做派生类的成员之一，因为初始化派生类时要先初始化基类，而这一步的形式和初始化派生类成员是一样的。</p>
+
+<pre><code class="language-C++">RatedPlayer::RatedPlayer(unsigned int r,const TableTennisPlayer &amp; tp):TableTennisPlayer(tp),rating(r)
+{
+    ...
+}
+</code></pre>
+
+<h4 id="使用派生类">使用派生类</h4>
+
+<p>要使用派生类，程序必须要能够问基类声明。</p>
+
+<p>可以将这两种类的声明置于同一个头文件中，也可以将每个类放在独立的头文件中，但由于这两个类是相关的，所以把其类声明放在一起更合适。</p>
+
+<h4 id="派生类和基类之间的关系">派生类和基类之间的关系</h4>
+
+<p>派生类与基类之间有一些特殊关系：</p>
+
+<ul>
+  <li>派生类对象可以使用基类的<strong>非私有方法</strong></li>
+  <li>基类指针可以在不进行<strong>显式</strong>类型转换的情况下指向派生类对象（只能单向）</li>
+  <li>基类引用可以在不进行<strong>显式</strong>类型转换的情况下引用派生类对象（只能单向）</li>
+</ul>
+
+<pre><code class="language-C++">Ratedplayer rplayer1(1140,"Mallory","Duck",true);
+TableTennisplayer&amp; rt=rplayer;
+TableTennisplayer* pt=&amp;rplayer;
+rt.Name();//invoke Name()with reference
+pt-&gt;Name();//invoke Name()with pointer
+</code></pre>
+
+<p>然而：</p>
+
+<ul>
+  <li>
+    <p><strong>基类指针或引用只能用于调用基类方法。</strong>因此，不能使用rt或pt来调用派生类的ResetRanking方法。</p>
+  </li>
+  <li>
+    <p><strong>不可以将基类对象和地址赋给派生类引用和指针。</strong></p>
+  </li>
+  <li>
+    <p>对于形参为指向基类的指针的函数，它可以使用基类对象的地址<strong>或派生类对象</strong>的地址作为实参。</p>
+  </li>
+  <li>
+    <p>引用兼容性属性也能够将基类对象初始化为派生类对象：</p>
+
+    <pre><code class="language-C++">RatedPlayer olaf1(1840,"Olaf","Loaf",true);
+TableTennisPlayer olaf2(olaf1);
+</code></pre>
+
+    <p>理论上，需要这样的构造函数原型来初始化olaf2：</p>
+
+    <pre><code class="language-C++">TableTennisPlayer(const RatedPlayer &amp;); //doesn't exist
+</code></pre>
+
+    <p>类定义中没有这样的构造函数，但存在隐式复制构造函数：</p>
+
+    <pre><code class="language-C++">TableTennisPlayer(const TableTennisPlayer &amp;); //implicit copy constructor
+</code></pre>
+
+    <p>由于可以发生从派生类到基类的隐式转换，所以这个复制构造函数能够接受派生类引用作为参数。</p>
+
+    <p>对于赋值运算符也是一样的：</p>
+
+    <pre><code class="language-C++">TableTennisPlayer(const TableTennisPlayer &amp;); //implicit copy constructor
+RatedPlayer olaf1(1840,"Olaf","Loaf",true);
+TableTennisPlayer winner;
+winner=olaf; //assign derived to base object
+</code></pre>
+
+    <p>存在隐式重载赋值运算符：</p>
+
+    <pre><code class="language-C++">TableTennisPlayer &amp; operator=(const TableTennisPlayer &amp;)const;
+</code></pre>
+
+    <p>在上面的部分中，只有派生类的基类部分会赋值给基类。</p>
+  </li>
+</ul>
+
+<h3 id="is-a继承">is-a继承</h3>
+
+<p>一般而言，认为普通公有继承只建立is-a，或者说is-a-kind-of关系。</p>
+
+<p>例如，可以从Fruit派生出Banana。</p>
+
+<p>公有继承不能实现以下关系：</p>
+
+<ul>
+  <li>is-like-a关系，不能采取明喻。人们通常说律师就像鲨鱼，但律师并不是鲨鱼。所以不能从Shark派生出Lawyer类。</li>
+  <li>is-implemented-as-a，作为…来实现关系。例如，可以使用数组来实现栈，但不能从Array类派生出Stack类。</li>
+  <li>uses-a关系。计算机可以使用打印机，但是不能从Computer派生出Printer类。</li>
+</ul>
+
+<h3 id="多态公有继承">多态公有继承</h3>
+
+<p><strong>多态公有继承</strong>指的是一个类公有地继承另一个类，并重写基类的虚函数，从而实现多态行为。主要涉及到两个部分：公有继承和多态。</p>
+
+<p><strong>多态（Polymorphism）</strong>是面向对象编程的一个重要特性，它允许我们通过基类的指针或引用来操作派生类对象。</p>
+
+<p>在C++中，多态是通过<strong>虚函数</strong>（virtual functions）来实现的。<strong>如果一个基类定义了一个虚函数，那么派生类可以重写（override）这个函数。然后，我们可以通过基类的指针或引用来调用这个函数，而实际执行的是派生类版本的函数。</strong>这就是所谓的<strong>动态绑定</strong>或后期绑定（late binding）。</p>
+
+<p>有两种机制可以用于实现多态公有继承：</p>
+
+<ul>
+  <li>在派生类中重新定义基类的方法</li>
+  <li>使用虚方法</li>
+</ul>
+
+<pre><code class="language-C++">class Brass
+{
+private:
+    std::string fullName;
+    long acctNum;
+    double balance;
+public:
+    Brass(const std::string&amp;s= "Nullbody",long an =-1,
+    double bal=0.0);
+    void Deposit(double amt);
+    virtual void Withdraw(double amt);
+    double Balance() const;
+    virtual void ViewAcct() const;
+    virtual ~Brass(){}
+};
+
+class BrassPlus:public Brass
+{
+private:
+    double maxLoan;
+    double rate;
+    double owesBank;
+public:
+    BrassPlus(const std::string &amp; s ="Nullbody",long an=-1,
+             double bal=0.0,double ml=500,
+             double r=0.11125);
+    BrassPlus(const Brass &amp; ba,double ml= 500,
+             double r=0.11125);
+    virtual void ViewAcct()const;
+    virtual void Withdraw(double amt);
+    void ResetMax(double m){maxLoan=m;}
+    void ResetRate(double r){rate=r;}
+    void ResetOwes(){owesBank=0;}
+};
+</code></pre>
+
+<ul>
+  <li>
+    <p>Withdraw()函数有2个版本，这说明基类和派生类在这两个函数中的行为不同（对于在两个类中行为相同的方法，则只在基类中声明）。</p>
+  </li>
+  <li>
+    <p>如果方法是通过引用或指针而不是对象调用的，关键字Virtual将确定使用哪一种方法。</p>
+
+    <ul>
+      <li>
+        <p>如果没有使用关键字virtual，程序将根据引用类型或指针类型选择方法。</p>
+
+        <pre><code class="language-C++">Brass dom ("Dominic-Banker",11224,4183.45)
+Brassplus dot ("Dorothy Banker",12118,2592.00);
+Brass &amp; bl_ref = dom;
+Brass &amp; b2_ref = dot;
+b1_ref.ViewAcct();//use Brass::ViewAcct()
+b2_ref.ViewAcct();//use Brass::ViewAcct()
+</code></pre>
+      </li>
+      <li>
+        <p>如果使用了virtual，程序将根据引用或指针<strong>指向的对象的类型</strong>来选择方法。</p>
+
+        <pre><code class="language-C++">Brass dom ("Dominic-Banker",11224,4183.45)
+Brassplus dot ("Dorothy Banker",12118,2592.00);
+Brass &amp; bl_ref = dom;
+Brass &amp; b2_ref = dot;
+b1_ref.ViewAcct();//use Brass::ViewAcct()
+b2_ref.ViewAcct();//use Brassplus::ViewAcct()
+</code></pre>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>方法在基类中被声明为虚的后，它在派生类中将自动成为虚方法。</p>
+
+    <ul>
+      <li>也可以在派生类中使用virtual来强调这一事实。（不然程序员很可能会忘记）</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="类实现">类实现</h4>
+
+<p><strong>关键字virtual只用于类声明的方法原型中，而不允许在方法文件中实现中使用！</strong></p>
+
+<p><strong>代码必须使用作用域解析运算符（特别是当派生类的重载函数中调用了基类的同名函数时），否则发生递归调用。</strong></p>
+
+<h4 id="基类与派生类的数组">基类与派生类的数组</h4>
+
+<p>假设要同时管理Brass和BrassPlus账户，如果能使用同一个数组来保存Brsss和BrassPlus对象，将很有帮助。</p>
+
+<p>但这是不可能的，因为数组中所有元素的类型必须相同，而Brass和BrassPlus是不同的类型。</p>
+
+<p><strong>然而，可以创建指向Brass的指针数组。由于使用的是公有继承模型，因此Brass指针既可以指向Brass对象，也可以指向BrassPlus对象。</strong></p>
+
+<p>多态真是美妙！</p>
+
+<h3 id="静态联编和动态联编">静态联编和动态联编</h3>
+
+<p>程序调用函数时，将使用哪个可执行代码块呢？</p>
+
+<p><strong>编译器将源代码中的函数调用解释为执行特定的函数代码块被称为函数名联编（binding）。</strong></p>
+
+<ul>
+  <li>在编译过程中进行联编被称为静态联编（static binding），又称为早期联编（early binding）。</li>
+  <li>生成能够在程序运行时选择正确的虚方法的代码，这被称为动态联编（dynamic binding），又称为晚期联编（late binding）。</li>
+</ul>
+
+<h4 id="指针引用类型的兼容">指针、引用类型的兼容</h4>
+
+<pre><code class="language-C++">BrassPlus dilly("Annie Dill",493222,2000);
+Brass* pb=&amp;dilly;
+Brass&amp; pb=dilly;
+</code></pre>
+
+<p>将派生类引用或指针转换为基类引用或指针被称为<strong>向上强制转换</strong>（upcasting），这使公有继承不需要进行显式类型转换。</p>
+
+<p>向上强制转换是可传递的，也就是说，如果从BrassPlus派生出BrassPlusPlus类，则Brass指针或引用可以引用Brass对象、BrassPlus对象或BrassPlusPlus对象。</p>
+
+<p>相反的过程——将基类指针或引用转换为派生类指针或引用——称为向下强制转换(downcasting)。</p>
+
+<p>如果不使用显式类型转换，则向下强制转换是不允许的。</p>
+
+<p>通常不推荐这么做，唯一有可能的情况是：本来这个基类指针指向的就是派生类对象，再将其转换成派生类指针。</p>
+
+<pre><code class="language-C++">class Base {
+public:
+    virtual ~Base() {}
+};
+
+class Derived : public Base {
+public:
+    void sayHello() {
+        std::cout &lt;&lt; "Hello from Derived!" &lt;&lt; std::endl;
+    }
+};
+
+int main() {
+    Base* b = new Derived(); // Upcasting
+
+    // Downcasting
+    Derived* d = (Derived*)(b);
+    if (d) { // Check if the downcasting was successful
+        d-&gt;sayHello(); // Now it's safe to call
+    }
+
+    delete b;
+    return 0;
+}
+</code></pre>
+
+<h4 id="两种类型的联编">两种类型的联编</h4>
+
+<ul>
+  <li>为使程序能够在运行阶段进行决策，必须采取一些方法来跟踪基类指针或引用指向的对象类型，所以会有额外处理开销。所以使用静态联编效率更高。</li>
+  <li>如果派生类不重新定义基类的任何方法，就不需要使用动态联编。</li>
+</ul>
+
+<h4 id="虚函数的工作原理">虚函数的工作原理</h4>
+
+<p>通常，编译器处理虚函数的方法是：给每个对象添加一个隐藏成员。</p>
+
+<p>隐藏成员中保存了一个<strong>指向函数地址数组的指针</strong>。这种数组称为<strong>虚函数表</strong>（virtual function table, vtbl）。（究竟有多少级指针呢？）</p>
+
+<p>虚函数表中存储了为类对象进行声明的虚函数的地址。例如，基类对象包含一个指针，该指针指向基类中所有虚函数的地址表。派生类对象将包含一个指向独立地址表的指针。</p>
+
+<ul>
+  <li>如果派生类提供了虚函数的新定义，该虚函数表将保存新函数的地址。</li>
+  <li>如果派生类没有重新定义虚函数，该虚函数表将保存函数原始版本的地址。</li>
+</ul>
+
+<p>再整理一下概念：</p>
+
+<ul>
+  <li><strong>虚函数表（vtable）</strong>：当一个类中声明了虚函数，编译器会为这个类生成一个虚函数表。这个表是一个函数指针数组，数组中的每个元素都是指向类的虚函数的指针。每个类的虚函数表是唯一的，所有该类的对象都共享同一个虚函数表。</li>
+  <li><strong>虚指针（vptr）</strong>：当一个类对象被创建时，如果该类中有虚函数，那么编译器会在对象内部添加一个虚指针。这个虚指针指向该类的虚函数表。如果有派生类对象，那么派生类对象的虚指针会指向派生类的虚函数表。</li>
+  <li><strong>动态绑定</strong>：当我们通过基类指针或引用调用虚函数时，编译器会查找指针或引用所指向的对象的虚指针，然后通过虚指针找到对应的虚函数表，最后在虚函数表中查找并调用相应的虚函数。这个过程是在运行时进行的，因此称为动态绑定。</li>
+</ul>
+
+<p>使用虚函数时，在内存和执行速度方面有一定的成本，包括：</p>
+
+<ul>
+  <li>每个对象都将增大，增大量为存储地址的空间。</li>
+  <li>对于每个类，编译器都创建一个虚函数地址表（数组）。</li>
+  <li>对于每个函数调用，都需要执行一项额外的操作，即到表中查找地址。</li>
+</ul>
+
+<h4 id="有关虚函数注意事项">有关虚函数注意事项</h4>
+
+<h5 id="构造函数">构造函数</h5>
+
+<p>构造函数不能是虚函数。实际上，这没有意义</p>
+
+<p>创建派生类对象时，将调用派生类的构造函数，然后派生类的构造函数会调用基类的一个构造函数。</p>
+
+<p><strong>也就是说派生类不继承基类的构造函数。</strong></p>
+
+<h5 id="析构函数">析构函数</h5>
+
+<p>通常应给基类提供一个虚析构函数（这样派生类的析构函数自动也成为虚的），即使它并不需要析构函数。</p>
+
+<p>考虑这样的场景：</p>
+
+<pre><code class="language-C++">Employee * pe=new Singer;
+...
+delete pe;
+</code></pre>
+
+<ul>
+  <li>如果析构函数不是虚的，那么delete只会释放基类部分的内存（会引发问题！）。</li>
+  <li>如果析构函数是虚的，那么先调用派生类的析构，再自动调用基类的析构函数（这是声明周期管理的特性）。</li>
+</ul>
+
+<h5 id="友元">友元</h5>
+
+<p>友元不能是虚函数，因为<strong>友元不是类成员，而只有成员才能是虚函数。</strong></p>
+
+<p>如果由于这个原因引起了设计问题，可以通过让友元函数使用虚成员函数来解决。</p>
+
+<h5 id="没有重新定义">没有重新定义</h5>
+
+<p>如果派生类没有重新定义函数，将使用该函数的基类版本。</p>
+
+<p>如果派生类位于派生链中，则将使用最新的虚函数版本（虚函数不是不能用！）。</p>
+
+<p><strong>也就是说从某个类开始声明了虚函数，那么后面所有的版本无论是否重新定义，都自动成为虚函数。</strong></p>
+
+<p>例外的情况是基类版本是隐藏的（稍后将介绍）</p>
+
+<h5 id="重新定义将隐藏方法">重新定义将隐藏方法</h5>
+
+<p>如果派生类中的函数和基类中的虚函数<strong>有相同的名称和参数列表</strong>，那么派生类中的函数将<strong>覆盖</strong>（也称为重写）基类中的虚函数，这是虚函数的正常使用方式。</p>
+
+<p>如果派生类中的函数和基类中的函数具有相同的名称，但参数列表不同，那么派生类中的函数将会<strong>隐藏基类中所有同名的函数</strong>，无论参数列表是否相同。</p>
+
+<p>如果你想在派生类中使用和基类中同名但参数列表不同的函数，而不隐藏基类中的函数，你可以使用<code class="language-plaintext highlighter-rouge">using</code>声明。</p>
+
+<p>这引出了两条经验规则：</p>
+
+<ul>
+  <li>
+    <p>如果重新定义继承的方法，应确保与原来的原型完全相同，但如果返回类型是基类引用或指针，则可以修改为指向派生类的引用或指针。<strong>（也即：可以允许返回类型不同的重载）</strong></p>
+
+    <p>这种允许返回类型随类类型的变化而变化的特性被称为返回类型协变（covariance of return type）。</p>
+  </li>
+  <li>
+    <p>如果基类声明被重载了，则应在派生类中重新定义所有的基类版本。</p>
+  </li>
+</ul>
+
+<h3 id="访问控制protected">访问控制：protected</h3>
+
+<p>private和protected之间的区别只有在基类派生的类中才会表现出来。</p>
+
+<p>派生类的成员可以直接访问基类的保护成员，但不能直接访问基类的私有成员。</p>
+
+<p>最好对类数据成员采用私有访问控制，不要使用保护访问控制；同时通过基类方法使派生类能够访问基类数据。</p>
+
+<h3 id="抽象基类abc">抽象基类（ABC）</h3>
+
+<p>C++通过使用纯虚函数（pure virtual function）提供未实现的函数。纯虚函数声明的结尾处为=0，参见：</p>
+
+<pre><code class="language-C++">class BaseEllipse
+{
+public:
+    virtual double Area() const=0;
+}
+</code></pre>
+
+<p>纯虚函数的理念是：包含纯虚函数的类只用作基类。</p>
+
+<p><strong>当类声明中包含纯虚函数时，则不能创建该类的对象。</strong></p>
+
+<p>这里的方法Area()没有定义，但C++甚至允许纯虚函数有定义：</p>
+
+<pre><code class="language-C++">//myclass.h
+void Move(int nx,ny)=0;
+
+//myclass.cpp
+void BaseEllipse::Move(int nx,ny){x=nx;y=ny;}
+...
+</code></pre>
+
+<p>为什么不干脆直接将派生类们分开定义？因为它们还是有共同之处的，所以这种解决办法效率不高，也从逻辑上比较冗余。</p>
+
+<h3 id="继承和动态内存分配">继承和动态内存分配</h3>
+
+<p>假设基类使用了动态内存分配，而派生类中不使用new：</p>
+
+<p><strong>是否需要显式定义析构函数？</strong></p>
+
+<p>不需要。</p>
+
+<p>派生类的默认构造函数总是要进行一些操作：执行自身的代码后调用基类析构函数。</p>
+
+<p>由于不需要额外执行特殊操作，所以不需要显式定义，用默认析构函数就行。</p>
+
+<p><strong>是否需要显式定义复制构造函数？</strong></p>
+
+<p>不需要。</p>
+
+<p>复制类成员或继承的类组件时，是使用该类的复制构造函数完成的。也就是说基类部分的复制是调用基类的复制构造函数，而派生类部分使用派生类的复制构造函数。</p>
+
+<p>这主要是考虑了动态内存分配。基类的复制构造函数保证了深复制，而派生类没有额外new，所以自动调用默认的复制构造函数，执行浅复制就行。</p>
+
+<p><strong>是否需要显式定义赋值运算符？</strong></p>
+
+<p>不需要，理由同上。</p>
+
+<hr />
+
+<p>假设派生类中使用了new，则以上三种都要重新显式定义。</p>
+
+<ul>
+  <li>
+    <p>派生类析构函数<strong>自动</strong>调用基类的析构函数，故其自身的职责是对派生类构造函数执行工作的进行清理。</p>
+  </li>
+  <li>
+    <p>派生类的复制构造函数只能访问派生类的数据，因此它必须调用基类的复制构造函数来处理共享的基类的数据。</p>
+
+    <p>调用派生类的复制构造函数时，会自动调用基类的默认复制构造函数，但如果需要调用的是基类的某个非默认的复制构造函数，则必须手动显式调用。</p>
+  </li>
+  <li>
+    <p>对于赋值运算符同理。</p>
+  </li>
+</ul>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH13 类继承 面向对象编程的主要目的之是提供可重用的代码。 C++提供了比修改代码更好的方法来扩展和修改类。这种方法叫作类继承，它能够从已有的类派生出新的类，而派生类继承了原有类（称为基类）的特征，包括方法。 下面是可以通过继承完成的一些工作： 可以在已有类的基础上添加功能。例如，对于数组类，可以添加数学运算。 可以给类添加数据。例如，对于字符串类，可以派生出一个类，一并添加指定字符串显示颜色的数据成员。 可以修改类方法的行为。例如，对于代表提供给飞机乘客的服务的Passenger类，可以派生出提供更高级别服务的FirstClassPassenger类。 简单的基类及其派生 class RatedPlayer: public TableTennisPlayer { ... } 冒号指出RatedPlayer类的基类是TableTennisplayer类。 public表明TableTennisPlayer是个公有基类，这被称为公有派生。 使用公有派生，基类的公有成员将成为派生类的公有成员：基类的私有部分也将成为派生类的一部分，但只能通过基类的公有和保护方法访问（稍后将介绍保护成员）。 上述代码完成了哪些工作呢？Ratedplayer对象将具有以下特征： 派生类对象存储了基类的数据成员（派生类继承了基类的实现）： 派生类对象可以使用基类的方法（派生类继承了基类的接口）。 需要在继承特性中添加什么呢？ 派生类需要自己的构造函数。 派生类可以根据需要添加额外的数据成员和成员函数。 构造函数：访问权限的考虑 派生类不能直接访问基类的私有成员，而必须通过基类提供的公有方法进行访问。 创建派生类对象时，程序首先创建基类对象。这意味着基类对象应当在程序进入派生类构造函数之前被创建。 上面所说的工作由成员初始化列表语法来完成。 显式的： RatedPlayer::RatedPlayer(unsigned int r,const string&amp; fn,const string&amp; ln,bool ht):TableTennisPlayer(fn,ln,ht) { rating=r; } 隐式的： RatedPlayer::RatedPlayer(unsigned int r,const string&amp; fn,const string&amp; ln,bool ht) { rating=r; } //这种省略成员初始化列表实际上等价于： RatedPlayer::RatedPlayer(unsigned int r,const string&amp; fn,const string&amp; ln,bool ht):TableTennisPlayer() { rating=r; } 这是因为：必须首先创建基类对象，如果不调用基类构造函数，程序将使用默认的基类构造函数。 所以，在任何情况下最好提供一个无参数的默认构造函数！ 如果传入参数是类引用： RatedPlayer::RatedPlayer(unsigned int r,const TableTennisPlayer&amp; tp):TableTennisPlayer(tp) { rating=r; } 由王tp的类型为TableTennisPlayer&amp;，因此将调用基类的复制构造函数（这个浅复制是可以接受的，因为没有使用new）。 基类没有定义复制构造函数，如果需要使用复制构造函数但又没有定义，编译器将自动生成一个。 此外，可以把基类也看做派生类的成员之一，因为初始化派生类时要先初始化基类，而这一步的形式和初始化派生类成员是一样的。 RatedPlayer::RatedPlayer(unsigned int r,const TableTennisPlayer &amp; tp):TableTennisPlayer(tp),rating(r) { ... } 使用派生类 要使用派生类，程序必须要能够问基类声明。 可以将这两种类的声明置于同一个头文件中，也可以将每个类放在独立的头文件中，但由于这两个类是相关的，所以把其类声明放在一起更合适。 派生类和基类之间的关系 派生类与基类之间有一些特殊关系： 派生类对象可以使用基类的非私有方法 基类指针可以在不进行显式类型转换的情况下指向派生类对象（只能单向） 基类引用可以在不进行显式类型转换的情况下引用派生类对象（只能单向） Ratedplayer rplayer1(1140,"Mallory","Duck",true); TableTennisplayer&amp; rt=rplayer; TableTennisplayer* pt=&amp;rplayer; rt.Name();//invoke Name()with reference pt-&gt;Name();//invoke Name()with pointer 然而： 基类指针或引用只能用于调用基类方法。因此，不能使用rt或pt来调用派生类的ResetRanking方法。 不可以将基类对象和地址赋给派生类引用和指针。 对于形参为指向基类的指针的函数，它可以使用基类对象的地址或派生类对象的地址作为实参。 引用兼容性属性也能够将基类对象初始化为派生类对象： RatedPlayer olaf1(1840,"Olaf","Loaf",true); TableTennisPlayer olaf2(olaf1); 理论上，需要这样的构造函数原型来初始化olaf2： TableTennisPlayer(const RatedPlayer &amp;); //doesn't exist 类定义中没有这样的构造函数，但存在隐式复制构造函数： TableTennisPlayer(const TableTennisPlayer &amp;); //implicit copy constructor 由于可以发生从派生类到基类的隐式转换，所以这个复制构造函数能够接受派生类引用作为参数。 对于赋值运算符也是一样的： TableTennisPlayer(const TableTennisPlayer &amp;); //implicit copy constructor RatedPlayer olaf1(1840,"Olaf","Loaf",true); TableTennisPlayer winner; winner=olaf; //assign derived to base object 存在隐式重载赋值运算符： TableTennisPlayer &amp; operator=(const TableTennisPlayer &amp;)const; 在上面的部分中，只有派生类的基类部分会赋值给基类。 is-a继承 一般而言，认为普通公有继承只建立is-a，或者说is-a-kind-of关系。 例如，可以从Fruit派生出Banana。 公有继承不能实现以下关系： is-like-a关系，不能采取明喻。人们通常说律师就像鲨鱼，但律师并不是鲨鱼。所以不能从Shark派生出Lawyer类。 is-implemented-as-a，作为…来实现关系。例如，可以使用数组来实现栈，但不能从Array类派生出Stack类。 uses-a关系。计算机可以使用打印机，但是不能从Computer派生出Printer类。 多态公有继承 多态公有继承指的是一个类公有地继承另一个类，并重写基类的虚函数，从而实现多态行为。主要涉及到两个部分：公有继承和多态。 多态（Polymorphism）是面向对象编程的一个重要特性，它允许我们通过基类的指针或引用来操作派生类对象。 在C++中，多态是通过虚函数（virtual functions）来实现的。如果一个基类定义了一个虚函数，那么派生类可以重写（override）这个函数。然后，我们可以通过基类的指针或引用来调用这个函数，而实际执行的是派生类版本的函数。这就是所谓的动态绑定或后期绑定（late binding）。 有两种机制可以用于实现多态公有继承： 在派生类中重新定义基类的方法 使用虚方法 class Brass { private: std::string fullName; long acctNum; double balance; public: Brass(const std::string&amp;s= "Nullbody",long an =-1, double bal=0.0); void Deposit(double amt); virtual void Withdraw(double amt); double Balance() const; virtual void ViewAcct() const; virtual ~Brass(){} }; class BrassPlus:public Brass { private: double maxLoan; double rate; double owesBank; public: BrassPlus(const std::string &amp; s ="Nullbody",long an=-1, double bal=0.0,double ml=500, double r=0.11125); BrassPlus(const Brass &amp; ba,double ml= 500, double r=0.11125); virtual void ViewAcct()const; virtual void Withdraw(double amt); void ResetMax(double m){maxLoan=m;} void ResetRate(double r){rate=r;} void ResetOwes(){owesBank=0;} }; Withdraw()函数有2个版本，这说明基类和派生类在这两个函数中的行为不同（对于在两个类中行为相同的方法，则只在基类中声明）。 如果方法是通过引用或指针而不是对象调用的，关键字Virtual将确定使用哪一种方法。 如果没有使用关键字virtual，程序将根据引用类型或指针类型选择方法。 Brass dom ("Dominic-Banker",11224,4183.45) Brassplus dot ("Dorothy Banker",12118,2592.00); Brass &amp; bl_ref = dom; Brass &amp; b2_ref = dot; b1_ref.ViewAcct();//use Brass::ViewAcct() b2_ref.ViewAcct();//use Brass::ViewAcct() 如果使用了virtual，程序将根据引用或指针指向的对象的类型来选择方法。 Brass dom ("Dominic-Banker",11224,4183.45) Brassplus dot ("Dorothy Banker",12118,2592.00); Brass &amp; bl_ref = dom; Brass &amp; b2_ref = dot; b1_ref.ViewAcct();//use Brass::ViewAcct() b2_ref.ViewAcct();//use Brassplus::ViewAcct() 方法在基类中被声明为虚的后，它在派生类中将自动成为虚方法。 也可以在派生类中使用virtual来强调这一事实。（不然程序员很可能会忘记） 类实现 关键字virtual只用于类声明的方法原型中，而不允许在方法文件中实现中使用！ 代码必须使用作用域解析运算符（特别是当派生类的重载函数中调用了基类的同名函数时），否则发生递归调用。 基类与派生类的数组 假设要同时管理Brass和BrassPlus账户，如果能使用同一个数组来保存Brsss和BrassPlus对象，将很有帮助。 但这是不可能的，因为数组中所有元素的类型必须相同，而Brass和BrassPlus是不同的类型。 然而，可以创建指向Brass的指针数组。由于使用的是公有继承模型，因此Brass指针既可以指向Brass对象，也可以指向BrassPlus对象。 多态真是美妙！ 静态联编和动态联编 程序调用函数时，将使用哪个可执行代码块呢？ 编译器将源代码中的函数调用解释为执行特定的函数代码块被称为函数名联编（binding）。 在编译过程中进行联编被称为静态联编（static binding），又称为早期联编（early binding）。 生成能够在程序运行时选择正确的虚方法的代码，这被称为动态联编（dynamic binding），又称为晚期联编（late binding）。 指针、引用类型的兼容 BrassPlus dilly("Annie Dill",493222,2000); Brass* pb=&amp;dilly; Brass&amp; pb=dilly; 将派生类引用或指针转换为基类引用或指针被称为向上强制转换（upcasting），这使公有继承不需要进行显式类型转换。 向上强制转换是可传递的，也就是说，如果从BrassPlus派生出BrassPlusPlus类，则Brass指针或引用可以引用Brass对象、BrassPlus对象或BrassPlusPlus对象。 相反的过程——将基类指针或引用转换为派生类指针或引用——称为向下强制转换(downcasting)。 如果不使用显式类型转换，则向下强制转换是不允许的。 通常不推荐这么做，唯一有可能的情况是：本来这个基类指针指向的就是派生类对象，再将其转换成派生类指针。 class Base { public: virtual ~Base() {} }; class Derived : public Base { public: void sayHello() { std::cout &lt;&lt; "Hello from Derived!" &lt;&lt; std::endl; } }; int main() { Base* b = new Derived(); // Upcasting // Downcasting Derived* d = (Derived*)(b); if (d) { // Check if the downcasting was successful d-&gt;sayHello(); // Now it's safe to call } delete b; return 0; } 两种类型的联编 为使程序能够在运行阶段进行决策，必须采取一些方法来跟踪基类指针或引用指向的对象类型，所以会有额外处理开销。所以使用静态联编效率更高。 如果派生类不重新定义基类的任何方法，就不需要使用动态联编。 虚函数的工作原理 通常，编译器处理虚函数的方法是：给每个对象添加一个隐藏成员。 隐藏成员中保存了一个指向函数地址数组的指针。这种数组称为虚函数表（virtual function table, vtbl）。（究竟有多少级指针呢？） 虚函数表中存储了为类对象进行声明的虚函数的地址。例如，基类对象包含一个指针，该指针指向基类中所有虚函数的地址表。派生类对象将包含一个指向独立地址表的指针。 如果派生类提供了虚函数的新定义，该虚函数表将保存新函数的地址。 如果派生类没有重新定义虚函数，该虚函数表将保存函数原始版本的地址。 再整理一下概念： 虚函数表（vtable）：当一个类中声明了虚函数，编译器会为这个类生成一个虚函数表。这个表是一个函数指针数组，数组中的每个元素都是指向类的虚函数的指针。每个类的虚函数表是唯一的，所有该类的对象都共享同一个虚函数表。 虚指针（vptr）：当一个类对象被创建时，如果该类中有虚函数，那么编译器会在对象内部添加一个虚指针。这个虚指针指向该类的虚函数表。如果有派生类对象，那么派生类对象的虚指针会指向派生类的虚函数表。 动态绑定：当我们通过基类指针或引用调用虚函数时，编译器会查找指针或引用所指向的对象的虚指针，然后通过虚指针找到对应的虚函数表，最后在虚函数表中查找并调用相应的虚函数。这个过程是在运行时进行的，因此称为动态绑定。 使用虚函数时，在内存和执行速度方面有一定的成本，包括： 每个对象都将增大，增大量为存储地址的空间。 对于每个类，编译器都创建一个虚函数地址表（数组）。 对于每个函数调用，都需要执行一项额外的操作，即到表中查找地址。 有关虚函数注意事项 构造函数 构造函数不能是虚函数。实际上，这没有意义 创建派生类对象时，将调用派生类的构造函数，然后派生类的构造函数会调用基类的一个构造函数。 也就是说派生类不继承基类的构造函数。 析构函数 通常应给基类提供一个虚析构函数（这样派生类的析构函数自动也成为虚的），即使它并不需要析构函数。 考虑这样的场景： Employee * pe=new Singer; ... delete pe; 如果析构函数不是虚的，那么delete只会释放基类部分的内存（会引发问题！）。 如果析构函数是虚的，那么先调用派生类的析构，再自动调用基类的析构函数（这是声明周期管理的特性）。 友元 友元不能是虚函数，因为友元不是类成员，而只有成员才能是虚函数。 如果由于这个原因引起了设计问题，可以通过让友元函数使用虚成员函数来解决。 没有重新定义 如果派生类没有重新定义函数，将使用该函数的基类版本。 如果派生类位于派生链中，则将使用最新的虚函数版本（虚函数不是不能用！）。 也就是说从某个类开始声明了虚函数，那么后面所有的版本无论是否重新定义，都自动成为虚函数。 例外的情况是基类版本是隐藏的（稍后将介绍） 重新定义将隐藏方法 如果派生类中的函数和基类中的虚函数有相同的名称和参数列表，那么派生类中的函数将覆盖（也称为重写）基类中的虚函数，这是虚函数的正常使用方式。 如果派生类中的函数和基类中的函数具有相同的名称，但参数列表不同，那么派生类中的函数将会隐藏基类中所有同名的函数，无论参数列表是否相同。 如果你想在派生类中使用和基类中同名但参数列表不同的函数，而不隐藏基类中的函数，你可以使用using声明。 这引出了两条经验规则： 如果重新定义继承的方法，应确保与原来的原型完全相同，但如果返回类型是基类引用或指针，则可以修改为指向派生类的引用或指针。（也即：可以允许返回类型不同的重载） 这种允许返回类型随类类型的变化而变化的特性被称为返回类型协变（covariance of return type）。 如果基类声明被重载了，则应在派生类中重新定义所有的基类版本。 访问控制：protected private和protected之间的区别只有在基类派生的类中才会表现出来。 派生类的成员可以直接访问基类的保护成员，但不能直接访问基类的私有成员。 最好对类数据成员采用私有访问控制，不要使用保护访问控制；同时通过基类方法使派生类能够访问基类数据。 抽象基类（ABC） C++通过使用纯虚函数（pure virtual function）提供未实现的函数。纯虚函数声明的结尾处为=0，参见： class BaseEllipse { public: virtual double Area() const=0; } 纯虚函数的理念是：包含纯虚函数的类只用作基类。 当类声明中包含纯虚函数时，则不能创建该类的对象。 这里的方法Area()没有定义，但C++甚至允许纯虚函数有定义： //myclass.h void Move(int nx,ny)=0; //myclass.cpp void BaseEllipse::Move(int nx,ny){x=nx;y=ny;} ... 为什么不干脆直接将派生类们分开定义？因为它们还是有共同之处的，所以这种解决办法效率不高，也从逻辑上比较冗余。 继承和动态内存分配 假设基类使用了动态内存分配，而派生类中不使用new： 是否需要显式定义析构函数？ 不需要。 派生类的默认构造函数总是要进行一些操作：执行自身的代码后调用基类析构函数。 由于不需要额外执行特殊操作，所以不需要显式定义，用默认析构函数就行。 是否需要显式定义复制构造函数？ 不需要。 复制类成员或继承的类组件时，是使用该类的复制构造函数完成的。也就是说基类部分的复制是调用基类的复制构造函数，而派生类部分使用派生类的复制构造函数。 这主要是考虑了动态内存分配。基类的复制构造函数保证了深复制，而派生类没有额外new，所以自动调用默认的复制构造函数，执行浅复制就行。 是否需要显式定义赋值运算符？ 不需要，理由同上。 假设派生类中使用了new，则以上三种都要重新显式定义。 派生类析构函数自动调用基类的析构函数，故其自身的职责是对派生类构造函数执行工作的进行清理。 派生类的复制构造函数只能访问派生类的数据，因此它必须调用基类的复制构造函数来处理共享的基类的数据。 调用派生类的复制构造函数时，会自动调用基类的默认复制构造函数，但如果需要调用的是基类的某个非默认的复制构造函数，则必须手动显式调用。 对于赋值运算符同理。]]></summary></entry><entry><title type="html">CH4 复合类型</title><link href="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html" rel="alternate" type="text/html" title="CH4 复合类型" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH4%20%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B</id><content type="html" xml:base="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html"><![CDATA[<h2 id="ch4-复合类型">CH4 复合类型</h2>
+
+<h3 id="字符串的输入">字符串的输入</h3>
+
+<p><strong>cin使用空白（空格、制表符和换行符）来确定字符串的结束位置，这意味着cin在获取字符数组输入时只读取一个单词。</strong>读取该单词后，cin将该字符串放到数组中，并自动在结尾添加空字符。</p>
+
+<p><strong>读取一行</strong></p>
+
+<ul>
+  <li>
+    <p><strong>面向行的输入：getline()</strong></p>
+
+    <ul>
+      <li>
+        <p>getline()函数读取整行，它使用通过回车键输入的<strong>换行符</strong>来确定输入结尾。</p>
+      </li>
+      <li>
+        <p>例如，假设要使用getline()将姓名读入到一个包含20个元素的name数组中。可以使用这样的函数调用：
+<code class="language-plaintext highlighter-rouge">cin.getline (name,20);</code>
+这将把一行读入到name数组中，如果这行包含的字符不超过<strong>19</strong>个。</p>
+      </li>
+      <li>
+        <p><strong>它通过换行符来确定行尾，但不保存换行符（也就是说它将从缓冲区里读取到换行符并丢弃）。</strong></p>
+
+        <p>另外，getline函数返回当前cin对象，可以连续调用： <code class="language-plaintext highlighter-rouge">cin.getline(namel,Arsize).getline(name2,Arsize);</code></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>面向行的输入：get()</strong></p>
+
+    <p>istream类<strong>（cin是一个istream对象！）</strong>有另一个名为get()的成员函数，该函数有几种变体。其中一种变体的工作方式与getline()类似，它们接受的参数相同，解释参数的方式也相同，并且都读取到行尾。</p>
+
+    <ul>
+      <li>get并不再读取并丢弃换行符，而是将其留在输入队列中。假设我们连续两次调用get():</li>
+    </ul>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cin.get (name,Arsize);
+cin.get(dessert,Arsize);//a problem
+</code></pre></div>    </div>
+
+    <p>由于第一次调用后，换行符将留在输入队列中，因此第二次调用时看到的第一个字符便是换行符。因此get()认为已到达行尾，而没有发现任何可读取的内容。如果不借助于帮助，get()将不能跨过该换行符。</p>
+
+    <ul>
+      <li>
+        <p>get有另一种变体：使用不带任何参数的cin.get()调用可读取下一个字符（即使是换行符）：</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cin.get (name,Arsize);//read first line
+cin.get();//read newline
+cin.get(dessert,Arsize);//read second line
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>get也返回一个cin对象，也可以连续使用：</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cin.get(name,Arsize).get();//concatenate member functions
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>为什么要使用get(),而不是getline()呢？</p>
+
+<ul>
+  <li>
+    <p>首先，老式实现没有getline()。</p>
+  </li>
+  <li>
+    <p>其次，get()使输入更仔细。</p>
+
+    <p>例如，假设用get()将一行读入数组中。<strong>如何知道停止读取的原因是由于已经读取了整行，而不是由于数组已填满呢？</strong>查看下一个输入字符，如果是换行符，说明已读取了整行；否则，说明该行中还有其他输入。</p>
+  </li>
+</ul>
+
+<p>总之，getline()使用起来简单一些，但get()使得检查错误更简单些。可以用其中的任何一个来读取一行输入。</p>
+
+<p><strong>空行</strong></p>
+
+<p>当get()（不是getline()）读取空行后将设置失效位(failbit)。这意味着接下来的输入将被阻断，但可以用下面的命令来恢复输入：</p>
+
+<p><code class="language-plaintext highlighter-rouge">cin.clear();</code></p>
+
+<p><strong>溢出</strong></p>
+
+<p>另一个潜在的问题是，输入字符串可能比分配的空间长。</p>
+
+<p>如果输入行包含的字符数比指定的多，则getline()和get()将把余下的字符留在输入队列中，而getline()还会设置失效位，并关闭后面的输入。</p>
+
+<h3 id="string类">string类</h3>
+
+<p>需要注意的是，需要从cin中读取到一个string类的方式如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>getline(cin,str);
+</code></pre></div></div>
+
+<p>这表明这里的getline不是一个类方法。这个getline也是遇到换行符停止，并丢弃它。</p>
+
+<h3 id="其他形式的字符串字面值">其他形式的字符串字面值</h3>
+
+<p>除char类型外，C++还有类型wchar_t，而C++11新增了类型char16_t和char32_t。对于这些类型的字符串字面值，C++分别使用前缀L、u和U表示，下面是一个如何使用这些前缀的例子：</p>
+
+<pre><code class="language-C++">wchar_t title[]=L"Chief Astrogator";//.w_char 'string
+char16_t name[]=u"Felonia Ripova";//char 16 string
+char32_t car[]U"Humber Super Snipe";//char 32 string
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">char16_t</code>和<code class="language-plaintext highlighter-rouge">char</code>是两种不同的字符类型，它们的主要区别在于它们的大小和用途：</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">char</code>：这是最基本的字符类型，通常用于存储ASCII字符。在大多数系统中，<code class="language-plaintext highlighter-rouge">char</code>的大小是8位（1字节）。这意味着它可以直接表示ASCII字符集中的字符，但对于更大的字符集（如Unicode），一个<code class="language-plaintext highlighter-rouge">char</code>可能不足以表示一个字符。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">char16_t</code>：这是一种16位（2字节）的字符类型，通常用于存储UTF-16编码的Unicode字符。这意味着它可以表示Unicode字符集中的大多数字符，包括ASCII字符和许多非ASCII字符。</p>
+  </li>
+</ul>
+
+<p>下面是一个例子，说明了<code class="language-plaintext highlighter-rouge">char</code>和<code class="language-plaintext highlighter-rouge">char16_t</code>的区别：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="sc">'A'</span><span class="p">;</span> <span class="c1">// ASCII character</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"char: "</span> <span class="o">&lt;&lt;</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="c1">// Character 'LATIN SMALL LETTER A WITH GRAVE' (U+00E0) in UTF-16</span>
+    <span class="kt">char16_t</span> <span class="n">c16</span> <span class="o">=</span> <span class="n">u</span><span class="err">'\</span><span class="n">u00E0</span><span class="err">'</span><span class="p">;</span> 
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"char16_t: "</span> <span class="o">&lt;&lt;</span> <span class="n">c16</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在这个例子中，<code class="language-plaintext highlighter-rouge">char</code>变量<code class="language-plaintext highlighter-rouge">c</code>存储了一个ASCII字符<code class="language-plaintext highlighter-rouge">'A'</code>，而<code class="language-plaintext highlighter-rouge">char16_t</code>变量<code class="language-plaintext highlighter-rouge">c16</code>存储了一个Unicode字符<code class="language-plaintext highlighter-rouge">'LATIN SMALL LETTER A WITH GRAVE'</code>（U+00E0）。<strong>注意，这个Unicode字符是不能用一个<code class="language-plaintext highlighter-rouge">char</code>来表示的，因为它的编码超出了<code class="language-plaintext highlighter-rouge">char</code>的范围。</strong></p>
+
+<p>注意：在打印<code class="language-plaintext highlighter-rouge">char16_t</code>类型的字符时，可能会出现问题，因为标准的C++ I/O库并不直接支持<code class="language-plaintext highlighter-rouge">char16_t</code>和<code class="language-plaintext highlighter-rouge">char32_t</code>。如果你需要处理<code class="language-plaintext highlighter-rouge">char16_t</code>或<code class="language-plaintext highlighter-rouge">char32_t</code>的字符串，你可能需要使用专门用于处理这些类型的库或函数。</p>
+
+<hr />
+
+<p>C++11还支持Unicode字符编码方案UTF-8。在这种方案中，根据编码的数字值，字符可能存储为1-4个八位组。C++使用前缀u8来表示这种类型的字符串字面值。</p>
+
+<p>C+11新增的另一种类型是<strong>原始(raw)字符串。</strong>在原始字符串中，字符表示的就是自己，例如；序列\n
+不表示换行符，而表示两个常规字符斜杠和，因此在屏幕上显示时，将显示这两个字符。</p>
+
+<p>当然，既然可在字符串字面量包含”，就不能再使用它来表示字符串的开头和末尾。因此，原始字符串将<code class="language-plaintext highlighter-rouge">"(</code>和<code class="language-plaintext highlighter-rouge">)"</code>用作定界符，并使用前缀R来标识原始字符串：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cout.&lt;&lt;R"(Jim "King"Tutt uses"\n"instead.of.endl.)"&lt;&lt;'\n';
+上述代码将显示如下内容：
+Jim "King" Tutt uses \n instead of endl.
+如果使用标准字符串字面值；·将需编写如下代码：
+cout&lt;&lt;"Jim \King("Tutt uses\"n\"instead of endl."&lt;&lt;'\n';
+</code></pre></div></div>
+
+<p><strong>输入原始字符串时，按回车键不仅会移到下一行，还将在原始字符串中添加回车字符。</strong></p>
+
+<p>如果要在原始字符串中包含<code class="language-plaintext highlighter-rouge">)”</code>，该如何办呢？</p>
+
+<p>原始字符串语法允许您在表示字符串开头的”和(之间添加其他字符，这意味着表示字符串结尾的”和）之间也必须包含这些字符。</p>
+
+<pre><code class="language-C++">cout &lt;R"+*("(Who wouldn't?)",she whispered.)+*"&lt;&lt;endl;
+将显示如下内容：
+"(Who wouldn't?)",she whispered.
+</code></pre>
+
+<h3 id="anonymous-union">anonymous union</h3>
+
+<p>通常的struct里定义union：</p>
+
+<pre><code class="language-C++">struct widget
+{
+	char brand[20];
+    union id
+    {
+        long id_num;
+        char id_char[20];
+    }id_val;
+};
+widget prize;
+</code></pre>
+
+<p>这样就得如此访问：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>prize.id_val.id_num
+</code></pre></div></div>
+
+<p>匿名共用体(anonymous union)没有名称，成员将成为位于相同地址处的变量。显然，每次只有一
+个成员是当前的成员：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>struct widget
+{
+	char brand[20];
+    union id
+    {
+        long id_num;
+        char id_char[20];
+    }
+};
+widget prize;
+</code></pre></div></div>
+
+<p><strong>由于共用体是匿名的，因此id_num和id_char被视为prize的两个成员，它们的地址相同，所以不需</strong>
+<strong>要中间标识符id_val。</strong>程序员负责确定当前哪个成员是活动的。</p>
+
+<h3 id="枚举enum">枚举enum</h3>
+
+<p><code class="language-plaintext highlighter-rouge">enum spectrum {red,orange,yellow,green,blue,violet,indigo,ultraviolet};</code></p>
+
+<p>这条语句完成两项工作:</p>
+
+<ul>
+  <li>让spectrum成为新类型的名称：spectrum被称为枚举(enumeration),就像struct变量被称为结构一样。</li>
+  <li>将red、orange、yellow等作为符号常量，它们对应整数值0~7。这些常量叫作枚举量(enumerator)。</li>
+</ul>
+
+<p>它的特性：</p>
+
+<ul>
+  <li>
+    <p>只能将定义时使用的枚举量赋值给枚举变量</p>
+  </li>
+  <li>
+    <p>在使用强制类型转换时，可以将一个有效的int值赋给枚举变量</p>
+
+    <p><code class="language-plaintext highlighter-rouge">band spectrum(3); //typecast 3 to type spectrum</code></p>
+
+    <p><strong>只要这个int值在枚举的取值范围内（2的幂），赋值语句就是合法的，</strong>但是后续操作可能不合法。</p>
+  </li>
+  <li>
+    <p>可以通过设置锚点的方式显式设置枚举量的值：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">enum bigstep(first,second 100,third);</code></p>
+
+    <p>这里，first在默认情况下为0。后面没有被初始化的枚举量的值将比其前面的枚举量大1。因此，third的值为101。</p>
+  </li>
+  <li>
+    <p>enum可以自动提升为int，但反过来不行。</p>
+  </li>
+  <li>
+    <p>enum没有定义操作运算符，与运算符放在一起时会提升为int。</p>
+  </li>
+</ul>
+
+<h3 id="指针">指针</h3>
+
+<p><strong>使用new创建与释放</strong></p>
+
+<ul>
+  <li>
+    <p>不要使用delete来释放不是new分配的内存。</p>
+  </li>
+  <li>
+    <p>不要使用delete释放同一个内存块两次。</p>
+  </li>
+  <li>
+    <p>如果使用ncw[]为数组分配内存，则应使用delete[]来释放。</p>
+  </li>
+  <li>
+    <p>如果使用new[]为一个实体分配内存，则应使用delete(没有方括号)来释放。</p>
+
+    <p>所以，在类的成员变量种，如果创建长度为1的char数组，最好使用<code class="language-plaintext highlighter-rouge">str=new char[1]</code>而不是<code class="language-plaintext highlighter-rouge">str=new char</code>！</p>
+
+    <p>这样无论长度是多少，都不需要再修改析构函数。</p>
+  </li>
+  <li>
+    <p>对空指针应用delete是安全的。</p>
+  </li>
+</ul>
+
+<pre><code class="language-C++">int psome new int [10];//get a block of 10 ints
+delete [] psome;
+</code></pre>
+
+<p><strong>I/O</strong></p>
+
+<p>一般来说，如果给cout提供一个指针，它将打印地址。但如果指针的类型为char*,则cout将显示指
+向的字符串。如果要显示的是字符串的地址，则必须将这种指针强制转换为另一种指针类型，如int*因此，ps显示为字符串“fox”,而(int*)ps显示为该字符串的地址。</p>
+
+<pre><code class="language-C++">ps =animal; //set ps to point to-string
+cout&lt;&lt;animal&lt;&lt;"at"&lt;&lt;(int*)animal&lt;&lt;endl;
+cout&lt;&lt;ps&lt;&lt;"at"&lt;(int*t)ps&lt;&lt;endl;
+它将生成下面的输出：
+fox at 0x0065fd30
+fox at 0x0065fd30
+</code></pre>
+
+<p><strong>使用指针访问结构体成员</strong></p>
+
+<p>比较棘手的一步是访问成员。创建动态结构时，不能将成员运算符句点用于结构名，因为这种结构没
+有名称，只是知道它的地址。C++专门为这种情况提供了一个运算符：箭头成员运算符(-&gt;)。</p>
+
+<p>例如<code class="language-plaintext highlighter-rouge">ps-&gt;price</code>。</p>
+
+<p>另一种方式：<code class="language-plaintext highlighter-rouge">(*ps).price</code></p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH4 复合类型 字符串的输入 cin使用空白（空格、制表符和换行符）来确定字符串的结束位置，这意味着cin在获取字符数组输入时只读取一个单词。读取该单词后，cin将该字符串放到数组中，并自动在结尾添加空字符。 读取一行 面向行的输入：getline() getline()函数读取整行，它使用通过回车键输入的换行符来确定输入结尾。 例如，假设要使用getline()将姓名读入到一个包含20个元素的name数组中。可以使用这样的函数调用： cin.getline (name,20); 这将把一行读入到name数组中，如果这行包含的字符不超过19个。 它通过换行符来确定行尾，但不保存换行符（也就是说它将从缓冲区里读取到换行符并丢弃）。 另外，getline函数返回当前cin对象，可以连续调用： cin.getline(namel,Arsize).getline(name2,Arsize); 面向行的输入：get() istream类（cin是一个istream对象！）有另一个名为get()的成员函数，该函数有几种变体。其中一种变体的工作方式与getline()类似，它们接受的参数相同，解释参数的方式也相同，并且都读取到行尾。 get并不再读取并丢弃换行符，而是将其留在输入队列中。假设我们连续两次调用get(): cin.get (name,Arsize); cin.get(dessert,Arsize);//a problem 由于第一次调用后，换行符将留在输入队列中，因此第二次调用时看到的第一个字符便是换行符。因此get()认为已到达行尾，而没有发现任何可读取的内容。如果不借助于帮助，get()将不能跨过该换行符。 get有另一种变体：使用不带任何参数的cin.get()调用可读取下一个字符（即使是换行符）： cin.get (name,Arsize);//read first line cin.get();//read newline cin.get(dessert,Arsize);//read second line get也返回一个cin对象，也可以连续使用： cin.get(name,Arsize).get();//concatenate member functions 为什么要使用get(),而不是getline()呢？ 首先，老式实现没有getline()。 其次，get()使输入更仔细。 例如，假设用get()将一行读入数组中。如何知道停止读取的原因是由于已经读取了整行，而不是由于数组已填满呢？查看下一个输入字符，如果是换行符，说明已读取了整行；否则，说明该行中还有其他输入。 总之，getline()使用起来简单一些，但get()使得检查错误更简单些。可以用其中的任何一个来读取一行输入。 空行 当get()（不是getline()）读取空行后将设置失效位(failbit)。这意味着接下来的输入将被阻断，但可以用下面的命令来恢复输入： cin.clear(); 溢出 另一个潜在的问题是，输入字符串可能比分配的空间长。 如果输入行包含的字符数比指定的多，则getline()和get()将把余下的字符留在输入队列中，而getline()还会设置失效位，并关闭后面的输入。 string类 需要注意的是，需要从cin中读取到一个string类的方式如下： getline(cin,str); 这表明这里的getline不是一个类方法。这个getline也是遇到换行符停止，并丢弃它。 其他形式的字符串字面值 除char类型外，C++还有类型wchar_t，而C++11新增了类型char16_t和char32_t。对于这些类型的字符串字面值，C++分别使用前缀L、u和U表示，下面是一个如何使用这些前缀的例子： wchar_t title[]=L"Chief Astrogator";//.w_char 'string char16_t name[]=u"Felonia Ripova";//char 16 string char32_t car[]U"Humber Super Snipe";//char 32 string char16_t和char是两种不同的字符类型，它们的主要区别在于它们的大小和用途： char：这是最基本的字符类型，通常用于存储ASCII字符。在大多数系统中，char的大小是8位（1字节）。这意味着它可以直接表示ASCII字符集中的字符，但对于更大的字符集（如Unicode），一个char可能不足以表示一个字符。 char16_t：这是一种16位（2字节）的字符类型，通常用于存储UTF-16编码的Unicode字符。这意味着它可以表示Unicode字符集中的大多数字符，包括ASCII字符和许多非ASCII字符。 下面是一个例子，说明了char和char16_t的区别： #include &lt;iostream&gt; int main() { char c = 'A'; // ASCII character std::cout &lt;&lt; "char: " &lt;&lt; c &lt;&lt; "\n"; // Character 'LATIN SMALL LETTER A WITH GRAVE' (U+00E0) in UTF-16 char16_t c16 = u'\u00E0'; std::cout &lt;&lt; "char16_t: " &lt;&lt; c16 &lt;&lt; "\n"; return 0; } 在这个例子中，char变量c存储了一个ASCII字符'A'，而char16_t变量c16存储了一个Unicode字符'LATIN SMALL LETTER A WITH GRAVE'（U+00E0）。注意，这个Unicode字符是不能用一个char来表示的，因为它的编码超出了char的范围。 注意：在打印char16_t类型的字符时，可能会出现问题，因为标准的C++ I/O库并不直接支持char16_t和char32_t。如果你需要处理char16_t或char32_t的字符串，你可能需要使用专门用于处理这些类型的库或函数。 C++11还支持Unicode字符编码方案UTF-8。在这种方案中，根据编码的数字值，字符可能存储为1-4个八位组。C++使用前缀u8来表示这种类型的字符串字面值。 C+11新增的另一种类型是原始(raw)字符串。在原始字符串中，字符表示的就是自己，例如；序列\n 不表示换行符，而表示两个常规字符斜杠和，因此在屏幕上显示时，将显示这两个字符。 当然，既然可在字符串字面量包含”，就不能再使用它来表示字符串的开头和末尾。因此，原始字符串将"(和)"用作定界符，并使用前缀R来标识原始字符串： cout.&lt;&lt;R"(Jim "King"Tutt uses"\n"instead.of.endl.)"&lt;&lt;'\n'; 上述代码将显示如下内容： Jim "King" Tutt uses \n instead of endl. 如果使用标准字符串字面值；·将需编写如下代码： cout&lt;&lt;"Jim \King("Tutt uses\"n\"instead of endl."&lt;&lt;'\n'; 输入原始字符串时，按回车键不仅会移到下一行，还将在原始字符串中添加回车字符。 如果要在原始字符串中包含)”，该如何办呢？ 原始字符串语法允许您在表示字符串开头的”和(之间添加其他字符，这意味着表示字符串结尾的”和）之间也必须包含这些字符。 cout &lt;R"+*("(Who wouldn't?)",she whispered.)+*"&lt;&lt;endl; 将显示如下内容： "(Who wouldn't?)",she whispered. anonymous union 通常的struct里定义union： struct widget { char brand[20]; union id { long id_num; char id_char[20]; }id_val; }; widget prize; 这样就得如此访问： prize.id_val.id_num 匿名共用体(anonymous union)没有名称，成员将成为位于相同地址处的变量。显然，每次只有一 个成员是当前的成员： struct widget { char brand[20]; union id { long id_num; char id_char[20]; } }; widget prize; 由于共用体是匿名的，因此id_num和id_char被视为prize的两个成员，它们的地址相同，所以不需 要中间标识符id_val。程序员负责确定当前哪个成员是活动的。 枚举enum enum spectrum {red,orange,yellow,green,blue,violet,indigo,ultraviolet}; 这条语句完成两项工作: 让spectrum成为新类型的名称：spectrum被称为枚举(enumeration),就像struct变量被称为结构一样。 将red、orange、yellow等作为符号常量，它们对应整数值0~7。这些常量叫作枚举量(enumerator)。 它的特性： 只能将定义时使用的枚举量赋值给枚举变量 在使用强制类型转换时，可以将一个有效的int值赋给枚举变量 band spectrum(3); //typecast 3 to type spectrum 只要这个int值在枚举的取值范围内（2的幂），赋值语句就是合法的，但是后续操作可能不合法。 可以通过设置锚点的方式显式设置枚举量的值： enum bigstep(first,second 100,third); 这里，first在默认情况下为0。后面没有被初始化的枚举量的值将比其前面的枚举量大1。因此，third的值为101。 enum可以自动提升为int，但反过来不行。 enum没有定义操作运算符，与运算符放在一起时会提升为int。 指针 使用new创建与释放 不要使用delete来释放不是new分配的内存。 不要使用delete释放同一个内存块两次。 如果使用ncw[]为数组分配内存，则应使用delete[]来释放。 如果使用new[]为一个实体分配内存，则应使用delete(没有方括号)来释放。 所以，在类的成员变量种，如果创建长度为1的char数组，最好使用str=new char[1]而不是str=new char！ 这样无论长度是多少，都不需要再修改析构函数。 对空指针应用delete是安全的。 int psome new int [10];//get a block of 10 ints delete [] psome; I/O 一般来说，如果给cout提供一个指针，它将打印地址。但如果指针的类型为char*,则cout将显示指 向的字符串。如果要显示的是字符串的地址，则必须将这种指针强制转换为另一种指针类型，如int*因此，ps显示为字符串“fox”,而(int*)ps显示为该字符串的地址。 ps =animal; //set ps to point to-string cout&lt;&lt;animal&lt;&lt;"at"&lt;&lt;(int*)animal&lt;&lt;endl; cout&lt;&lt;ps&lt;&lt;"at"&lt;(int*t)ps&lt;&lt;endl; 它将生成下面的输出： fox at 0x0065fd30 fox at 0x0065fd30 使用指针访问结构体成员 比较棘手的一步是访问成员。创建动态结构时，不能将成员运算符句点用于结构名，因为这种结构没 有名称，只是知道它的地址。C++专门为这种情况提供了一个运算符：箭头成员运算符(-&gt;)。 例如ps-&gt;price。 另一种方式：(*ps).price]]></summary></entry><entry><title type="html">CH5 表达式</title><link href="/csnotes/2024/02/11/CH5-%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" rel="alternate" type="text/html" title="CH5 表达式" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH5%20%E8%A1%A8%E8%BE%BE%E5%BC%8F</id><content type="html" xml:base="/csnotes/2024/02/11/CH5-%E8%A1%A8%E8%BE%BE%E5%BC%8F.html"><![CDATA[<h2 id="ch5-表达式">CH5 表达式</h2>
+
+<h3 id="类型别名">类型别名</h3>
+
+<p>C++为类型建立别名的方式有两种。</p>
+
+<ul>
+  <li>一种是使用预处理器
+<code class="language-plaintext highlighter-rouge">#define BYTE char //preprocessor replaces BYTE with char</code>
+这样，预处理器将在编译程序时用char替换所有的BYTE,从而使BYTE成为char的别名，</li>
+  <li>第二种方法是使用C++和C的关键字typedef来创建别名。例如；要将byte作为char的别名，可以这样做：
+<code class="language-plaintext highlighter-rouge">typedef char byte;//makes-byte an alfas forchar</code></li>
+</ul>
+
+<p>下面是通用格式：
+<code class="language-plaintext highlighter-rouge">typedef typeName aliasName;</code></p>
+
+<p>换句话说，如果要将aliasName作为某种类型的别名，可以声明aliasName,如同将aliasName声明为
+这种类型的变量那样，然后在声明的前面加上关键字typedef。例如，要让byte pointer成为char指针的别名，可将byte_pointer声明为char指针，然后在前面加上typedef:
+<code class="language-plaintext highlighter-rouge">typedef'char.byte pointer;//pointer to char type</code></p>
+
+<p>也可以使用#define，不过声明一系列变量时，这种方法不适用。例如，：请看下面的代码</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#define FLOAT POINTER float
+FLOAT POINTER pa,pb;
+</code></pre></div></div>
+
+<p>预处理器置换将该声明转换为这样：
+<code class="language-plaintext highlighter-rouge">float* pa,pb;</code>
+typedef方法不会有这样的问题。它能够处理更复杂的类型别名，这使得与使用#define相比；使用typedef是一种更佳的选择。
+注意，<strong>typedef不会创建新类型，而只是为已有的类型建立一个新名称</strong>。如果将word作为int的别名，
+则cout将把word类型的值视为int类型</p>
+
+<h3 id="计时">计时</h3>
+
+<p>在C和C++的<code class="language-plaintext highlighter-rouge">&lt;ctime&gt;</code>库中，<code class="language-plaintext highlighter-rouge">CLOCKS_PER_SEC</code>是一个宏，它定义了每秒的时钟滴答数。这个宏常常用于将<code class="language-plaintext highlighter-rouge">clock()</code>函数返回的时钟滴答数转换为秒数。</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">clock()</code>函数返回程序从启动到<code class="language-plaintext highlighter-rouge">clock()</code>被调用时消耗的处理器时间。这个时间是以时钟滴答数（clock ticks）为单位的，而不是秒。</strong>因此，为了得到消耗的秒数，你需要把<code class="language-plaintext highlighter-rouge">clock()</code>的返回值除以<code class="language-plaintext highlighter-rouge">CLOCKS_PER_SEC</code>。</p>
+
+<p>例如：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;ctime&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">clock_t</span> <span class="n">start</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">clock</span><span class="p">();</span>
+    
+    <span class="c1">// Do some computation...</span>
+    
+    <span class="n">std</span><span class="o">::</span><span class="kt">clock_t</span> <span class="n">end</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">clock</span><span class="p">();</span>
+    <span class="kt">double</span> <span class="n">elapsed_secs</span> <span class="o">=</span> <span class="kt">double</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">CLOCKS_PER_SEC</span><span class="p">;</span>
+    
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Elapsed time: "</span> <span class="o">&lt;&lt;</span> <span class="n">elapsed_secs</span> <span class="o">&lt;&lt;</span> <span class="s">" seconds.</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在这个例子中，我们首先调用<code class="language-plaintext highlighter-rouge">clock()</code>获取程序开始的时间（以时钟滴答数为单位），然后进行一些计算，然后再次调用<code class="language-plaintext highlighter-rouge">clock()</code>获取程序结束的时间。然后我们用结束时间减去开始时间，得到消耗的时钟滴答数，然后把这个数除以<code class="language-plaintext highlighter-rouge">CLOCKS_PER_SEC</code>，得到消耗的秒数。</p>
+
+<p>注意，<code class="language-plaintext highlighter-rouge">CLOCKS_PER_SEC</code>的值依赖于实现，但在许多系统中，它的值是1000000，这意味着每秒有1000000个时钟滴答。</p>
+
+<h3 id="循环和文本输入">循环和文本输入</h3>
+
+<p><strong>使用cin</strong></p>
+
+<pre><code class="language-C++">while(ch!='#')
+{
+    cout&lt;&lt;ch;
+    ++count;
+    cin&gt;&gt;ch;
+}
+</code></pre>
+
+<p>这样的方式会从输入缓冲区内一个一个字符读取，<strong>并忽略掉空白和换行</strong></p>
+
+<p><strong>EOF</strong></p>
+
+<p>关注两个cin的成员函数：cin.eof(), cin.fail()</p>
+
+<p>检测到EOF后，cin将两位（eofbit<strong>和</strong>failbit）都设置为1。可以通过成员函数eof()来查看eofbit是否被设置：</p>
+
+<ul>
+  <li>如果检测到EOF,则cin.eof()将返回bool值true,否则返回false。</li>
+  <li>同样，如果eofbit<strong>或</strong>failbit被设置为1,则fail()成员函数返回true,否则返回false。</li>
+</ul>
+
+<p>注意，eof()和fail()方法报告最近读取的结果：也就是说，它们在事后报告，而不是预先报告。因此应将cin.eof()或cin.fail()测试放在读取后。</p>
+
+<p>上面讲述的是，读取到EOF后，标志位会被设置，且两个成员函数会改变。同时还有另一种方法判断：判断ch的内容。</p>
+
+<ul>
+  <li>cin.get()将返回一个用符号常量EOF表示的特殊值。该常量是在头文件iostream中定义的，它通常定义为-1（因为ASCII没有-1的字符）</li>
+  <li>使用<code class="language-plaintext highlighter-rouge">ch==EOF</code>判断</li>
+</ul>
+
+<p><strong>提示：需要知道的是，EOF不表示输入中的字符，而是指出没有字符。</strong></p>
+
+<p>在某些情况下，char是无符号的，此时必须把cin.get()返回值赋给int变量。然而如果这样做，在显示ch时必须将其强制转换成char类型。</p>
+
+<h3 id="右值引用">右值引用</h3>
+
+<p>右值引用：在类型声明中，<code class="language-plaintext highlighter-rouge">&amp;&amp;</code>被用作右值引用。例如，<code class="language-plaintext highlighter-rouge">int&amp;&amp; r = std::move(a);</code>这里的<code class="language-plaintext highlighter-rouge">&amp;&amp;</code>用来声明一个右值引用。</p>
+
+<p>右值引用是C++11引入的一个新特性，主要用于实现移动语义和完美转发。移动语义可以提高程序的效率，因为它们允许将资源（如动态分配的内存）从一个对象转移到另一个对象，而不是创建一个新的副本。完美转发允许函数模板将其参数”完美地”转发给其他函数，保持参数的原始类型（包括左值、右值、常量等属性）。</p>
+
+<p>举例来说，如果你有一个对象，你想要将其传递给另一个对象，但你不再需要原始对象，那么你可以使用<code class="language-plaintext highlighter-rouge">std::move</code>来将原始对象转换为一个右值，然后使用右值引用来接收它，这样你就可以避免不必要的拷贝操作。</p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH5 表达式 类型别名 C++为类型建立别名的方式有两种。 一种是使用预处理器 #define BYTE char //preprocessor replaces BYTE with char 这样，预处理器将在编译程序时用char替换所有的BYTE,从而使BYTE成为char的别名， 第二种方法是使用C++和C的关键字typedef来创建别名。例如；要将byte作为char的别名，可以这样做： typedef char byte;//makes-byte an alfas forchar 下面是通用格式： typedef typeName aliasName; 换句话说，如果要将aliasName作为某种类型的别名，可以声明aliasName,如同将aliasName声明为 这种类型的变量那样，然后在声明的前面加上关键字typedef。例如，要让byte pointer成为char指针的别名，可将byte_pointer声明为char指针，然后在前面加上typedef: typedef'char.byte pointer;//pointer to char type 也可以使用#define，不过声明一系列变量时，这种方法不适用。例如，：请看下面的代码 #define FLOAT POINTER float FLOAT POINTER pa,pb; 预处理器置换将该声明转换为这样： float* pa,pb; typedef方法不会有这样的问题。它能够处理更复杂的类型别名，这使得与使用#define相比；使用typedef是一种更佳的选择。 注意，typedef不会创建新类型，而只是为已有的类型建立一个新名称。如果将word作为int的别名， 则cout将把word类型的值视为int类型 计时 在C和C++的&lt;ctime&gt;库中，CLOCKS_PER_SEC是一个宏，它定义了每秒的时钟滴答数。这个宏常常用于将clock()函数返回的时钟滴答数转换为秒数。 clock()函数返回程序从启动到clock()被调用时消耗的处理器时间。这个时间是以时钟滴答数（clock ticks）为单位的，而不是秒。因此，为了得到消耗的秒数，你需要把clock()的返回值除以CLOCKS_PER_SEC。 例如： #include &lt;ctime&gt; #include &lt;iostream&gt; int main() { std::clock_t start = std::clock(); // Do some computation... std::clock_t end = std::clock(); double elapsed_secs = double(end - start) / CLOCKS_PER_SEC; std::cout &lt;&lt; "Elapsed time: " &lt;&lt; elapsed_secs &lt;&lt; " seconds.\n"; return 0; } 在这个例子中，我们首先调用clock()获取程序开始的时间（以时钟滴答数为单位），然后进行一些计算，然后再次调用clock()获取程序结束的时间。然后我们用结束时间减去开始时间，得到消耗的时钟滴答数，然后把这个数除以CLOCKS_PER_SEC，得到消耗的秒数。 注意，CLOCKS_PER_SEC的值依赖于实现，但在许多系统中，它的值是1000000，这意味着每秒有1000000个时钟滴答。 循环和文本输入 使用cin while(ch!='#') { cout&lt;&lt;ch; ++count; cin&gt;&gt;ch; } 这样的方式会从输入缓冲区内一个一个字符读取，并忽略掉空白和换行 EOF 关注两个cin的成员函数：cin.eof(), cin.fail() 检测到EOF后，cin将两位（eofbit和failbit）都设置为1。可以通过成员函数eof()来查看eofbit是否被设置： 如果检测到EOF,则cin.eof()将返回bool值true,否则返回false。 同样，如果eofbit或failbit被设置为1,则fail()成员函数返回true,否则返回false。 注意，eof()和fail()方法报告最近读取的结果：也就是说，它们在事后报告，而不是预先报告。因此应将cin.eof()或cin.fail()测试放在读取后。 上面讲述的是，读取到EOF后，标志位会被设置，且两个成员函数会改变。同时还有另一种方法判断：判断ch的内容。 cin.get()将返回一个用符号常量EOF表示的特殊值。该常量是在头文件iostream中定义的，它通常定义为-1（因为ASCII没有-1的字符） 使用ch==EOF判断 提示：需要知道的是，EOF不表示输入中的字符，而是指出没有字符。 在某些情况下，char是无符号的，此时必须把cin.get()返回值赋给int变量。然而如果这样做，在显示ch时必须将其强制转换成char类型。 右值引用 右值引用：在类型声明中，&amp;&amp;被用作右值引用。例如，int&amp;&amp; r = std::move(a);这里的&amp;&amp;用来声明一个右值引用。 右值引用是C++11引入的一个新特性，主要用于实现移动语义和完美转发。移动语义可以提高程序的效率，因为它们允许将资源（如动态分配的内存）从一个对象转移到另一个对象，而不是创建一个新的副本。完美转发允许函数模板将其参数”完美地”转发给其他函数，保持参数的原始类型（包括左值、右值、常量等属性）。 举例来说，如果你有一个对象，你想要将其传递给另一个对象，但你不再需要原始对象，那么你可以使用std::move来将原始对象转换为一个右值，然后使用右值引用来接收它，这样你就可以避免不必要的拷贝操作。]]></summary></entry><entry><title type="html">CH7 函数</title><link href="/csnotes/2024/02/11/CH7-%E5%87%BD%E6%95%B0.html" rel="alternate" type="text/html" title="CH7 函数" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH7%20%E5%87%BD%E6%95%B0</id><content type="html" xml:base="/csnotes/2024/02/11/CH7-%E5%87%BD%E6%95%B0.html"><![CDATA[<h2 id="ch7-函数">CH7 函数</h2>
+
+<h3 id="函数指针">函数指针</h3>
+
+<p>与数据项相似，函数也有地址。函数的地址是存储其机器语言代码的内存的开始地址。</p>
+
+<p>使用函数指针三步骤：</p>
+
+<ul>
+  <li>获取函数的地址</li>
+  <li>声明一个函数指针</li>
+  <li>使用函数指针来调用函数</li>
+</ul>
+
+<p><strong>获取函数的地址</strong></p>
+
+<p>获取函数的地址很简单：只要使用函数名（后面不跟参数）即可。也就是说，如果thik()是一个函数，
+则thik就是该函数的地址。要将函数作为参数进行传递，必须传递函数名。</p>
+
+<pre><code class="language-C++">process(think); //passes address of think()to process()
+thought(think()); //passes return value of think()to thought()
+</code></pre>
+
+<p><strong>声明函数指针</strong></p>
+
+<p>声明指向某种数据类型的指针时，必须指定指针指向的类型。同样，声明指向函数的指针时，也必须
+指定指针指向的函数类型。这意味着声明应指定函数的<strong>返回类型</strong>以及函数的<strong>参数列表</strong>。</p>
+
+<p>注意：函数指针的参数列表的名称是可选的。</p>
+
+<pre><code class="language-C++">double (*pf)(int);//pf points to a function that returns double
+double *pf(int);//pf()a function that returns a pointer-to-double
+</code></pre>
+
+<p>注意这里的函数指针的名称就是pf。</p>
+
+<p>正确地声明pf后，便可以将相应函数的地址赋给它：</p>
+
+<pre><code class="language-C++">double pam(int）;
+double (*pf)(int);
+pf=pam;//pf now points to the pam() function
+</code></pre>
+
+<p>在函数的参数列表中传入函数指针的方式：</p>
+
+<pre><code class="language-C++">void estimate(int lines,double (*pf)(int));
+</code></pre>
+
+<p><strong>使用函数指针来调用函数</strong></p>
+
+<p>有两种方式：</p>
+
+<pre><code class="language-C++">double y=(*pf)(5);
+double y=pf(5);
+</code></pre>
+
+<p>第一种格式虽然不太好看，但它给出了强有力的提示一代码正在使用函数指针。</p>
+
+<p>还可以用auto自动推断。</p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH7 函数 函数指针 与数据项相似，函数也有地址。函数的地址是存储其机器语言代码的内存的开始地址。 使用函数指针三步骤： 获取函数的地址 声明一个函数指针 使用函数指针来调用函数 获取函数的地址 获取函数的地址很简单：只要使用函数名（后面不跟参数）即可。也就是说，如果thik()是一个函数， 则thik就是该函数的地址。要将函数作为参数进行传递，必须传递函数名。 process(think); //passes address of think()to process() thought(think()); //passes return value of think()to thought() 声明函数指针 声明指向某种数据类型的指针时，必须指定指针指向的类型。同样，声明指向函数的指针时，也必须 指定指针指向的函数类型。这意味着声明应指定函数的返回类型以及函数的参数列表。 注意：函数指针的参数列表的名称是可选的。 double (*pf)(int);//pf points to a function that returns double double *pf(int);//pf()a function that returns a pointer-to-double 注意这里的函数指针的名称就是pf。 正确地声明pf后，便可以将相应函数的地址赋给它： double pam(int）; double (*pf)(int); pf=pam;//pf now points to the pam() function 在函数的参数列表中传入函数指针的方式： void estimate(int lines,double (*pf)(int)); 使用函数指针来调用函数 有两种方式： double y=(*pf)(5); double y=pf(5); 第一种格式虽然不太好看，但它给出了强有力的提示一代码正在使用函数指针。 还可以用auto自动推断。]]></summary></entry><entry><title type="html">CH8 函数进阶</title><link href="/csnotes/2024/02/11/CH8-%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" rel="alternate" type="text/html" title="CH8 函数进阶" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH8%20%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6</id><content type="html" xml:base="/csnotes/2024/02/11/CH8-%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html"><![CDATA[<h2 id="ch8-函数进阶">CH8 函数进阶</h2>
+
+<h3 id="引用变量">引用变量</h3>
+
+<p>引用是已定义的变量的<strong>别名</strong>（另一个名称）。</p>
+
+<pre><code class="language-C++">int rats;
+int &amp; rodents rats;//makes rodents an alias for rats
+</code></pre>
+
+<p>请注意，语句中的&amp;运算符不是地址运算符，而是将rodents的类型声明为int&amp;,即指向int变量
+的引用。</p>
+
+<p>引用看上去很像伪装表示的指针（其中，*解除引用运算符被隐式理解）。实际上，引用还是
+不同于指针的。除了表示法不同外，还有其他的差别。例如，差别之一是，必须在声明引用时将其初始化，而不能像指针那样，先声明，再赋值：</p>
+
+<pre><code class="language-C++">int rat;
+int rodent;
+rodent rat;//No,you can't do this.
+</code></pre>
+
+<p><strong>注意：必须在声明引用变量时进行初始化。</strong></p>
+
+<p><strong>引用更接近const指针，必须在创建时进行初始化，一旦与某个变量关联起来，就将一直效忠于它。</strong></p>
+
+<p>引用通常被用作函数参数：</p>
+
+<pre><code class="language-C++">void swapr(int&amp; a,int&amp; b)
+{
+	int temp;
+    temp=a;
+    a=b;
+    b=temp;
+}
+
+void swapp(int* p,int *q)
+{
+    int temp;
+    temp=*p;
+    *p=*q;
+    *q=temp;
+}
+int a,b;
+swapr(a,b);
+swapp(&amp;a,&amp;b);
+</code></pre>
+
+<p>注意调用方式。</p>
+
+<h3 id="临时变量引用参数和const">临时变量、引用参数和const</h3>
+
+<pre><code class="language-C++">double refcube(double &amp;ra)
+{
+    ra*=ra*=ra;
+    return ra;
+}
+double z=refcube(x+3.0);//should not compile,cuz x+3.0 is not a variable.
+</code></pre>
+
+<p>这样是不行的，因为x+3.0不是一个变量。</p>
+
+<p>如果实参与引用参数不匹配C++将生成临时变量。当前，仅当参数为const引用时，C++才允许这
+样做，但以前不是这样。</p>
+
+<p>下面来看看何种情况下，C++将生成临时变量，以及为何对const引用的限制是合理的。</p>
+
+<p>编译器将在下面两种情况下生成临时变量：</p>
+
+<ul>
+  <li>
+    <p>实参的类型正确，但不是左值；</p>
+  </li>
+  <li>
+    <p>实参的类型不正确，但可以转换为正确的类型。</p>
+  </li>
+</ul>
+
+<p>所以如果这么定义就是合法的操作：</p>
+
+<pre><code class="language-C++">double refcube2(const double&amp; ra)
+{
+    
+    return ra*ra*ra;
+}
+double z=refcube2(x+3.0);//valid
+double z=refcube2(7.0);//valid
+</code></pre>
+
+<p>在这些情况下，编译器都将生成一个<strong>临时匿名变量</strong>，并<strong>让ra指向它</strong>，这些临时变量只在函数调用期间存在，此后编译器便可以随意将其删除。</p>
+
+<p><strong>为何要返回引用？</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">dup=accumulate(team,five)</code></p>
+
+<p>如果accumulate()返回一个结构，而不是指向结构的引用，将把整个结构复制到个临时位置，再将这个拷贝复制给dup。</p>
+
+<p>但在返回值为引用时，将直接把team复制到dup,其效率更高。</p>
+
+<p><strong>返回引用时最重要的一点是，应该避免返回函数终止时不再存在的内存单元引用。</strong></p>
+
+<ul>
+  <li>应该返回new创建的变量</li>
+  <li>应该返回参数中传进来的引用</li>
+</ul>
+
+<p><strong>为何要将const用于返回引用类型的函数？</strong></p>
+
+<p>如果返回引用，那么它将是一个可修改的左值，那么以下诡异的代码其实是合法的：</p>
+
+<p><code class="language-plaintext highlighter-rouge">accumulate(dup,five)=four</code></p>
+
+<p>假设您要使用引用返回值，但又不允许执行像给accumulate()赋值这样的操作，只需将返回类型声明为const引用：</p>
+
+<pre><code class="language-C++">const free throws &amp;
+    accumulate(free_throws &amp;target,const free_throws &amp;source);
+</code></pre>
+
+<p>现在返回类型为const,是不可修改的左值，因此下面的赋值语句不合法：</p>
+
+<p><code class="language-plaintext highlighter-rouge">accumulate(dup,five)=four</code></p>
+
+<p><strong>何时使用引用？</strong></p>
+
+<p>对于使用传递的值而不作修改的函数：</p>
+
+<ul>
+  <li>如果数据对象很小，如内置数据类型或小型结构，则按值传递。</li>
+  <li>如果数据对象是数组，则使用指针，因为这是唯一的选择，并将指针声明为指向const的指针。</li>
+  <li>如果数据对象是较大的结构，则使用const指针或const引用，以提高程序的效率。这样可以节省复制结构所需的时间和空间。</li>
+  <li>如果数据对象是类对象，则使用const引用。类设计的语义常常要求使用引用，这是C++新增这项特性的主要原因。因此，传递类对象参数的标准方式是按引用传递。</li>
+</ul>
+
+<p>对于修改调用函数中数据的函数：</p>
+
+<ul>
+  <li>如果数据对象是内置数据类型，则使用指针。如果看到诸如fixit(&amp;x)这样的代码（其中x是int），
+则很明显，该函数将修改x。</li>
+  <li>如果数据对象是数组，则只能使用指针。</li>
+  <li>如果数据对象是结构，则使用引用或指针。</li>
+  <li>如果数据对象是类对象，则使用引用。</li>
+</ul>
+
+<h3 id="函数重载">函数重载</h3>
+
+<p>函数重载的关键是函数的参数列表——也称为函数特征标(unction signature)，如果两个函数的参数
+数数目和类型相同，同时参数的排列顺序也相同，则它们的特征标相同，而变量名是无关紧要的。</p>
+
+<p><strong>请记住，是特征标，而不是函数类型使得可以对函数进行重载。</strong></p>
+
+<p>如果没有原型匹配：</p>
+
+<ul>
+  <li>如果函数名有唯一原型，那么会尝试使用强制类型转换</li>
+  <li>如果有多个原型，那么报错</li>
+</ul>
+
+<p><strong>编译器在检查函数特征标时，将把类型引用和类型本身视为同一个特征标。</strong></p>
+
+<pre><code class="language-C++">double cube(double x);
+double cube(double &amp;x);
+cout&lt;&lt;cube(x);//invalid,which?????
+</code></pre>
+
+<p>此时编译器无法确定应该使用哪个类型。</p>
+
+<p><strong>再次强调：请记住，是特征标，而不是函数类型使得可以对函数进行重载。</strong></p>
+
+<p>例如以下两个声明是互斥的：</p>
+
+<pre><code class="language-C++">long gronk(int n,float m);
+double gronk(int n,float m);
+</code></pre>
+
+<h3 id="函数模板">函数模板</h3>
+
+<p>函数模板是通用的函数描述，也就是说，它们使用泛型来定义函数，其中的泛型可用具体的类型（如int或double)上替换。</p>
+
+<p>函数模板允许以任意类型的方式来定义函数。例如，可以这样建立一个交换模板：</p>
+
+<pre><code class="language-C++">template &lt;typename AnyType&gt;
+void Swap(AnyType &amp;a,AnyType &amp;b)
+{
+    AnyType temp;
+    temp=a;
+    a=b;
+    b=temp;
+}
+</code></pre>
+
+<p>第一行指出；要建立一个模板，并将类型命名为AnyTypes关键字template和typename是必需的，<strong>除</strong>
+<strong>非可以使用关键字class代替typename（一般情况下可以）</strong>。另外，必须使用尖括号。类型名可以任意选择（这里称为AnyType)，只要遵守C++命名规则即可。</p>
+
+<p>许多程序员都使用简单的名称，如T。</p>
+
+<p>模板并不创建任何函数，而只是告诉编译器如何定义函数。需要交换int的函数时，编译器将按模板模式创建这样的函数，并用int代替AnyType,同样，需要交换double的函数时，编译器将按模板模式创建这样的函数，并用double代替AnyType。</p>
+
+<p>例如，可以直接这么使用：<code class="language-plaintext highlighter-rouge">Swap(a,b)</code>，编译器会自动为其生成int/double版本。</p>
+
+<p><strong>注意，函数模板不能缩短可执行程序。</strong></p>
+
+<p>模板像宏定义，它不能节省空间，如果使用了int和double版本的swap，则最终的代码段会包含两个swap函数：最终仍将由两个独立的函数定义，就像以手工方式定义了这些函数一样。最终的代码不包含任何模板，而只包含了为程序生成的实际函数。</p>
+
+<p>使用模板的好处是，它使生成多个函数定义更简单、更可靠。</p>
+
+<p><strong>模板也可以重载。</strong></p>
+
+<p><strong>局限性</strong>：编写的函数模板很可能无法处理某些类型。例如如果函数中有比较运算，而传入的是个数组，就崩了。</p>
+
+<h4 id="显式具体化">显式具体化</h4>
+
+<p>可以提供一个具体化函数定义——称为显式具体化(explicit specialization)，其中包含所需的代
+码。</p>
+
+<p>从形式上看，显式具体化有点像一种特殊重载。</p>
+
+<p><strong>当编译器找到与函数调用匹配的具体化定义时，将使用该定义，而不再寻找模板。</strong></p>
+
+<p>C++98标准中的具体化方法如下：</p>
+
+<ul>
+  <li>对于给定的函数名——可以有非模板函数、模板函数和显式具体化模板函数以及它们的重载版本</li>
+  <li>显式具体化的原型和定义应以template&lt;&gt;打头，并通过名称来指出类型。</li>
+  <li>优先级是非模板函数&gt;具体化&gt;模板函数</li>
+</ul>
+
+<pre><code class="language-C++">template &lt;class T&gt;
+void Swap(T &amp;a,T &amp;b)
+{
+    //inplementation for general version
+}
+
+//具体化
+template &lt;&gt; 
+void Swap(job &amp;a,job &amp;b)
+{
+    //implementation unique for type job
+}
+//也可以这样写，表明这是一个针对job类型的具体化：
+template &lt;&gt; 
+void Swap&lt;job&gt;(job &amp;a,job &amp;b)
+{
+    //implementation unique for type job
+}
+</code></pre>
+
+<h4 id="显示实例化">显示实例化</h4>
+
+<p>记住，在代码中包含函数模板本身并不会生成函数定义，它只是一个用于生成函数定义的方案。编译器使用模板为特定类型生成函数定义时一得到的是模板实例(instantiation)。</p>
+
+<p>例如，函数调用Swap(i,j)导致编译器生成Swap()的一个实例，该实例使用int类型。</p>
+
+<p><strong>模板并非函数定义，但使用int的模板实例是函数定义。</strong>这种实例化方式被称为隐式实例化
+(implicit instantiation)，因为编译器之所以知道需要进行定义，是由于程序调用Swap()函数时提供了int参数。</p>
+
+<p>最初，编译器只能通过隐式实例化，来使用模板生成函数定义，但现在C++还允许显式实例化(explicit
+instantiation)。这意味着可以直接命令编译器创建特定的实例，如Swap<int>()。</int></p>
+
+<p>其语法是<code class="language-plaintext highlighter-rouge">template void Swap&lt;int&gt;(int,int);</code>，前面的&lt;&gt;没有了。</p>
+
+<h4 id="对比">对比</h4>
+
+<p><strong>显示具体化声明的意思是“不要使用Swap()模板来生成函数定义，而应使用专门为T类型显式地定义</strong>
+<strong>的函数定义”。</strong></p>
+
+<p>这些原型必须有自己的函数定义。显式具体化声明在关键字template后包含&lt;&gt;，而显式实例化没有。</p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH8 函数进阶 引用变量 引用是已定义的变量的别名（另一个名称）。 int rats; int &amp; rodents rats;//makes rodents an alias for rats 请注意，语句中的&amp;运算符不是地址运算符，而是将rodents的类型声明为int&amp;,即指向int变量 的引用。 引用看上去很像伪装表示的指针（其中，*解除引用运算符被隐式理解）。实际上，引用还是 不同于指针的。除了表示法不同外，还有其他的差别。例如，差别之一是，必须在声明引用时将其初始化，而不能像指针那样，先声明，再赋值： int rat; int rodent; rodent rat;//No,you can't do this. 注意：必须在声明引用变量时进行初始化。 引用更接近const指针，必须在创建时进行初始化，一旦与某个变量关联起来，就将一直效忠于它。 引用通常被用作函数参数： void swapr(int&amp; a,int&amp; b) { int temp; temp=a; a=b; b=temp; } void swapp(int* p,int *q) { int temp; temp=*p; *p=*q; *q=temp; } int a,b; swapr(a,b); swapp(&amp;a,&amp;b); 注意调用方式。 临时变量、引用参数和const double refcube(double &amp;ra) { ra*=ra*=ra; return ra; } double z=refcube(x+3.0);//should not compile,cuz x+3.0 is not a variable. 这样是不行的，因为x+3.0不是一个变量。 如果实参与引用参数不匹配C++将生成临时变量。当前，仅当参数为const引用时，C++才允许这 样做，但以前不是这样。 下面来看看何种情况下，C++将生成临时变量，以及为何对const引用的限制是合理的。 编译器将在下面两种情况下生成临时变量： 实参的类型正确，但不是左值； 实参的类型不正确，但可以转换为正确的类型。 所以如果这么定义就是合法的操作： double refcube2(const double&amp; ra) { return ra*ra*ra; } double z=refcube2(x+3.0);//valid double z=refcube2(7.0);//valid 在这些情况下，编译器都将生成一个临时匿名变量，并让ra指向它，这些临时变量只在函数调用期间存在，此后编译器便可以随意将其删除。 为何要返回引用？ dup=accumulate(team,five) 如果accumulate()返回一个结构，而不是指向结构的引用，将把整个结构复制到个临时位置，再将这个拷贝复制给dup。 但在返回值为引用时，将直接把team复制到dup,其效率更高。 返回引用时最重要的一点是，应该避免返回函数终止时不再存在的内存单元引用。 应该返回new创建的变量 应该返回参数中传进来的引用 为何要将const用于返回引用类型的函数？ 如果返回引用，那么它将是一个可修改的左值，那么以下诡异的代码其实是合法的： accumulate(dup,five)=four 假设您要使用引用返回值，但又不允许执行像给accumulate()赋值这样的操作，只需将返回类型声明为const引用： const free throws &amp; accumulate(free_throws &amp;target,const free_throws &amp;source); 现在返回类型为const,是不可修改的左值，因此下面的赋值语句不合法： accumulate(dup,five)=four 何时使用引用？ 对于使用传递的值而不作修改的函数： 如果数据对象很小，如内置数据类型或小型结构，则按值传递。 如果数据对象是数组，则使用指针，因为这是唯一的选择，并将指针声明为指向const的指针。 如果数据对象是较大的结构，则使用const指针或const引用，以提高程序的效率。这样可以节省复制结构所需的时间和空间。 如果数据对象是类对象，则使用const引用。类设计的语义常常要求使用引用，这是C++新增这项特性的主要原因。因此，传递类对象参数的标准方式是按引用传递。 对于修改调用函数中数据的函数： 如果数据对象是内置数据类型，则使用指针。如果看到诸如fixit(&amp;x)这样的代码（其中x是int）， 则很明显，该函数将修改x。 如果数据对象是数组，则只能使用指针。 如果数据对象是结构，则使用引用或指针。 如果数据对象是类对象，则使用引用。 函数重载 函数重载的关键是函数的参数列表——也称为函数特征标(unction signature)，如果两个函数的参数 数数目和类型相同，同时参数的排列顺序也相同，则它们的特征标相同，而变量名是无关紧要的。 请记住，是特征标，而不是函数类型使得可以对函数进行重载。 如果没有原型匹配： 如果函数名有唯一原型，那么会尝试使用强制类型转换 如果有多个原型，那么报错 编译器在检查函数特征标时，将把类型引用和类型本身视为同一个特征标。 double cube(double x); double cube(double &amp;x); cout&lt;&lt;cube(x);//invalid,which????? 此时编译器无法确定应该使用哪个类型。 再次强调：请记住，是特征标，而不是函数类型使得可以对函数进行重载。 例如以下两个声明是互斥的： long gronk(int n,float m); double gronk(int n,float m); 函数模板 函数模板是通用的函数描述，也就是说，它们使用泛型来定义函数，其中的泛型可用具体的类型（如int或double)上替换。 函数模板允许以任意类型的方式来定义函数。例如，可以这样建立一个交换模板： template &lt;typename AnyType&gt; void Swap(AnyType &amp;a,AnyType &amp;b) { AnyType temp; temp=a; a=b; b=temp; } 第一行指出；要建立一个模板，并将类型命名为AnyTypes关键字template和typename是必需的，除 非可以使用关键字class代替typename（一般情况下可以）。另外，必须使用尖括号。类型名可以任意选择（这里称为AnyType)，只要遵守C++命名规则即可。 许多程序员都使用简单的名称，如T。 模板并不创建任何函数，而只是告诉编译器如何定义函数。需要交换int的函数时，编译器将按模板模式创建这样的函数，并用int代替AnyType,同样，需要交换double的函数时，编译器将按模板模式创建这样的函数，并用double代替AnyType。 例如，可以直接这么使用：Swap(a,b)，编译器会自动为其生成int/double版本。 注意，函数模板不能缩短可执行程序。 模板像宏定义，它不能节省空间，如果使用了int和double版本的swap，则最终的代码段会包含两个swap函数：最终仍将由两个独立的函数定义，就像以手工方式定义了这些函数一样。最终的代码不包含任何模板，而只包含了为程序生成的实际函数。 使用模板的好处是，它使生成多个函数定义更简单、更可靠。 模板也可以重载。 局限性：编写的函数模板很可能无法处理某些类型。例如如果函数中有比较运算，而传入的是个数组，就崩了。 显式具体化 可以提供一个具体化函数定义——称为显式具体化(explicit specialization)，其中包含所需的代 码。 从形式上看，显式具体化有点像一种特殊重载。 当编译器找到与函数调用匹配的具体化定义时，将使用该定义，而不再寻找模板。 C++98标准中的具体化方法如下： 对于给定的函数名——可以有非模板函数、模板函数和显式具体化模板函数以及它们的重载版本 显式具体化的原型和定义应以template&lt;&gt;打头，并通过名称来指出类型。 优先级是非模板函数&gt;具体化&gt;模板函数 template &lt;class T&gt; void Swap(T &amp;a,T &amp;b) { //inplementation for general version } //具体化 template &lt;&gt; void Swap(job &amp;a,job &amp;b) { //implementation unique for type job } //也可以这样写，表明这是一个针对job类型的具体化： template &lt;&gt; void Swap&lt;job&gt;(job &amp;a,job &amp;b) { //implementation unique for type job } 显示实例化 记住，在代码中包含函数模板本身并不会生成函数定义，它只是一个用于生成函数定义的方案。编译器使用模板为特定类型生成函数定义时一得到的是模板实例(instantiation)。 例如，函数调用Swap(i,j)导致编译器生成Swap()的一个实例，该实例使用int类型。 模板并非函数定义，但使用int的模板实例是函数定义。这种实例化方式被称为隐式实例化 (implicit instantiation)，因为编译器之所以知道需要进行定义，是由于程序调用Swap()函数时提供了int参数。 最初，编译器只能通过隐式实例化，来使用模板生成函数定义，但现在C++还允许显式实例化(explicit instantiation)。这意味着可以直接命令编译器创建特定的实例，如Swap()。 其语法是template void Swap&lt;int&gt;(int,int);，前面的&lt;&gt;没有了。 对比 显示具体化声明的意思是“不要使用Swap()模板来生成函数定义，而应使用专门为T类型显式地定义 的函数定义”。 这些原型必须有自己的函数定义。显式具体化声明在关键字template后包含&lt;&gt;，而显式实例化没有。]]></summary></entry><entry><title type="html">CH9 内存模型和名称空间</title><link href="/csnotes/2024/02/11/CH9-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4.html" rel="alternate" type="text/html" title="CH9 内存模型和名称空间" /><published>2024-02-11T00:00:00+00:00</published><updated>2024-02-11T00:00:00+00:00</updated><id>/csnotes/2024/02/11/CH9%20%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4</id><content type="html" xml:base="/csnotes/2024/02/11/CH9-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4.html"><![CDATA[<h2 id="ch9-内存模型和名称空间">CH9 内存模型和名称空间</h2>
+
+<h3 id="单独编译">单独编译</h3>
+
+<h4 id="程序的组成">程序的组成</h4>
+
+<p>程序应该分为三部分：</p>
+
+<ul>
+  <li>头文件：包含结构声明和使用这些结构的函数的原型。</li>
+  <li>源代码文件：包含与结构有关的函数的代码。</li>
+  <li>源代码文件：包含调用与结构相关的函数的代码。</li>
+</ul>
+
+<p><strong>头文件中应该包含什么？</strong></p>
+
+<ul>
+  <li>函数原型。</li>
+  <li>使用#define或const定义的符号常量。</li>
+  <li>结构声明。</li>
+  <li>类声明。</li>
+  <li>模板声明。</li>
+  <li>内联函数。</li>
+</ul>
+
+<p>引用时使用<code class="language-plaintext highlighter-rouge">include "mylib.h"</code>而不是<code class="language-plaintext highlighter-rouge">include &lt;mylib.h&gt;</code>：</p>
+
+<ul>
+  <li>对于后者：会到存储标准头文件的主机系统的文件系统中查找。</li>
+  <li>对于前者：到当前的工作目录或源代码目录（或其他目录，这取决于编译器）。如果没有找到的话再区标准库中找。</li>
+</ul>
+
+<h3 id="存储持续性作用域和链接性">存储持续性、作用域和链接性</h3>
+
+<h4 id="外部变量">外部变量</h4>
+
+<p>单定义规则（ODR）：变量只能有一次定义（但可以有多个声明）。</p>
+
+<p>引用声明使用关键字extern，且不进行初始化。</p>
+
+<p>一般来说，如果在<code class="language-plaintext highlighter-rouge">a.h</code>或者<code class="language-plaintext highlighter-rouge">a.cpp</code>中定义了一个全局变量 <code class="language-plaintext highlighter-rouge">(extern) int a=10</code>，那么在其他文件中需要使用<code class="language-plaintext highlighter-rouge">extern int a</code>来标识这个全局变量已经在其他地方定义过了。</p>
+
+<p><strong>注意，如果一个全局变量定义在头文件<code class="language-plaintext highlighter-rouge">a.h</code>中，就不能在多个源文件中引用<code class="language-plaintext highlighter-rouge">a.h</code>，否则会造成多重定义错误。</strong></p>
+
+<p><strong>更一般的做法是，在<code class="language-plaintext highlighter-rouge">a.h</code>中声明，而在<code class="language-plaintext highlighter-rouge">a.cpp</code>中定义，然后其他源文件引用<code class="language-plaintext highlighter-rouge">a.h</code>。</strong></p>
+
+<h3 id="说明符和限定符">说明符和限定符</h3>
+
+<h4 id="cv限定符">cv限定符</h4>
+
+<ul>
+  <li>
+    <p>const</p>
+
+    <p>它表明，内存被初始化后程序就不能在修改它。当涉及到指针的时候略复杂，后续介绍。</p>
+  </li>
+  <li>
+    <p>volatile</p>
+
+    <p>即使程序代码没有对内存单元进行修改，其值也可能发生变化。例如，可以将一个指针指向某个硬件位置，其中包含了来自串行端口的时间或信息。</p>
+
+    <p><strong>在这种情况下，硬件（而不是程序）可能修改其中的内容。或者两个程序可能互相影响，共享数据。</strong></p>
+
+    <p>该关键字的作用是为了不要让编译器进行某种可能改变程序员意图的优化。例如，假设编译器发现，程序在几条语句中两次使用了某个变量的值，则编译器可能不是让程序查找这个值两次，而是将这个值缓存到寄存器中。这种优化假设变量的值在这两次使用之间不会变化。如果不将变量声明为volatile,则编译器将进行这种优化：将变量声明为volatile,相当于告诉编译器，不要进行这种优化。</p>
+
+    <p>这种情况实际上不太常用，只需要知道用法即可。</p>
+  </li>
+</ul>
+
+<h4 id="mutable">mutable</h4>
+
+<p>可以用它来指出，即便结构（或类）变量为const，其某个成员也可以被修改。</p>
+
+<p>这个关键字的影响是全局的。在定义struct时便可以指定某个成员是mutable的，这样即便后来定义了一个const的实例，在修改这个指定成员时也不受限制。</p>
+
+<h4 id="语言链接性">语言链接性</h4>
+
+<p>举一个函数重载的例子：编译器可能将<code class="language-plaintext highlighter-rouge">spiff(int)</code>转换为<code class="language-plaintext highlighter-rouge">_spoff_i</code>，而将<code class="language-plaintext highlighter-rouge">spiff(double,double)</code>转换为_<code class="language-plaintext highlighter-rouge">spiff_d_d</code>，这种方法被称为C++语言链接。</p>
+
+<h4 id="定位new运算符">定位new运算符</h4>
+
+<p>通常，new负责在堆(heap)中找到一个足以能够满足要求的内存块。</p>
+
+<p><strong>new运算符还有另一种变体，被称为定位new运算符，它让您能够指定要使用的位置。</strong></p>
+
+<p>程序员可能使用这种特性来设置其内存管理规程、处理需要通过特定地址进行访问的硬件或在特定位置创建对象。</p>
+
+<p><strong>要使用定位new特性，首先需要包含头文件new，它提供了这种版本的new运算符的原型。</strong></p>
+
+<p>然后将new运算符用于提供了所需地址的参数。除需要指定参数外，句法与常规new运算符相同。</p>
+
+<p>下面的代码段演示了new运算符的4种用法：</p>
+
+<pre><code class="language-C++">#include &lt;new&gt;
+struct chaff
+{
+    char dross [20]i
+    int slag;
+}:
+char bufferl[50];
+char buffer2[500]
+int main()
+{
+	chaff *pl,*p2;
+	int *p3,*p4;
+//first,the regular forms of new
+	pl = new chaff;//place structure in heap
+	p3 = new int [20];//place int array in heap
+//now,the two forms of placement new
+	p2 = new (buffer1) chaff;//place structure in bufferl
+	p4 = new (buffer2) int [20];//place int array in buffer2
+    ...
+</code></pre>
+
+<p>定位new运算符返回的是一个指针<strong>（基本上，它只是返回传递给它的地址，并将其强制转换为void*）</strong>，它的地址是指定好的，这个地址可以是任意的（局部，静态或动态分配）。它只是占用一下那个空间。</p>
+
+<p>另外需要注意的是，这个new不一定是在堆区分配的空间，<strong>它不是动态申请的内存，所以也不应该由它来使用delete释放。</strong></p>
+
+<p><strong>事实上，delete只能用于常规new运算符分配的堆内存，而其他内存区域处于delete的管辖范围之外。</strong></p>
+
+<p>此外，如果用普通new申请了一块空间，然后又用定位new在这块空间上做了些事情，那么delete操作是不关心定位new的行为的！</p>
+
+<p><strong>如果new的是一个类，其中有动态成员，那么delete的时候直接无差别清除内存，不会自动调用析构函数！</strong></p>
+
+<h3 id="名称空间">名称空间</h3>
+
+<p>可以用关键字namespace创建名称空间：</p>
+
+<pre><code class="language-C++">namespace jack{
+    double pail;
+    void fetch(); //function prototype
+    int pal;
+    struct Well{...}//you can define of declare members in a namespace
+}
+namespace Jill{
+    double bucket{double n}{...};
+    double fetch;
+    int pal;
+    struct Hill{...};
+}
+</code></pre>
+
+<p>如果此时再加一个：</p>
+
+<pre><code class="language-C++">namespace Jill{
+    char * goose(const char* );
+}
+</code></pre>
+
+<p><strong>这不代表重新定义名称空间，而是将名称goose添加到Jill中已有的名称列表中。</strong></p>
+
+<p><strong>别名</strong></p>
+
+<p>可以给名称空间创建别名。例如，假设有下面的名称空间：
+<code class="language-plaintext highlighter-rouge">namespace my_very_favorite_things {..)</code>
+则可以使用下面的语句让mvft成为my_very_favorite_things的别名：
+<code class="language-plaintext highlighter-rouge">namespace mvft = my_very_favorite_things;</code></p>
+
+<p><strong>未命名</strong></p>
+
+<pre><code class="language-C++">namespace  //unnamed namespace
+{
+    int ice;
+    int bandycoot;
+}
+</code></pre>
+
+<p>如果是这么创建的话，那么创建的那一刻起它就被使用了，就像后面跟着using编译指令一样。</p>
+
+<h4 id="using声明和using编译">using声明和using编译</h4>
+
+<p>using声明：</p>
+
+<p><code class="language-plaintext highlighter-rouge">using Jill::fetch</code></p>
+
+<p>using编译：</p>
+
+<p><code class="language-plaintext highlighter-rouge">using namespace Jack;</code></p>
+
+<p>using声明使一个名称可用，而using编译指令使所有的名称都可用。using编译指令由名称空间名和它
+前面的关键字using namespace组成，它使名称空间中的所有名称都可用，而不需要使用作用域解析运算符。</p>
+
+<p><strong>using编译是将这个命名空间中的所有名称引入当前作用域。因此，可以连续使用uisng编译，就像导入包一样。</strong></p>
+
+<p><strong>如果两个命名空间中存在同名的函数、变量或类型，那么在使用<code class="language-plaintext highlighter-rouge">using</code>指令引入这两个命名空间后，直接使用这个名称将会导致编译器报错，因为编译器无法确定你想要使用哪个命名空间中的名称。</strong></p>
+
+<p>只能在全局</p>
+
+<p>在代码中使用作用域解析运算符::不会存在二义性：</p>
+
+<pre><code class="language-C++">jack::pal=3;
+jill:pal=10;
+</code></pre>
+
+<p>而使用using声明可能导致二义性，并导致编译器报错：</p>
+
+<pre><code class="language-C++">using jack::pal;
+using jill::pal;
+pal=4;
+</code></pre>
+
+<h4 id="比较">比较</h4>
+
+<p>使用using编译指令导入一个名称空间中所有的名称与使用多个using声明是不一样的，而更像是大量使用作用域解析运算符。</p>
+
+<p><strong>如果某个名称已经在函数中声明了，则不能用using声明导入相同的名称。</strong></p>
+
+<p>然而，使用using编译指令时，将进行名称解析，就像在包含using声明和名称空间本身的最小声明区域中声明子名称一样。</p>
+
+<p><strong>如果使用using编译指令导入一个已经在函数中声明的名称，则局部名称将隐藏名称空间名，就像隐藏同名的全局变量一样（不是先来后到！）</strong>，不过仍可以使用作用域解析运算符。</p>
+
+<h4 id="嵌套">嵌套</h4>
+
+<p>namespace之间也可以嵌套，也许会出现<code class="language-plaintext highlighter-rouge">element::fire:flame</code>这样的成员，也可以使用<code class="language-plaintext highlighter-rouge">using namespace elements:fire</code>使用子名称空间。</p>
+
+<p>另外，也可以在名称空间中使用using编译指令和using声明，如下所示：</p>
+
+<pre><code class="language-C++">namespace myth
+{
+    using Jill::fetch;
+    using namespace elements;
+    nsing std::cout; //cin&amp;cout are defined in namespace std;
+    using std::cin;
+}
+</code></pre>
+
+<h4 id="在什么实际场景下会需要切换名称空间">在什么实际场景下会需要切换名称空间？</h4>
+
+<p>在C++编程中，命名空间主要用于防止命名冲突，特别是在大型项目中或者使用第三方库时。以下是一些可能需要切换命名空间的实际场景：</p>
+
+<ol>
+  <li>
+    <p><strong>使用第三方库</strong>：当你在项目中使用多个第三方库时，可能会出现函数或类名冲突的问题。这时，你可以使用命名空间来区分不同库中的同名函数或类。例如，如果两个库都有一个名为<code class="language-plaintext highlighter-rouge">sort</code>的函数，你可以通过<code class="language-plaintext highlighter-rouge">Library1::sort()</code>和<code class="language-plaintext highlighter-rouge">Library2::sort()</code>来调用对应的函数。</p>
+  </li>
+  <li>
+    <p><strong>组织大型项目</strong>：在大型项目中，你可能希望将代码组织成逻辑上相关的部分。这时，你可以为每个部分创建一个命名空间，例如<code class="language-plaintext highlighter-rouge">UserInterface</code>、<code class="language-plaintext highlighter-rouge">Database</code>、<code class="language-plaintext highlighter-rouge">Networking</code>等。在编写代码时，可以根据需要切换到对应的命名空间。</p>
+  </li>
+  <li>
+    <p><strong>避免全局变量冲突</strong>：全局变量在整个程序中都是可见的，很容易引起命名冲突。你可以把全局变量放在命名空间中，以避免冲突。</p>
+  </li>
+  <li>
+    <p><strong>版本控制</strong>：如果你的库或框架有多个版本，你可以使用命名空间为每个版本提供一套API，例如<code class="language-plaintext highlighter-rouge">V1::doSomething()</code>和<code class="language-plaintext highlighter-rouge">V2::doSomething()</code>。</p>
+  </li>
+</ol>
+
+<p>注意，虽然命名空间可以帮助我们避免命名冲突，但是过度使用或不当使用命名空间也可能导致问题。例如，不建议使用<code class="language-plaintext highlighter-rouge">using namespace std;</code>，因为这可能会导致标准库中的名称与你的代码中的名称冲突。</p>]]></content><author><name>DragonK</name></author><category term="CSNotes" /><category term="C++笔记" /><summary type="html"><![CDATA[CH9 内存模型和名称空间 单独编译 程序的组成 程序应该分为三部分： 头文件：包含结构声明和使用这些结构的函数的原型。 源代码文件：包含与结构有关的函数的代码。 源代码文件：包含调用与结构相关的函数的代码。 头文件中应该包含什么？ 函数原型。 使用#define或const定义的符号常量。 结构声明。 类声明。 模板声明。 内联函数。 引用时使用include "mylib.h"而不是include &lt;mylib.h&gt;： 对于后者：会到存储标准头文件的主机系统的文件系统中查找。 对于前者：到当前的工作目录或源代码目录（或其他目录，这取决于编译器）。如果没有找到的话再区标准库中找。 存储持续性、作用域和链接性 外部变量 单定义规则（ODR）：变量只能有一次定义（但可以有多个声明）。 引用声明使用关键字extern，且不进行初始化。 一般来说，如果在a.h或者a.cpp中定义了一个全局变量 (extern) int a=10，那么在其他文件中需要使用extern int a来标识这个全局变量已经在其他地方定义过了。 注意，如果一个全局变量定义在头文件a.h中，就不能在多个源文件中引用a.h，否则会造成多重定义错误。 更一般的做法是，在a.h中声明，而在a.cpp中定义，然后其他源文件引用a.h。 说明符和限定符 cv限定符 const 它表明，内存被初始化后程序就不能在修改它。当涉及到指针的时候略复杂，后续介绍。 volatile 即使程序代码没有对内存单元进行修改，其值也可能发生变化。例如，可以将一个指针指向某个硬件位置，其中包含了来自串行端口的时间或信息。 在这种情况下，硬件（而不是程序）可能修改其中的内容。或者两个程序可能互相影响，共享数据。 该关键字的作用是为了不要让编译器进行某种可能改变程序员意图的优化。例如，假设编译器发现，程序在几条语句中两次使用了某个变量的值，则编译器可能不是让程序查找这个值两次，而是将这个值缓存到寄存器中。这种优化假设变量的值在这两次使用之间不会变化。如果不将变量声明为volatile,则编译器将进行这种优化：将变量声明为volatile,相当于告诉编译器，不要进行这种优化。 这种情况实际上不太常用，只需要知道用法即可。 mutable 可以用它来指出，即便结构（或类）变量为const，其某个成员也可以被修改。 这个关键字的影响是全局的。在定义struct时便可以指定某个成员是mutable的，这样即便后来定义了一个const的实例，在修改这个指定成员时也不受限制。 语言链接性 举一个函数重载的例子：编译器可能将spiff(int)转换为_spoff_i，而将spiff(double,double)转换为_spiff_d_d，这种方法被称为C++语言链接。 定位new运算符 通常，new负责在堆(heap)中找到一个足以能够满足要求的内存块。 new运算符还有另一种变体，被称为定位new运算符，它让您能够指定要使用的位置。 程序员可能使用这种特性来设置其内存管理规程、处理需要通过特定地址进行访问的硬件或在特定位置创建对象。 要使用定位new特性，首先需要包含头文件new，它提供了这种版本的new运算符的原型。 然后将new运算符用于提供了所需地址的参数。除需要指定参数外，句法与常规new运算符相同。 下面的代码段演示了new运算符的4种用法： #include &lt;new&gt; struct chaff { char dross [20]i int slag; }: char bufferl[50]; char buffer2[500] int main() { chaff *pl,*p2; int *p3,*p4; //first,the regular forms of new pl = new chaff;//place structure in heap p3 = new int [20];//place int array in heap //now,the two forms of placement new p2 = new (buffer1) chaff;//place structure in bufferl p4 = new (buffer2) int [20];//place int array in buffer2 ... 定位new运算符返回的是一个指针（基本上，它只是返回传递给它的地址，并将其强制转换为void*），它的地址是指定好的，这个地址可以是任意的（局部，静态或动态分配）。它只是占用一下那个空间。 另外需要注意的是，这个new不一定是在堆区分配的空间，它不是动态申请的内存，所以也不应该由它来使用delete释放。 事实上，delete只能用于常规new运算符分配的堆内存，而其他内存区域处于delete的管辖范围之外。 此外，如果用普通new申请了一块空间，然后又用定位new在这块空间上做了些事情，那么delete操作是不关心定位new的行为的！ 如果new的是一个类，其中有动态成员，那么delete的时候直接无差别清除内存，不会自动调用析构函数！ 名称空间 可以用关键字namespace创建名称空间： namespace jack{ double pail; void fetch(); //function prototype int pal; struct Well{...}//you can define of declare members in a namespace } namespace Jill{ double bucket{double n}{...}; double fetch; int pal; struct Hill{...}; } 如果此时再加一个： namespace Jill{ char * goose(const char* ); } 这不代表重新定义名称空间，而是将名称goose添加到Jill中已有的名称列表中。 别名 可以给名称空间创建别名。例如，假设有下面的名称空间： namespace my_very_favorite_things {..) 则可以使用下面的语句让mvft成为my_very_favorite_things的别名： namespace mvft = my_very_favorite_things; 未命名 namespace //unnamed namespace { int ice; int bandycoot; } 如果是这么创建的话，那么创建的那一刻起它就被使用了，就像后面跟着using编译指令一样。 using声明和using编译 using声明： using Jill::fetch using编译： using namespace Jack; using声明使一个名称可用，而using编译指令使所有的名称都可用。using编译指令由名称空间名和它 前面的关键字using namespace组成，它使名称空间中的所有名称都可用，而不需要使用作用域解析运算符。 using编译是将这个命名空间中的所有名称引入当前作用域。因此，可以连续使用uisng编译，就像导入包一样。 如果两个命名空间中存在同名的函数、变量或类型，那么在使用using指令引入这两个命名空间后，直接使用这个名称将会导致编译器报错，因为编译器无法确定你想要使用哪个命名空间中的名称。 只能在全局 在代码中使用作用域解析运算符::不会存在二义性： jack::pal=3; jill:pal=10; 而使用using声明可能导致二义性，并导致编译器报错： using jack::pal; using jill::pal; pal=4; 比较 使用using编译指令导入一个名称空间中所有的名称与使用多个using声明是不一样的，而更像是大量使用作用域解析运算符。 如果某个名称已经在函数中声明了，则不能用using声明导入相同的名称。 然而，使用using编译指令时，将进行名称解析，就像在包含using声明和名称空间本身的最小声明区域中声明子名称一样。 如果使用using编译指令导入一个已经在函数中声明的名称，则局部名称将隐藏名称空间名，就像隐藏同名的全局变量一样（不是先来后到！），不过仍可以使用作用域解析运算符。 嵌套 namespace之间也可以嵌套，也许会出现element::fire:flame这样的成员，也可以使用using namespace elements:fire使用子名称空间。 另外，也可以在名称空间中使用using编译指令和using声明，如下所示： namespace myth { using Jill::fetch; using namespace elements; nsing std::cout; //cin&amp;cout are defined in namespace std; using std::cin; } 在什么实际场景下会需要切换名称空间？ 在C++编程中，命名空间主要用于防止命名冲突，特别是在大型项目中或者使用第三方库时。以下是一些可能需要切换命名空间的实际场景： 使用第三方库：当你在项目中使用多个第三方库时，可能会出现函数或类名冲突的问题。这时，你可以使用命名空间来区分不同库中的同名函数或类。例如，如果两个库都有一个名为sort的函数，你可以通过Library1::sort()和Library2::sort()来调用对应的函数。 组织大型项目：在大型项目中，你可能希望将代码组织成逻辑上相关的部分。这时，你可以为每个部分创建一个命名空间，例如UserInterface、Database、Networking等。在编写代码时，可以根据需要切换到对应的命名空间。 避免全局变量冲突：全局变量在整个程序中都是可见的，很容易引起命名冲突。你可以把全局变量放在命名空间中，以避免冲突。 版本控制：如果你的库或框架有多个版本，你可以使用命名空间为每个版本提供一套API，例如V1::doSomething()和V2::doSomething()。 注意，虽然命名空间可以帮助我们避免命名冲突，但是过度使用或不当使用命名空间也可能导致问题。例如，不建议使用using namespace std;，因为这可能会导致标准库中的名称与你的代码中的名称冲突。]]></summary></entry><entry><title type="html">多臂老虎机问题</title><link href="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html" rel="alternate" type="text/html" title="多臂老虎机问题" /><published>2023-11-19T00:00:00+00:00</published><updated>2023-11-19T00:00:00+00:00</updated><id>/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98</id><content type="html" xml:base="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html"><![CDATA[<h2 id="关键词">关键词</h2>
+
+<ul>
+  <li>试错型学习</li>
+  <li>探索与利用</li>
+</ul>
+
+<h2 id="问题定义">问题定义</h2>
+
+<p>在多臂老虎机（multi-armed bandit，MAB）问题（见图 2-1）中，有一个拥有K根拉杆的老虎机，拉动每一根拉杆都对应一个关于奖励的概率分布R。</p>
+
+<p>我们每次拉动其中一根拉杆，就可以从该拉杆对应的奖励概率分布中获得一个奖励 。我们在各根拉杆的奖励概率分布未知的情况下，从头开始尝试，目标是在操作T次拉杆后获得尽可能高的累积奖励。</p>
+
+<p>由于奖励的概率分布是未知的，因此我们需要在“探索拉杆的获奖概率”和“根据经验选择获奖最多的拉杆”中进行权衡。“采用怎样的操作策略才能使获得的累积奖励最高”便是多臂老虎机问题。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/640.8908144b.png" alt="img" /></p>
+
+<h2 id="要素形式化描述">要素形式化描述</h2>
+
+<p>多臂老虎机问题可以表示为一个元组$\langle \mathcal{A},\mathcal{R} \rangle$，其中</p>
+
+<ul>
+  <li>$\mathcal{A}$是动作集合，包含K个元素（总共有K个老虎机）</li>
+  <li>$\mathcal{R}$是奖励概率分布，也就是说每个老虎机的产出对应一个奖励概率分布（而不是固定的）。</li>
+</ul>
+
+<p>多臂老虎机的目标是最大化一段时间步T内累计的奖励。
+\(max \sum^{T}_{t=1}r_{t},r_{t} \backsim \mathcal{R}(·|a_{t})\)</p>
+
+<h2 id="累计懊悔">累计懊悔</h2>
+
+<p>对于某个动作a，存在一个期望奖励，即其概率分布均值。那么存在一个期望最大的拉杆，表示为$Q^{*}$。</p>
+
+<p>为了更加直观、方便地观察拉动一根拉杆的期望奖励离最优拉杆期望奖励的差距，我们引入<strong>懊悔</strong>（regret）概念。懊悔定义为拉动当前拉杆的动作a与最优拉杆的期望奖励差，即$R(a)=Q^{*}-Q(a)$。累计懊悔为$\sigma_{R}=\sum^{T}<em>{t=1}R(a</em>{t})$，即一次完整的T步决策完成后累计的懊悔总量。</p>
+
+<p>MAB问题的目标为最大化累积奖励，等价于最小化累积懊悔。</p>
+
+<h2 id="估计期望奖励">估计期望奖励</h2>
+
+<p>由于只拉动一次拉杆获得的奖励存在随机性，所以需要多次拉动一根拉杆，然后计算得到的多次奖励的期望。（<strong>增量式更新</strong>）</p>
+
+<h2 id="平衡探索与利用算法实现">平衡探索与利用：算法实现</h2>
+
+<p><strong>基本算法框架</strong></p>
+
+<pre><code class="language-Python">class Solver:
+    """ 多臂老虎机算法基本框架 """
+    def __init__(self, bandit):
+        self.bandit = bandit
+        self.counts = np.zeros(self.bandit.K)  # 每根拉杆的尝试次数
+        self.regret = 0.  # 当前步的累积懊悔
+        self.actions = []  # 维护一个列表,记录每一步的动作
+        self.regrets = []  # 维护一个列表,记录每一步的累积懊悔
+
+    def update_regret(self, k):
+        # 计算累积懊悔并保存,k为本次动作选择的拉杆的编号
+        self.regret += self.bandit.best_prob - self.bandit.probs[k]
+        self.regrets.append(self.regret)
+
+    def run_one_step(self):
+        # 返回当前动作选择哪一根拉杆,由每个具体的策略实现
+        raise NotImplementedError
+
+    def run(self, num_steps):
+        # 运行一定次数,num_steps为总运行次数
+        for _ in range(num_steps):
+            k = self.run_one_step()
+            self.counts[k] += 1
+            self.actions.append(k)
+            self.update_regret(k)
+</code></pre>
+
+<p>在多臂老虎机问题中，一个经典的问题就是探索与利用的平衡问题。</p>
+
+<p><strong>探索</strong>（exploration）是指尝试拉动更多可能的拉杆，这根拉杆不一定会获得最大的奖励，但这种方案能够摸清楚所有拉杆的获奖情况。例如，对于一个10臂老虎机，我们要把所有的拉杆都拉动一下才知道哪根拉杆可能获得最大的奖励。</p>
+
+<p><strong>利用</strong>（exploitation）是指拉动已知期望奖励最大的那根拉杆，由于已知的信息仅仅来自有限次的交互观测，所以当前的最优拉杆不一定是全局最优的。</p>
+
+<p>于是在多臂老虎机问题中，设计策略时就需要平衡探索和利用的次数，使得累积奖励最大化。一个比较常用的思路是在开始时做比较多的探索，在对每根拉杆都有比较准确的估计后，再进行利用。目前已有一些比较经典的算法来解决这个问题，例如上置信界算法和汤普森采样算法等，接下来将分别介绍这几种算法。</p>
+
+<h3 id="epsilon-贪心算法">$\epsilon$-贪心算法</h3>
+
+<p>在原来的完全贪婪算法上添加噪声，每次以$1-\epsilon$概率选择目前为止奖励最大的那根拉杆（<strong>利用</strong>），$\epsilon$概率随机选择一根拉杆（<strong>探索</strong>）。</p>
+
+<p>随着探索次数的不断增加，我们对各个动作的奖励估计得越来越准，此时我们就没必要继续花大力气进行探索。所以在$\epsilon$-贪婪算法的具体实现中，我们可以令$\epsilon$随时间衰减，即探索的概率将会不断降低。</p>
+
+<p>但是$\epsilon$不会在有限时间内衰减至0。因为基于<strong>有限步数</strong>观测的完全贪婪算法仍然是一个局部信息的贪婪算法，永远距离最优解有一个固定的差距。</p>
+
+<p>固定$\epsilon$的懊悔：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_4_2.4825c3f7.png" alt="img" /></p>
+
+<p>$\epsilon$与时间呈反比的懊悔：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_4_3.dd308d2c.png" alt="img" /></p>
+
+<p>后者明显更优。</p>
+
+<h3 id="上置信界算法">上置信界算法</h3>
+
+<ul>
+  <li>第一根拉杆只被拉动过一次，得到的奖励为0。</li>
+  <li>第二根拉杆被拉动过很多次，我们对它的奖励分布已经有了大致的把握。</li>
+</ul>
+
+<p>问题是要不要继续尝试第一根。</p>
+
+<p>我们可以使用一种基于不确定性的策略来综合考虑现有的期望奖励估值和不确定性，其核心问题是如何估计不确定性。</p>
+
+<p><strong>上置信界</strong>（upper confidence bound，UCB）算法是一种经典的基于不确定性的策略算法，它的思想用到了一个非常著名的数学原理：<strong>霍夫丁不等式</strong>（Hoeffding’s inequality）</p>
+
+<p>在概率论中，霍夫丁不等式给出了随机变量的和与其期望值偏差的概率上限，该不等式被Wassily Hoeffding于1963年提出并证明。霍夫丁不等式是Azuma-Hoeffding不等式的特例。</p>
+
+<p>令$X_1，\dots，X_n$为独立的随机变量，且$X_i\in[a,b],i=1，\dots，n$。这些随机变量的经验均值可表示为：$\bar{X}=\frac{X_1+\dots+X_n}{n}\$。</p>
+
+<p>霍夫丁不等式叙述如下：
+\(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le exp(-\frac{2n^2t^2}{\begin{matrix} \sum_{i=1}^n (b_i-a_i)^2 \end{matrix}})\\\)
+对于伯努利分布来说随机变量的上下界是1和0，所以：
+\(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le e^{-2nt^{2}}\\\)
+其中$t=\hat{U_{t}}(a)$代表不确定性度量。给定一个概率$p=e^{-2N_{t}(a)U_{t}(a)^{2}}$，根据不等式（反向）可以得到$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$至少以概率$1-p$成立。 当p很小的时候$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$就以很大概率成立。所以$\hat{Q_{t}}(a)+\hat{U_{t}}(a)$便是<strong>期望奖励的上界</strong>。</p>
+
+<p>这里给定p之后，就可以解得$\hat{U_{t}}(a)=\sqrt{\frac{-log \ p}{2N_{t}(a)}}$。</p>
+
+<p>总结：事先设定一个概率p。UCB算法在每次选择拉杆前，先估计每根拉杆的期望奖励的上界，使得拉动每根拉杆的期望奖励只有一个较小的概率p超过这个上界，接着选出期望奖励上界最大的拉杆，从而选择最有可能获得最大期望奖励的拉杆。</p>
+
+<p>实现：设置$p=\frac{1}{t}$，为拉动每根拉杆的次数+1（防止分母为0），并设定一个系数c来控制不确定性的比重。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_5.53e4e9e1.png" alt="img" /></p>
+
+<p>（似乎一般，不过没关系）</p>
+
+<h3 id="汤普森采样算法">汤普森采样算法</h3>
+
+<p>假设拉动每根拉杆的奖励服从一个特定的概率分布，然后根据拉动每根拉杆的期望奖励来进行选择。</p>
+
+<p>但是由于计算所有拉杆的期望奖励的代价比较高，汤普森采样算法使用采样的方式，即根据当前每个动作a的奖励概率分布进行一轮采样，得到一组各根拉杆的奖励样本，再选择样本中奖励最大的动作。可以看出，汤普森采样是一种计算所有拉杆的最高奖励概率的蒙特卡洛采样方法。</p>
+
+<p>在实际情况中，我们通常用 Beta 分布对当前每个动作的奖励概率分布进行建模。具体来说，若某拉杆被选择k次，其中$m_{1}$次奖励为1，$m_{2}$次奖励为0，则该拉杆的奖励服从参数为$(m_{1}+1,m_{2}+1)$的 Beta分布。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/641.c16a3dee.png" alt="img" /></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/output_2_6.45dec2db.png" alt="img" /></p>
+
+<h2 id="总结">总结</h2>
+
+<p>$\epsilon$-贪婪算法的累积懊悔是随时间线性增长的，而另外 3 种算法（ $\epsilon$-衰减贪婪算法、上置信界算法、汤普森采样算法）的累积懊悔都是随时间次线性增长的（具体为对数形式增长）。</p>
+
+<p>多臂老虎机的每次交互的结果和以往的动作无关，所以可看作<strong>无状态的强化学习</strong>（stateless reinforcement learning）。</p>]]></content><author><name>DragonK</name></author><category term="Learning" /><category term="Notes" /><category term="Reinforce_Learning LAMDA" /><summary type="html"><![CDATA[关键词 试错型学习 探索与利用 问题定义 在多臂老虎机（multi-armed bandit，MAB）问题（见图 2-1）中，有一个拥有K根拉杆的老虎机，拉动每一根拉杆都对应一个关于奖励的概率分布R。 我们每次拉动其中一根拉杆，就可以从该拉杆对应的奖励概率分布中获得一个奖励 。我们在各根拉杆的奖励概率分布未知的情况下，从头开始尝试，目标是在操作T次拉杆后获得尽可能高的累积奖励。 由于奖励的概率分布是未知的，因此我们需要在“探索拉杆的获奖概率”和“根据经验选择获奖最多的拉杆”中进行权衡。“采用怎样的操作策略才能使获得的累积奖励最高”便是多臂老虎机问题。 要素形式化描述 多臂老虎机问题可以表示为一个元组$\langle \mathcal{A},\mathcal{R} \rangle$，其中 $\mathcal{A}$是动作集合，包含K个元素（总共有K个老虎机） $\mathcal{R}$是奖励概率分布，也就是说每个老虎机的产出对应一个奖励概率分布（而不是固定的）。 多臂老虎机的目标是最大化一段时间步T内累计的奖励。 \(max \sum^{T}_{t=1}r_{t},r_{t} \backsim \mathcal{R}(·|a_{t})\) 累计懊悔 对于某个动作a，存在一个期望奖励，即其概率分布均值。那么存在一个期望最大的拉杆，表示为$Q^{*}$。 为了更加直观、方便地观察拉动一根拉杆的期望奖励离最优拉杆期望奖励的差距，我们引入懊悔（regret）概念。懊悔定义为拉动当前拉杆的动作a与最优拉杆的期望奖励差，即$R(a)=Q^{*}-Q(a)$。累计懊悔为$\sigma_{R}=\sum^{T}{t=1}R(a{t})$，即一次完整的T步决策完成后累计的懊悔总量。 MAB问题的目标为最大化累积奖励，等价于最小化累积懊悔。 估计期望奖励 由于只拉动一次拉杆获得的奖励存在随机性，所以需要多次拉动一根拉杆，然后计算得到的多次奖励的期望。（增量式更新） 平衡探索与利用：算法实现 基本算法框架 class Solver: """ 多臂老虎机算法基本框架 """ def __init__(self, bandit): self.bandit = bandit self.counts = np.zeros(self.bandit.K) # 每根拉杆的尝试次数 self.regret = 0. # 当前步的累积懊悔 self.actions = [] # 维护一个列表,记录每一步的动作 self.regrets = [] # 维护一个列表,记录每一步的累积懊悔 def update_regret(self, k): # 计算累积懊悔并保存,k为本次动作选择的拉杆的编号 self.regret += self.bandit.best_prob - self.bandit.probs[k] self.regrets.append(self.regret) def run_one_step(self): # 返回当前动作选择哪一根拉杆,由每个具体的策略实现 raise NotImplementedError def run(self, num_steps): # 运行一定次数,num_steps为总运行次数 for _ in range(num_steps): k = self.run_one_step() self.counts[k] += 1 self.actions.append(k) self.update_regret(k) 在多臂老虎机问题中，一个经典的问题就是探索与利用的平衡问题。 探索（exploration）是指尝试拉动更多可能的拉杆，这根拉杆不一定会获得最大的奖励，但这种方案能够摸清楚所有拉杆的获奖情况。例如，对于一个10臂老虎机，我们要把所有的拉杆都拉动一下才知道哪根拉杆可能获得最大的奖励。 利用（exploitation）是指拉动已知期望奖励最大的那根拉杆，由于已知的信息仅仅来自有限次的交互观测，所以当前的最优拉杆不一定是全局最优的。 于是在多臂老虎机问题中，设计策略时就需要平衡探索和利用的次数，使得累积奖励最大化。一个比较常用的思路是在开始时做比较多的探索，在对每根拉杆都有比较准确的估计后，再进行利用。目前已有一些比较经典的算法来解决这个问题，例如上置信界算法和汤普森采样算法等，接下来将分别介绍这几种算法。 $\epsilon$-贪心算法 在原来的完全贪婪算法上添加噪声，每次以$1-\epsilon$概率选择目前为止奖励最大的那根拉杆（利用），$\epsilon$概率随机选择一根拉杆（探索）。 随着探索次数的不断增加，我们对各个动作的奖励估计得越来越准，此时我们就没必要继续花大力气进行探索。所以在$\epsilon$-贪婪算法的具体实现中，我们可以令$\epsilon$随时间衰减，即探索的概率将会不断降低。 但是$\epsilon$不会在有限时间内衰减至0。因为基于有限步数观测的完全贪婪算法仍然是一个局部信息的贪婪算法，永远距离最优解有一个固定的差距。 固定$\epsilon$的懊悔： $\epsilon$与时间呈反比的懊悔： 后者明显更优。 上置信界算法 第一根拉杆只被拉动过一次，得到的奖励为0。 第二根拉杆被拉动过很多次，我们对它的奖励分布已经有了大致的把握。 问题是要不要继续尝试第一根。 我们可以使用一种基于不确定性的策略来综合考虑现有的期望奖励估值和不确定性，其核心问题是如何估计不确定性。 上置信界（upper confidence bound，UCB）算法是一种经典的基于不确定性的策略算法，它的思想用到了一个非常著名的数学原理：霍夫丁不等式（Hoeffding’s inequality） 在概率论中，霍夫丁不等式给出了随机变量的和与其期望值偏差的概率上限，该不等式被Wassily Hoeffding于1963年提出并证明。霍夫丁不等式是Azuma-Hoeffding不等式的特例。 令$X_1，\dots，X_n$为独立的随机变量，且$X_i\in[a,b],i=1，\dots，n$。这些随机变量的经验均值可表示为：$\bar{X}=\frac{X_1+\dots+X_n}{n}\$。 霍夫丁不等式叙述如下： \(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le exp(-\frac{2n^2t^2}{\begin{matrix} \sum_{i=1}^n (b_i-a_i)^2 \end{matrix}})\\\) 对于伯努利分布来说随机变量的上下界是1和0，所以： \(\forall{t&gt;0}，\quad P(\bar{X}-E[\bar{X}]\ge t)\le e^{-2nt^{2}}\\\) 其中$t=\hat{U_{t}}(a)$代表不确定性度量。给定一个概率$p=e^{-2N_{t}(a)U_{t}(a)^{2}}$，根据不等式（反向）可以得到$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$至少以概率$1-p$成立。 当p很小的时候$Q_{t}(a)&lt;\hat{Q_{t}}(a)+\hat{U_{t}}(a)$就以很大概率成立。所以$\hat{Q_{t}}(a)+\hat{U_{t}}(a)$便是期望奖励的上界。 这里给定p之后，就可以解得$\hat{U_{t}}(a)=\sqrt{\frac{-log \ p}{2N_{t}(a)}}$。 总结：事先设定一个概率p。UCB算法在每次选择拉杆前，先估计每根拉杆的期望奖励的上界，使得拉动每根拉杆的期望奖励只有一个较小的概率p超过这个上界，接着选出期望奖励上界最大的拉杆，从而选择最有可能获得最大期望奖励的拉杆。 实现：设置$p=\frac{1}{t}$，为拉动每根拉杆的次数+1（防止分母为0），并设定一个系数c来控制不确定性的比重。 （似乎一般，不过没关系） 汤普森采样算法 假设拉动每根拉杆的奖励服从一个特定的概率分布，然后根据拉动每根拉杆的期望奖励来进行选择。 但是由于计算所有拉杆的期望奖励的代价比较高，汤普森采样算法使用采样的方式，即根据当前每个动作a的奖励概率分布进行一轮采样，得到一组各根拉杆的奖励样本，再选择样本中奖励最大的动作。可以看出，汤普森采样是一种计算所有拉杆的最高奖励概率的蒙特卡洛采样方法。 在实际情况中，我们通常用 Beta 分布对当前每个动作的奖励概率分布进行建模。具体来说，若某拉杆被选择k次，其中$m_{1}$次奖励为1，$m_{2}$次奖励为0，则该拉杆的奖励服从参数为$(m_{1}+1,m_{2}+1)$的 Beta分布。 总结 $\epsilon$-贪婪算法的累积懊悔是随时间线性增长的，而另外 3 种算法（ $\epsilon$-衰减贪婪算法、上置信界算法、汤普森采样算法）的累积懊悔都是随时间次线性增长的（具体为对数形式增长）。 多臂老虎机的每次交互的结果和以往的动作无关，所以可看作无状态的强化学习（stateless reinforcement learning）。]]></summary></entry></feed>

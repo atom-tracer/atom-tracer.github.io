@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CH11 使用类 | Step far.</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="CH11 使用类" />
+<meta name="author" content="DragonK" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CH11 使用类 运算符重载 基本 只能重载部分的、已经存在的运算符。 重载方式就像定义了一个特殊成员函数，因为这个运算符也是由对象调用的。 不同的运算符的运算顺序不同。一般而言，左侧的操作数是调用对象。 最好同时提供const和非const版本的运算符重载。因为const对象不能使用非const版本的重载运算符（即便这个重载运算符没有改变什么，但是计算机不相信你）。 例如，添加加法运算符： class Time { private: int hours; int minutes; public: Time(); Time (int h,int m=0); void AddMin(int m) void AddHr(int h): void Reset(int h=0,int m=0) Time operator+(const Time &amp;t) const; void Show() const; } Time Time::operator+(const Time &amp;t) const { Time sum; sum.minutes = minutes+t.minutes; sum.hours=hours+t.hours+sum.minutes/60; sum.minutes %= 60: return sum; } 注意，重载运算符是要返回一个对象的，返回时会发生一个复制。 使用： total = coding.operator+(fixing);//function notation total =coding +fixing; 重载限制 重载后的运算符必须至少有一个操作数是用户定义的类型，这将防止用户为标准类型重载运算符。 使用运算符时不能违反运算符原来的句法规则。例如，不能将求模运算符(%)重载成使用一个操作数。 不能修改运算符的优先级（或者说，运算符优先级不会变）。因此，如果将加号运算符重载成将两个类相加，则新的运算符与原来的加号具有相同的优先级。 不能创建新运算符。例如，不能定义operator*()函数来表示求幂。 不能重载特定运算符。 大多数运算符都可以通过成员或非成员函数进行重载，但下面的运算符只能通过成员函数进行重载：=,(),[],-&gt; 使用中括号表示法访问字符 在C++中，两个中括号组成一个中括号运算符，可以使用方法operator[]()来重载该运算符。 对于中括号运算符，一个操作数位于第一个中括号的前面，另一个操作数位于两个中括号之间。 对于一个自定义的String类，可以这么实现方法： char &amp; String::operator[](int i) { return str[i]; } 这样的话，语句： cout&lt;&lt;opera[4]; 将被转换为： cout&lt;&lt;opera.oeprator[4]; 而且像这样返回值声明为char&amp;，就可以像这样给元素赋值： String means(&quot;might&quot;); means[0]=&#39;r&#39;; 友元 友元有3种： 友元函数 友元类 友元成员函数 为何需要友元？ 考虑一个函数： Time Time:operator*(double mult)const { Time result; long totalminutes = hours*mult*60+minutes*mult; result.hours=totalminutes/60; result.minutes=totalminutes%60; return result; } 它只能适用于Time A=B*2.75。如果需要使用Time A=2.75*B，这么一来就需要定义一个非成员函数Time operator*(double m,const Time &amp;t);。 然而这会引发一个问题：非成员函数不能直接访问类的私有数据，至少常规非成员函数不能访问。 然而，有一类特殊的非成员函数可以访间类的私有成员，它们被称为友元函数。 创建友元 创建友元函数的第一步是将其原型放在类声明中，并在原型声明前加上关键字friend： friend Time operator*(double m,const Time t);//goes in class declaration 该原型意味着下面两点： 虽然operator()函数是在类声明中声明的，但它不是成员函数，因此不能使用成员运算符来调用。 虽然operator*()函数不是成员函数，但它与成员函数的访问权限相同。 只是具有成员函数的访问权限，但代表它位于类作用域内。 友元还是非友元？ 常用的友元：重载«运算符 如果有一个自定义对象trip，那么理论上如果要实现cout&lt;&lt;trip，需要在cout，也就是要修改iostream文件，然而这是个危险的注意，也会在标准接口上浪费时间。 所以一种方法是：通过使用友元函数，可以像下面这样重载运算符： ostream&amp; operator&lt;&lt;(ostream os,const Time t) { os&lt;&lt;t.hours&lt;&lt;&quot;hours,&quot;&lt;&lt;t.minutes&lt;&lt;&quot;minutes&quot;; return os; } 表面看来，它必须同时是这两个类的友元。然而： operator«()直接访问Time对象的各个成员，所以必须是Time类的友元 operator«()自始至终将ostream对象作为一个整体使用，不直接访问ostream对象的私有成员，所以不必是ostream的友元。 所以声明为Time类的友元后，可以直接使用cout&lt;&lt;trip了。 另外，调用cout«trip应使用cout对象本身，而不是它的拷贝，因此该函数按引用（而不是按值）来传递该对象。 成员函数还是非成员函数？ 考虑一个双目运算符+。 在类内重载运算符时+时，参数列表中只需要一个参数（就是另一个操作数）。这是因为另一个操作数通过this指针隐式传递。 如果重载运算符不是成员函数，那么参数列表需要两个参数（按顺序，两个操作数都要）。 类的自动转换 构造函数中的转换 Stonewt myCat;//create a Stonewt object mycat=19.6;//use Stonewt(double)to convert 19.6 to Stonewt 上述代码怎样才会成立呢？需要转换。而且只有接受一个参数的构造函数才能作为转换函数。 Stonewt有一个接受一个参数的构造函数： Stonewt (double 1bs);//template for double-to-Stonewt conversion Stonewt有一个接受多个参数的构造函数，但是仅第一个参数没有默认值，其他参数都有默认值： Stonewt (int stn,double 1bs);//not a conversion function Stonewt有符合上述形式，但类型不完全符合的构造函数。如果有不存在二义性的转换，则可实现二步转换： Stonewt (double lbe);//declaration Stonewt myCat; myCat=19; 以上转换属于隐式转换，显示转换（即显式强制类型转换）如下： Stonewt myCat;//create a Stonewt object myCat = 19.6;//not valid if Stonewt(double)is declared as explicit mycat=Stonewt(19.6);//ok,an explicit conversion mycat=(Stonewt)19.6;//ok,old form for explicit typecast 关键字explict C++新增的关键字explict用于关闭自动转换特性。 explicit Stonewt (double lbs);//no implicit conversions allowed 如果在声明/定义（某个）构造函数时使用了explict关键字，那么隐式类型转换将失效，但是显式转换仍然可用。 转换函数 构造函数只用于从某种类型到类类型的转换。 要进行相反的转换，必须使用特殊的C++运算符函数——转换函数。 定义转换函数就像重载运算符一样。可以如下定义转换函数： class Stonewt { private: ... public: operator int() const; operator double() const; } //defination below Stonewt::operator int() const { return int(pounds+0.5); } Stonewt::operator double() const { return pounds; } 当类定义了两种或更多的转换时，必须用显式强制类型转换来指出要使用哪个转换函数。 在定义了加法运算符的友元函数的情况下，如果提供了Stonewt(double)构造函数，则也可以这样做： Stonewt jennyst (9,12); double kennyD=176.0; Stonewt total; total=jennyst+kennyD; 但只有友元函数允许这样做： Stonewt jennyst (9,12); double pennyD=146.0; Stonewt total; total=pennyD+jennyst; 为什么？ 因为第一个代码块中实际上调用了jennySt.operator+ ，它是类内运算符的重载，所以可以访问同类的private成员。但是第二个代码块中penny是double类型，它会尝试调用operator+(jennySt,bennySt)，并将double隐式转换为StoneWt类型。它不是类成员函数，但是要访问private成员，所以在声明友元的情况下才能这么做。" />
+<meta property="og:description" content="CH11 使用类 运算符重载 基本 只能重载部分的、已经存在的运算符。 重载方式就像定义了一个特殊成员函数，因为这个运算符也是由对象调用的。 不同的运算符的运算顺序不同。一般而言，左侧的操作数是调用对象。 最好同时提供const和非const版本的运算符重载。因为const对象不能使用非const版本的重载运算符（即便这个重载运算符没有改变什么，但是计算机不相信你）。 例如，添加加法运算符： class Time { private: int hours; int minutes; public: Time(); Time (int h,int m=0); void AddMin(int m) void AddHr(int h): void Reset(int h=0,int m=0) Time operator+(const Time &amp;t) const; void Show() const; } Time Time::operator+(const Time &amp;t) const { Time sum; sum.minutes = minutes+t.minutes; sum.hours=hours+t.hours+sum.minutes/60; sum.minutes %= 60: return sum; } 注意，重载运算符是要返回一个对象的，返回时会发生一个复制。 使用： total = coding.operator+(fixing);//function notation total =coding +fixing; 重载限制 重载后的运算符必须至少有一个操作数是用户定义的类型，这将防止用户为标准类型重载运算符。 使用运算符时不能违反运算符原来的句法规则。例如，不能将求模运算符(%)重载成使用一个操作数。 不能修改运算符的优先级（或者说，运算符优先级不会变）。因此，如果将加号运算符重载成将两个类相加，则新的运算符与原来的加号具有相同的优先级。 不能创建新运算符。例如，不能定义operator*()函数来表示求幂。 不能重载特定运算符。 大多数运算符都可以通过成员或非成员函数进行重载，但下面的运算符只能通过成员函数进行重载：=,(),[],-&gt; 使用中括号表示法访问字符 在C++中，两个中括号组成一个中括号运算符，可以使用方法operator[]()来重载该运算符。 对于中括号运算符，一个操作数位于第一个中括号的前面，另一个操作数位于两个中括号之间。 对于一个自定义的String类，可以这么实现方法： char &amp; String::operator[](int i) { return str[i]; } 这样的话，语句： cout&lt;&lt;opera[4]; 将被转换为： cout&lt;&lt;opera.oeprator[4]; 而且像这样返回值声明为char&amp;，就可以像这样给元素赋值： String means(&quot;might&quot;); means[0]=&#39;r&#39;; 友元 友元有3种： 友元函数 友元类 友元成员函数 为何需要友元？ 考虑一个函数： Time Time:operator*(double mult)const { Time result; long totalminutes = hours*mult*60+minutes*mult; result.hours=totalminutes/60; result.minutes=totalminutes%60; return result; } 它只能适用于Time A=B*2.75。如果需要使用Time A=2.75*B，这么一来就需要定义一个非成员函数Time operator*(double m,const Time &amp;t);。 然而这会引发一个问题：非成员函数不能直接访问类的私有数据，至少常规非成员函数不能访问。 然而，有一类特殊的非成员函数可以访间类的私有成员，它们被称为友元函数。 创建友元 创建友元函数的第一步是将其原型放在类声明中，并在原型声明前加上关键字friend： friend Time operator*(double m,const Time t);//goes in class declaration 该原型意味着下面两点： 虽然operator()函数是在类声明中声明的，但它不是成员函数，因此不能使用成员运算符来调用。 虽然operator*()函数不是成员函数，但它与成员函数的访问权限相同。 只是具有成员函数的访问权限，但代表它位于类作用域内。 友元还是非友元？ 常用的友元：重载«运算符 如果有一个自定义对象trip，那么理论上如果要实现cout&lt;&lt;trip，需要在cout，也就是要修改iostream文件，然而这是个危险的注意，也会在标准接口上浪费时间。 所以一种方法是：通过使用友元函数，可以像下面这样重载运算符： ostream&amp; operator&lt;&lt;(ostream os,const Time t) { os&lt;&lt;t.hours&lt;&lt;&quot;hours,&quot;&lt;&lt;t.minutes&lt;&lt;&quot;minutes&quot;; return os; } 表面看来，它必须同时是这两个类的友元。然而： operator«()直接访问Time对象的各个成员，所以必须是Time类的友元 operator«()自始至终将ostream对象作为一个整体使用，不直接访问ostream对象的私有成员，所以不必是ostream的友元。 所以声明为Time类的友元后，可以直接使用cout&lt;&lt;trip了。 另外，调用cout«trip应使用cout对象本身，而不是它的拷贝，因此该函数按引用（而不是按值）来传递该对象。 成员函数还是非成员函数？ 考虑一个双目运算符+。 在类内重载运算符时+时，参数列表中只需要一个参数（就是另一个操作数）。这是因为另一个操作数通过this指针隐式传递。 如果重载运算符不是成员函数，那么参数列表需要两个参数（按顺序，两个操作数都要）。 类的自动转换 构造函数中的转换 Stonewt myCat;//create a Stonewt object mycat=19.6;//use Stonewt(double)to convert 19.6 to Stonewt 上述代码怎样才会成立呢？需要转换。而且只有接受一个参数的构造函数才能作为转换函数。 Stonewt有一个接受一个参数的构造函数： Stonewt (double 1bs);//template for double-to-Stonewt conversion Stonewt有一个接受多个参数的构造函数，但是仅第一个参数没有默认值，其他参数都有默认值： Stonewt (int stn,double 1bs);//not a conversion function Stonewt有符合上述形式，但类型不完全符合的构造函数。如果有不存在二义性的转换，则可实现二步转换： Stonewt (double lbe);//declaration Stonewt myCat; myCat=19; 以上转换属于隐式转换，显示转换（即显式强制类型转换）如下： Stonewt myCat;//create a Stonewt object myCat = 19.6;//not valid if Stonewt(double)is declared as explicit mycat=Stonewt(19.6);//ok,an explicit conversion mycat=(Stonewt)19.6;//ok,old form for explicit typecast 关键字explict C++新增的关键字explict用于关闭自动转换特性。 explicit Stonewt (double lbs);//no implicit conversions allowed 如果在声明/定义（某个）构造函数时使用了explict关键字，那么隐式类型转换将失效，但是显式转换仍然可用。 转换函数 构造函数只用于从某种类型到类类型的转换。 要进行相反的转换，必须使用特殊的C++运算符函数——转换函数。 定义转换函数就像重载运算符一样。可以如下定义转换函数： class Stonewt { private: ... public: operator int() const; operator double() const; } //defination below Stonewt::operator int() const { return int(pounds+0.5); } Stonewt::operator double() const { return pounds; } 当类定义了两种或更多的转换时，必须用显式强制类型转换来指出要使用哪个转换函数。 在定义了加法运算符的友元函数的情况下，如果提供了Stonewt(double)构造函数，则也可以这样做： Stonewt jennyst (9,12); double kennyD=176.0; Stonewt total; total=jennyst+kennyD; 但只有友元函数允许这样做： Stonewt jennyst (9,12); double pennyD=146.0; Stonewt total; total=pennyD+jennyst; 为什么？ 因为第一个代码块中实际上调用了jennySt.operator+ ，它是类内运算符的重载，所以可以访问同类的private成员。但是第二个代码块中penny是double类型，它会尝试调用operator+(jennySt,bennySt)，并将double隐式转换为StoneWt类型。它不是类成员函数，但是要访问private成员，所以在声明友元的情况下才能这么做。" />
+<link rel="canonical" href="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html" />
+<meta property="og:url" content="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html" />
+<meta property="og:site_name" content="Step far." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-11T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CH11 使用类" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DragonK"},"dateModified":"2024-02-11T00:00:00+00:00","datePublished":"2024-02-11T00:00:00+00:00","description":"CH11 使用类 运算符重载 基本 只能重载部分的、已经存在的运算符。 重载方式就像定义了一个特殊成员函数，因为这个运算符也是由对象调用的。 不同的运算符的运算顺序不同。一般而言，左侧的操作数是调用对象。 最好同时提供const和非const版本的运算符重载。因为const对象不能使用非const版本的重载运算符（即便这个重载运算符没有改变什么，但是计算机不相信你）。 例如，添加加法运算符： class Time { private: int hours; int minutes; public: Time(); Time (int h,int m=0); void AddMin(int m) void AddHr(int h): void Reset(int h=0,int m=0) Time operator+(const Time &amp;t) const; void Show() const; } Time Time::operator+(const Time &amp;t) const { Time sum; sum.minutes = minutes+t.minutes; sum.hours=hours+t.hours+sum.minutes/60; sum.minutes %= 60: return sum; } 注意，重载运算符是要返回一个对象的，返回时会发生一个复制。 使用： total = coding.operator+(fixing);//function notation total =coding +fixing; 重载限制 重载后的运算符必须至少有一个操作数是用户定义的类型，这将防止用户为标准类型重载运算符。 使用运算符时不能违反运算符原来的句法规则。例如，不能将求模运算符(%)重载成使用一个操作数。 不能修改运算符的优先级（或者说，运算符优先级不会变）。因此，如果将加号运算符重载成将两个类相加，则新的运算符与原来的加号具有相同的优先级。 不能创建新运算符。例如，不能定义operator*()函数来表示求幂。 不能重载特定运算符。 大多数运算符都可以通过成员或非成员函数进行重载，但下面的运算符只能通过成员函数进行重载：=,(),[],-&gt; 使用中括号表示法访问字符 在C++中，两个中括号组成一个中括号运算符，可以使用方法operator[]()来重载该运算符。 对于中括号运算符，一个操作数位于第一个中括号的前面，另一个操作数位于两个中括号之间。 对于一个自定义的String类，可以这么实现方法： char &amp; String::operator[](int i) { return str[i]; } 这样的话，语句： cout&lt;&lt;opera[4]; 将被转换为： cout&lt;&lt;opera.oeprator[4]; 而且像这样返回值声明为char&amp;，就可以像这样给元素赋值： String means(&quot;might&quot;); means[0]=&#39;r&#39;; 友元 友元有3种： 友元函数 友元类 友元成员函数 为何需要友元？ 考虑一个函数： Time Time:operator*(double mult)const { Time result; long totalminutes = hours*mult*60+minutes*mult; result.hours=totalminutes/60; result.minutes=totalminutes%60; return result; } 它只能适用于Time A=B*2.75。如果需要使用Time A=2.75*B，这么一来就需要定义一个非成员函数Time operator*(double m,const Time &amp;t);。 然而这会引发一个问题：非成员函数不能直接访问类的私有数据，至少常规非成员函数不能访问。 然而，有一类特殊的非成员函数可以访间类的私有成员，它们被称为友元函数。 创建友元 创建友元函数的第一步是将其原型放在类声明中，并在原型声明前加上关键字friend： friend Time operator*(double m,const Time t);//goes in class declaration 该原型意味着下面两点： 虽然operator()函数是在类声明中声明的，但它不是成员函数，因此不能使用成员运算符来调用。 虽然operator*()函数不是成员函数，但它与成员函数的访问权限相同。 只是具有成员函数的访问权限，但代表它位于类作用域内。 友元还是非友元？ 常用的友元：重载«运算符 如果有一个自定义对象trip，那么理论上如果要实现cout&lt;&lt;trip，需要在cout，也就是要修改iostream文件，然而这是个危险的注意，也会在标准接口上浪费时间。 所以一种方法是：通过使用友元函数，可以像下面这样重载运算符： ostream&amp; operator&lt;&lt;(ostream os,const Time t) { os&lt;&lt;t.hours&lt;&lt;&quot;hours,&quot;&lt;&lt;t.minutes&lt;&lt;&quot;minutes&quot;; return os; } 表面看来，它必须同时是这两个类的友元。然而： operator«()直接访问Time对象的各个成员，所以必须是Time类的友元 operator«()自始至终将ostream对象作为一个整体使用，不直接访问ostream对象的私有成员，所以不必是ostream的友元。 所以声明为Time类的友元后，可以直接使用cout&lt;&lt;trip了。 另外，调用cout«trip应使用cout对象本身，而不是它的拷贝，因此该函数按引用（而不是按值）来传递该对象。 成员函数还是非成员函数？ 考虑一个双目运算符+。 在类内重载运算符时+时，参数列表中只需要一个参数（就是另一个操作数）。这是因为另一个操作数通过this指针隐式传递。 如果重载运算符不是成员函数，那么参数列表需要两个参数（按顺序，两个操作数都要）。 类的自动转换 构造函数中的转换 Stonewt myCat;//create a Stonewt object mycat=19.6;//use Stonewt(double)to convert 19.6 to Stonewt 上述代码怎样才会成立呢？需要转换。而且只有接受一个参数的构造函数才能作为转换函数。 Stonewt有一个接受一个参数的构造函数： Stonewt (double 1bs);//template for double-to-Stonewt conversion Stonewt有一个接受多个参数的构造函数，但是仅第一个参数没有默认值，其他参数都有默认值： Stonewt (int stn,double 1bs);//not a conversion function Stonewt有符合上述形式，但类型不完全符合的构造函数。如果有不存在二义性的转换，则可实现二步转换： Stonewt (double lbe);//declaration Stonewt myCat; myCat=19; 以上转换属于隐式转换，显示转换（即显式强制类型转换）如下： Stonewt myCat;//create a Stonewt object myCat = 19.6;//not valid if Stonewt(double)is declared as explicit mycat=Stonewt(19.6);//ok,an explicit conversion mycat=(Stonewt)19.6;//ok,old form for explicit typecast 关键字explict C++新增的关键字explict用于关闭自动转换特性。 explicit Stonewt (double lbs);//no implicit conversions allowed 如果在声明/定义（某个）构造函数时使用了explict关键字，那么隐式类型转换将失效，但是显式转换仍然可用。 转换函数 构造函数只用于从某种类型到类类型的转换。 要进行相反的转换，必须使用特殊的C++运算符函数——转换函数。 定义转换函数就像重载运算符一样。可以如下定义转换函数： class Stonewt { private: ... public: operator int() const; operator double() const; } //defination below Stonewt::operator int() const { return int(pounds+0.5); } Stonewt::operator double() const { return pounds; } 当类定义了两种或更多的转换时，必须用显式强制类型转换来指出要使用哪个转换函数。 在定义了加法运算符的友元函数的情况下，如果提供了Stonewt(double)构造函数，则也可以这样做： Stonewt jennyst (9,12); double kennyD=176.0; Stonewt total; total=jennyst+kennyD; 但只有友元函数允许这样做： Stonewt jennyst (9,12); double pennyD=146.0; Stonewt total; total=pennyD+jennyst; 为什么？ 因为第一个代码块中实际上调用了jennySt.operator+ ，它是类内运算符的重载，所以可以访问同类的private成员。但是第二个代码块中penny是double类型，它会尝试调用operator+(jennySt,bennySt)，并将double隐式转换为StoneWt类型。它不是类成员函数，但是要访问private成员，所以在声明友元的情况下才能这么做。","headline":"CH11 使用类","mainEntityOfPage":{"@type":"WebPage","@id":"/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html"},"url":"/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Step far." /><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"
+        async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe-lightbox.umd.min.js" async></script>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe.umd.min.js" async></script>
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/photoswipe.min.css"
+  rel="stylesheet"
+/>
+<style>
+  .pswp .pswp__container .pswp__img {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initPhotoSwipe() {
+    let customOptions = {};
+
+    try {
+      const data = ``.replaceAll("=>", ":");
+      customOptions = JSON.parse(data);
+    } catch (e) {
+      console.info("Invalid custom photo previewer options! " + e.message);
+    }
+
+    // Define object and gallery options
+    const options = Object.assign(
+      {
+        gallery: "section.main",
+        children: "a.photo-swipe",
+        photo_scale: 2,
+        // dynamic import is not supported in UMD version
+        pswpModule: PhotoSwipe,
+      },
+      customOptions
+    );
+
+    const galleryEl = document.querySelector(options.gallery);
+    if (!galleryEl) {
+      return;
+    }
+
+    const imgEls = [];
+    const els = galleryEl.querySelectorAll("img:not(.emoji)");
+    els.forEach((el) => {
+      if (el.src.trim() == "") {
+        return;
+      }
+      if (!imgEls.includes(el)) {
+        imgEls.push(el);
+      }
+    });
+
+    if (imgEls.length === 0) {
+      return;
+    }
+
+    imgEls.forEach((imgEl) => {
+      imgEl.outerHTML = `
+      <a class="photo-swipe"
+        href="${imgEl.src}"
+        data-pswp-width="${
+          Math.max(imgEl.naturalWidth, imgEl.width) * options.photo_scale
+        }"
+        data-pswp-height="${
+          Math.max(imgEl.naturalHeight, imgEl.height) * options.photo_scale
+        }"
+        data-pswp-caption="${imgEl.getAttribute("caption") || imgEl.alt}"
+        target="_blank">
+        ${imgEl.outerHTML}
+      </a>`;
+    });
+
+    // Initialize PhotoSwipe 5
+    var lightbox = new PhotoSwipeLightbox(options);
+
+    lightbox.init();
+  }
+
+  window.addEventListener("load", initPhotoSwipe);
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner"><span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Step far." src="" onerror="this.style.display='none'">
+  Step far.
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger"><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+</span></div>
+        </nav></div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CH11 使用类</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <div class="post-meta">
+    <time class="dt-published" datetime="2024-02-11T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 11, 2024
+    </time>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div><div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="ch11-使用类">CH11 使用类</h2>
+
+<h3 id="运算符重载">运算符重载</h3>
+
+<h4 id="基本">基本</h4>
+
+<ul>
+  <li><strong>只能重载部分的、已经存在的运算符。</strong></li>
+  <li>重载方式就像定义了一个特殊成员函数，<strong>因为这个运算符也是由对象调用的。</strong></li>
+  <li>不同的运算符的运算顺序不同。<strong>一般而言，左侧的操作数是调用对象。</strong></li>
+  <li>最好同时提供const和非const版本的运算符重载。因为const对象不能使用非const版本的重载运算符<strong>（即便这个重载运算符没有改变什么，但是计算机不相信你）</strong>。</li>
+</ul>
+
+<p>例如，添加加法运算符：</p>
+
+<pre><code class="language-C++">class Time
+{
+private:
+    int hours;
+    int minutes;
+public:
+    Time();
+    Time (int h,int m=0);
+    void AddMin(int m)
+    void AddHr(int h):
+    void Reset(int h=0,int m=0)
+    Time operator+(const Time &amp;t) const;
+    void Show() const;
+}
+        
+Time Time::operator+(const Time &amp;t) const
+{
+    Time sum;
+    sum.minutes = minutes+t.minutes;
+    sum.hours=hours+t.hours+sum.minutes/60;
+    sum.minutes %= 60:
+    return sum;
+}
+</code></pre>
+
+<p>注意，重载运算符是要返回一个对象的，返回时会发生一个复制。</p>
+
+<p>使用：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">total = coding.operator+(fixing);//function notation</code></li>
+  <li><code class="language-plaintext highlighter-rouge">total =coding +fixing;</code></li>
+</ul>
+
+<h4 id="重载限制">重载限制</h4>
+
+<ul>
+  <li><strong>重载后的运算符必须至少有一个操作数是用户定义的类型</strong>，这将防止用户为标准类型重载运算符。</li>
+  <li>使用运算符时不能违反运算符原来的句法规则。例如，不能将求模运算符(%)重载成使用一个操作数。</li>
+  <li>不能修改运算符的优先级（<strong>或者说，运算符优先级不会变</strong>）。因此，如果将加号运算符重载成将两个类相加，则新的运算符与原来的加号具有相同的优先级。</li>
+  <li><strong>不能创建新运算符。</strong>例如，不能定义operator*()函数来表示求幂。</li>
+  <li><strong>不能重载特定运算符。</strong></li>
+  <li>大多数运算符都可以通过成员或非成员函数进行重载，但下面的运算符只能通过成员函数进行重载：<code class="language-plaintext highlighter-rouge">=,(),[],-&gt;</code></li>
+</ul>
+
+<h4 id="使用中括号表示法访问字符">使用中括号表示法访问字符</h4>
+
+<p>在C++中，两个中括号组成一个中括号运算符，可以使用方法operator[]()来重载该运算符。</p>
+
+<p>对于中括号运算符，一个操作数位于第一个中括号的前面，另一个操作数位于两个中括号之间。</p>
+
+<p>对于一个自定义的String类，可以这么实现方法：</p>
+
+<pre><code class="language-C++">char &amp; String::operator[](int i)
+{
+    return str[i];
+}
+</code></pre>
+
+<p>这样的话，语句：</p>
+
+<pre><code class="language-C++">cout&lt;&lt;opera[4];
+</code></pre>
+
+<p>将被转换为：</p>
+
+<pre><code class="language-C++">cout&lt;&lt;opera.oeprator[4];
+</code></pre>
+
+<p>而且像这样返回值声明为char&amp;，就可以像这样给元素赋值：</p>
+
+<pre><code class="language-C++">String means("might");
+means[0]='r';
+</code></pre>
+
+<h3 id="友元">友元</h3>
+
+<p>友元有3种：</p>
+
+<ul>
+  <li>友元函数</li>
+  <li>友元类</li>
+  <li>友元成员函数</li>
+</ul>
+
+<h4 id="为何需要友元">为何需要友元？</h4>
+
+<p>考虑一个函数：</p>
+
+<pre><code class="language-C++">Time Time:operator*(double mult)const
+{
+    Time result;
+    long totalminutes = hours*mult*60+minutes*mult;
+    result.hours=totalminutes/60;
+    result.minutes=totalminutes%60;
+    return result;
+}
+</code></pre>
+
+<p>它只能适用于<code class="language-plaintext highlighter-rouge">Time A=B*2.75</code>。如果需要使用<code class="language-plaintext highlighter-rouge">Time A=2.75*B</code>，这么一来就需要定义一个<strong>非成员函数</strong><code class="language-plaintext highlighter-rouge">Time operator*(double m,const Time &amp;t);</code>。</p>
+
+<p><strong>然而这会引发一个问题：非成员函数不能直接访问类的私有数据，至少常规非成员函数不能访问。</strong></p>
+
+<p>然而，有一类特殊的非成员函数可以访间类的私有成员，它们被称为友元函数。</p>
+
+<h4 id="创建友元">创建友元</h4>
+
+<p>创建友元函数的第一步是将其<strong>原型</strong>放在<strong>类声明</strong>中，并在原型声明前加上关键字friend：</p>
+
+<pre><code class="language-C++">friend Time operator*(double m,const Time t);//goes in class declaration
+</code></pre>
+
+<p>该原型意味着下面两点：</p>
+
+<ul>
+  <li>虽然operator()函数是在类声明中声明的，但<strong>它不是成员函数，因此不能使用成员运算符来调用。</strong></li>
+  <li>虽然operator*()函数不是成员函数，但它<strong>与成员函数的访问权限相同。</strong></li>
+  <li><strong>只是具有成员函数的访问权限，但代表它位于类作用域内。</strong></li>
+</ul>
+
+<h4 id="友元还是非友元">友元还是非友元？</h4>
+
+<p><strong>常用的友元：重载«运算符</strong></p>
+
+<p>如果有一个自定义对象<code class="language-plaintext highlighter-rouge">trip</code>，那么理论上如果要实现<code class="language-plaintext highlighter-rouge">cout&lt;&lt;trip</code>，需要在cout，也就是要修改iostream文件，然而这是个危险的注意，也会在标准接口上浪费时间。</p>
+
+<p>所以一种方法是：通过使用友元函数，可以像下面这样重载运算符：</p>
+
+<pre><code class="language-C++">ostream&amp; operator&lt;&lt;(ostream os,const Time t)
+{
+	os&lt;&lt;t.hours&lt;&lt;"hours,"&lt;&lt;t.minutes&lt;&lt;"minutes";
+    return os;
+}
+</code></pre>
+
+<p>表面看来，它必须同时是这两个类的友元。然而：</p>
+
+<ul>
+  <li>operator«()直接访问Time对象的各个成员，所以必须是Time类的友元</li>
+  <li>operator«()自始至终将ostream对象作为一个整体使用，<strong>不直接访问ostream对象的私有成员，所以不必是ostream的友元。</strong></li>
+</ul>
+
+<p>所以声明为Time类的友元后，可以直接使用<code class="language-plaintext highlighter-rouge">cout&lt;&lt;trip</code>了。</p>
+
+<p><strong>另外，调用cout«trip应使用cout对象本身，而不是它的拷贝，因此该函数按引用（而不是按值）来传递该对象。</strong></p>
+
+<h4 id="成员函数还是非成员函数">成员函数还是非成员函数？</h4>
+
+<p>考虑一个双目运算符+。</p>
+
+<p><strong>在类内重载运算符时+时，参数列表中只需要一个参数（就是另一个操作数）。</strong>这是因为另一个操作数通过this指针隐式传递。</p>
+
+<p><strong>如果重载运算符不是成员函数，那么参数列表需要两个参数（按顺序，两个操作数都要）。</strong></p>
+
+<h3 id="类的自动转换">类的自动转换</h3>
+
+<h4 id="构造函数中的转换">构造函数中的转换</h4>
+
+<pre><code class="language-C++">Stonewt myCat;//create a Stonewt object
+mycat=19.6;//use Stonewt(double)to convert 19.6 to Stonewt
+</code></pre>
+
+<p>上述代码怎样才会成立呢？需要转换。而且只有接受一个参数的构造函数才能作为转换函数。</p>
+
+<ul>
+  <li>
+    <p>Stonewt有一个接受一个参数的构造函数：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">Stonewt (double 1bs);//template for double-to-Stonewt conversion</code></p>
+  </li>
+  <li>
+    <p>Stonewt有一个接受多个参数的构造函数，但是仅第一个参数没有默认值，其他参数都有默认值：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">Stonewt (int stn,double 1bs);//not a conversion function</code></p>
+  </li>
+  <li>
+    <p>Stonewt有符合上述形式，但类型不完全符合的构造函数。如果有不存在二义性的转换，则可实现二步转换：</p>
+
+    <pre><code class="language-C++">Stonewt (double lbe);//declaration
+Stonewt myCat;
+myCat=19;
+</code></pre>
+  </li>
+</ul>
+
+<p>以上转换属于隐式转换，显示转换（即显式强制类型转换）如下：</p>
+
+<pre><code class="language-C++">Stonewt myCat;//create a Stonewt object
+myCat = 19.6;//not valid if Stonewt(double)is declared as explicit
+mycat=Stonewt(19.6);//ok,an explicit conversion
+mycat=(Stonewt)19.6;//ok,old form for explicit typecast
+</code></pre>
+
+<h5 id="关键字explict">关键字explict</h5>
+
+<p>C++新增的关键字explict用于关闭自动转换特性。</p>
+
+<pre><code class="language-C++">explicit Stonewt (double lbs);//no implicit conversions allowed
+</code></pre>
+
+<p>如果在声明/定义（某个）构造函数时使用了explict关键字，那么隐式类型转换将失效，但是显式转换仍然可用。</p>
+
+<h4 id="转换函数">转换函数</h4>
+
+<p>构造函数只用于从某种类型到类类型的转换。</p>
+
+<p>要进行相反的转换，必须使用特殊的C++运算符函数——转换函数。</p>
+
+<p>定义转换函数就像重载运算符一样。可以如下定义转换函数：</p>
+
+<pre><code class="language-C++">class Stonewt
+{
+private:
+    ...
+public:
+    operator int() const;
+    operator double() const;
+}
+
+//defination below
+Stonewt::operator int() const
+{
+    return int(pounds+0.5);
+}
+Stonewt::operator double() const
+{
+    return pounds;
+}
+</code></pre>
+
+<p>当类定义了两种或更多的转换时，<strong>必须</strong>用显式强制类型转换来指出要使用哪个转换函数。</p>
+
+<p>在定义了加法运算符的友元函数的情况下，如果提供了Stonewt(double)构造函数，则也可以这样做：</p>
+
+<pre><code class="language-C++">Stonewt jennyst (9,12);
+double kennyD=176.0;
+Stonewt total;
+total=jennyst+kennyD;
+</code></pre>
+
+<p>但只有友元函数允许这样做：</p>
+
+<pre><code class="language-C++">Stonewt jennyst (9,12);
+double pennyD=146.0;
+Stonewt total;
+total=pennyD+jennyst;
+</code></pre>
+
+<p>为什么？</p>
+
+<p>因为第一个代码块中实际上调用了<code class="language-plaintext highlighter-rouge">jennySt.operator+</code> ，它是类内运算符的重载，所以可以访问同类的private成员。但是第二个代码块中penny是double类型，它会尝试调用<code class="language-plaintext highlighter-rouge">operator+(jennySt,bennySt)</code>，并将double隐式转换为StoneWt类型。它不是类成员函数，但是要访问private成员，所以在声明友元的情况下才能这么做。</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav"><a class="previous" href="/csnotes/2024/02/11/CH10-%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB.html" title="CH10 对象和类">CH10 对象和类</a><a class="next" href="/csnotes/2024/02/11/CH12-%E7%B1%BB%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.html" title="CH12 类和动态内存分配">CH12 类和动态内存分配</a></div><div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li class="">
+          <a class="post-link" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html" title="CH2 数字逻辑基础">
+            CH2 数字逻辑基础<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/research/notes/2023/10/16/EDA4AI-Tutorial.html" title="EDA4AI Tutorial">
+            EDA4AI Tutorial<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH10-%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB.html" title="CH10 对象和类">
+            CH10 对象和类<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH5-%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" title="CH5 表达式">
+            CH5 表达式<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li></ul>
+    </div><div class="post-comments"></div></section>
+</div>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner"><div>Unpublished Work <span class="copyleft">&copy;</span> 2017-2024 DragonK</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

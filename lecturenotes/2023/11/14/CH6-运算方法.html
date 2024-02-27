@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CH6 运算方法 | Step far.</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="CH6 运算方法" />
+<meta name="author" content="DragonK" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="基本运算部件 主要关注基本运算部件：加法器（串行→并行 ）→ 带标志加法器 → ALU。 串行进位加法器 就是若干个全加器的串联。 并行进位加法器 将两个加数送进FA，并行产生$P_{i},G_{i}$，然后将它们送入4位ALU，并行产生$C_{i}$，然后送回FA产生最终结果$F_{i}$。 局部进位加法器 组内并行，组间串行： 16位两级先行进位加法器 算术逻辑部件ALU CPU有一个操作控制端（ALUop），用来决定ALU所执行的处理功能。 ALUop的位数k决定了操作的种类数目。例如，当位数k为3时，ALU最多只有8种操作。 ALU能够进行基本算术运算与逻辑运算： 无符号整数加、减 带符号整数加、减 与、或、非、异或等逻辑运算 输出结果的同时设置标志位EFLAGS。 定点数运算 定点数加减运算 均采用补码计算。 补码的定义：假设n位二进制数，其中最高位为符号位，则对于负数X有： \(X_{补}=2^{n}+X\) 对于有负数参与的运算，计算机中需要有一个电路实现：已知X与Y的补码，计算X+Y的补码和X-Y的补码。 根据定义： \([X+Y]_{补}=2^{n}+X+Y=(2^{n}+X)+(2^{n}+Y)=X_{补}+Y_{补} \ \ \ (mod \ 2^{n}) \\ [X-Y]_{补}=2^{n}+X-Y=(2^{n}+X)+(2^{n}-Y)=X_{补}+-Y_{补} \ \ \ (mod \ 2^{n})\) 所以只需要关注减法：求这个数字的负数的补码即可，也即 \(-B_{补}=\bar{B}_{补}+1\) EFLAGS的设置 OF 考虑到两个同符号数相加才会产生溢出，所以当X和Y的最高位相同且不同于结果Z，则OF置1。 CF 进行加法的时候，如果最高位相加产生进位C，则CF置1； 进行减法的时候，应该将C取反作为借位标志； 综合起来可得：$CF=Sub \ XOR \ C$ 定点数乘除运算 原码作为浮点数尾数的表示形式，需要计算机能实现定点原码小数的乘法运算。根据每次部分积是一位相乘得到还是两位相乘得到，有原码一位乘法和原码两位乘法；推广有原码多位乘法。 当我们谈到原码/补码的时候，我们是在谈论有符号数的运算。 原码乘法运算 用原码实现乘法运算时，符号位与数值位分开计算。因此，一位乘法的描述如下： 已知X的原码$X_{0}.X_{1}…X_{n}$，Y的原码$Y_{0}.Y_{1}…Y_{n}$。那么乘积Z的原码为$Z_{0}.Z_{1}…Z_{2n}$，其中小数点的位$Z_{0}=X_{0} \ XOR \ Y_{0}$，$Z_{1}…Z_{2n}=(0.X_{1}…X_{n})*(0.Y_{1}…Y_{n})$ 。 为什么明明是在讨论整数乘除，却出现了小数？ 可以不管小数点，事实上在机器内部也没有小数点，只是约定了一个小数点的位置，小数点约定在最左边就是定点小数乘法，约定在右边就是定点整数乘法。 所以可以将两个定点小数的数值部分看作两个无符号数的乘积。 举例： 我们只需要一个N位加法器来临时存储结果，2N位来存储最终结果。 原码两位乘法 补码乘法运算 用于进行带符号整数运算。 问题的缘起： \([X*Y]_{补} \neq [X]_{补} * [Y]_{补}\) 所以不能用无符号整数乘法计算。 思路：由于加减运算符合这个“合并律”，所以只要将所求转换成对若干数的和求补即可。 Booth乘法是一种补码相乘算法，可以将数值位与符号位合在一起参与运算。 注意这里n-1是最高位，只是一种表示而已。 补码两位乘法 定点数除法运算 基本上同手算除法的思路一样。 由于除法的特性，必须做除前预处理：当被除数和除数都≠ 0，且商≠ 0时，才进一步进行除法运算。 此外我们还需要区分定点小数与定点整数的除法： 定点正整数（即无符号数 ）相除：在被除数的高位添n个0 定点正小数（即原码小数）相除：在被除数的低位添加n个0 这样，就将所有情况都统一为：一个2n位数除以一个n位数。 然后还需要注意：n位除法需要n+1步。 无符号数除法运算 恢复余数法 写的时候数一下：一共要sl R 5次。 需要注意：最后一步余数寄存器需要向右移动一位（并且不移动到商的地方） 但是这种方法很麻烦，所以一般采用： 不恢复余数法 下一次加什么由上一次加完后R的符号位决定。 最后一次只需要移动商的部分（左移），不需要移动余数！ 有符号数除法运算 和无符号数除法运算类似，也有恢复余数法和加减交替法，但是结合实际，只介绍加减交替法。 原码除法 复习一下原码表示：最高位表符号位，低位的所有表其绝对值的真值。 原码除法的思想是： 符号位和数值位分开处理： 商的数值部分由无符号数除法求得 商符由被除数和除数的符号确定：同号为0，异号为1 余数的符号同被除数的符号 举例： 这里由于是小数运算所以在低位补了0，注意整数是在高位补0。 一开始的右边是空的，是因为认为n位除n位永远不会溢出，先行左移了1位。 补码除法 思想： 直接用补码除法，符号和数值一起进行运算，商符直接在运算中产生 补码运算的不恢复余数法要点： 尤其要注意最后商和余数的修正，这是两个独立的过程。 举例：" />
+<meta property="og:description" content="基本运算部件 主要关注基本运算部件：加法器（串行→并行 ）→ 带标志加法器 → ALU。 串行进位加法器 就是若干个全加器的串联。 并行进位加法器 将两个加数送进FA，并行产生$P_{i},G_{i}$，然后将它们送入4位ALU，并行产生$C_{i}$，然后送回FA产生最终结果$F_{i}$。 局部进位加法器 组内并行，组间串行： 16位两级先行进位加法器 算术逻辑部件ALU CPU有一个操作控制端（ALUop），用来决定ALU所执行的处理功能。 ALUop的位数k决定了操作的种类数目。例如，当位数k为3时，ALU最多只有8种操作。 ALU能够进行基本算术运算与逻辑运算： 无符号整数加、减 带符号整数加、减 与、或、非、异或等逻辑运算 输出结果的同时设置标志位EFLAGS。 定点数运算 定点数加减运算 均采用补码计算。 补码的定义：假设n位二进制数，其中最高位为符号位，则对于负数X有： \(X_{补}=2^{n}+X\) 对于有负数参与的运算，计算机中需要有一个电路实现：已知X与Y的补码，计算X+Y的补码和X-Y的补码。 根据定义： \([X+Y]_{补}=2^{n}+X+Y=(2^{n}+X)+(2^{n}+Y)=X_{补}+Y_{补} \ \ \ (mod \ 2^{n}) \\ [X-Y]_{补}=2^{n}+X-Y=(2^{n}+X)+(2^{n}-Y)=X_{补}+-Y_{补} \ \ \ (mod \ 2^{n})\) 所以只需要关注减法：求这个数字的负数的补码即可，也即 \(-B_{补}=\bar{B}_{补}+1\) EFLAGS的设置 OF 考虑到两个同符号数相加才会产生溢出，所以当X和Y的最高位相同且不同于结果Z，则OF置1。 CF 进行加法的时候，如果最高位相加产生进位C，则CF置1； 进行减法的时候，应该将C取反作为借位标志； 综合起来可得：$CF=Sub \ XOR \ C$ 定点数乘除运算 原码作为浮点数尾数的表示形式，需要计算机能实现定点原码小数的乘法运算。根据每次部分积是一位相乘得到还是两位相乘得到，有原码一位乘法和原码两位乘法；推广有原码多位乘法。 当我们谈到原码/补码的时候，我们是在谈论有符号数的运算。 原码乘法运算 用原码实现乘法运算时，符号位与数值位分开计算。因此，一位乘法的描述如下： 已知X的原码$X_{0}.X_{1}…X_{n}$，Y的原码$Y_{0}.Y_{1}…Y_{n}$。那么乘积Z的原码为$Z_{0}.Z_{1}…Z_{2n}$，其中小数点的位$Z_{0}=X_{0} \ XOR \ Y_{0}$，$Z_{1}…Z_{2n}=(0.X_{1}…X_{n})*(0.Y_{1}…Y_{n})$ 。 为什么明明是在讨论整数乘除，却出现了小数？ 可以不管小数点，事实上在机器内部也没有小数点，只是约定了一个小数点的位置，小数点约定在最左边就是定点小数乘法，约定在右边就是定点整数乘法。 所以可以将两个定点小数的数值部分看作两个无符号数的乘积。 举例： 我们只需要一个N位加法器来临时存储结果，2N位来存储最终结果。 原码两位乘法 补码乘法运算 用于进行带符号整数运算。 问题的缘起： \([X*Y]_{补} \neq [X]_{补} * [Y]_{补}\) 所以不能用无符号整数乘法计算。 思路：由于加减运算符合这个“合并律”，所以只要将所求转换成对若干数的和求补即可。 Booth乘法是一种补码相乘算法，可以将数值位与符号位合在一起参与运算。 注意这里n-1是最高位，只是一种表示而已。 补码两位乘法 定点数除法运算 基本上同手算除法的思路一样。 由于除法的特性，必须做除前预处理：当被除数和除数都≠ 0，且商≠ 0时，才进一步进行除法运算。 此外我们还需要区分定点小数与定点整数的除法： 定点正整数（即无符号数 ）相除：在被除数的高位添n个0 定点正小数（即原码小数）相除：在被除数的低位添加n个0 这样，就将所有情况都统一为：一个2n位数除以一个n位数。 然后还需要注意：n位除法需要n+1步。 无符号数除法运算 恢复余数法 写的时候数一下：一共要sl R 5次。 需要注意：最后一步余数寄存器需要向右移动一位（并且不移动到商的地方） 但是这种方法很麻烦，所以一般采用： 不恢复余数法 下一次加什么由上一次加完后R的符号位决定。 最后一次只需要移动商的部分（左移），不需要移动余数！ 有符号数除法运算 和无符号数除法运算类似，也有恢复余数法和加减交替法，但是结合实际，只介绍加减交替法。 原码除法 复习一下原码表示：最高位表符号位，低位的所有表其绝对值的真值。 原码除法的思想是： 符号位和数值位分开处理： 商的数值部分由无符号数除法求得 商符由被除数和除数的符号确定：同号为0，异号为1 余数的符号同被除数的符号 举例： 这里由于是小数运算所以在低位补了0，注意整数是在高位补0。 一开始的右边是空的，是因为认为n位除n位永远不会溢出，先行左移了1位。 补码除法 思想： 直接用补码除法，符号和数值一起进行运算，商符直接在运算中产生 补码运算的不恢复余数法要点： 尤其要注意最后商和余数的修正，这是两个独立的过程。 举例：" />
+<link rel="canonical" href="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html" />
+<meta property="og:url" content="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html" />
+<meta property="og:site_name" content="Step far." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-11-14T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CH6 运算方法" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DragonK"},"dateModified":"2023-11-14T00:00:00+00:00","datePublished":"2023-11-14T00:00:00+00:00","description":"基本运算部件 主要关注基本运算部件：加法器（串行→并行 ）→ 带标志加法器 → ALU。 串行进位加法器 就是若干个全加器的串联。 并行进位加法器 将两个加数送进FA，并行产生$P_{i},G_{i}$，然后将它们送入4位ALU，并行产生$C_{i}$，然后送回FA产生最终结果$F_{i}$。 局部进位加法器 组内并行，组间串行： 16位两级先行进位加法器 算术逻辑部件ALU CPU有一个操作控制端（ALUop），用来决定ALU所执行的处理功能。 ALUop的位数k决定了操作的种类数目。例如，当位数k为3时，ALU最多只有8种操作。 ALU能够进行基本算术运算与逻辑运算： 无符号整数加、减 带符号整数加、减 与、或、非、异或等逻辑运算 输出结果的同时设置标志位EFLAGS。 定点数运算 定点数加减运算 均采用补码计算。 补码的定义：假设n位二进制数，其中最高位为符号位，则对于负数X有： \\(X_{补}=2^{n}+X\\) 对于有负数参与的运算，计算机中需要有一个电路实现：已知X与Y的补码，计算X+Y的补码和X-Y的补码。 根据定义： \\([X+Y]_{补}=2^{n}+X+Y=(2^{n}+X)+(2^{n}+Y)=X_{补}+Y_{补} \\ \\ \\ (mod \\ 2^{n}) \\\\ [X-Y]_{补}=2^{n}+X-Y=(2^{n}+X)+(2^{n}-Y)=X_{补}+-Y_{补} \\ \\ \\ (mod \\ 2^{n})\\) 所以只需要关注减法：求这个数字的负数的补码即可，也即 \\(-B_{补}=\\bar{B}_{补}+1\\) EFLAGS的设置 OF 考虑到两个同符号数相加才会产生溢出，所以当X和Y的最高位相同且不同于结果Z，则OF置1。 CF 进行加法的时候，如果最高位相加产生进位C，则CF置1； 进行减法的时候，应该将C取反作为借位标志； 综合起来可得：$CF=Sub \\ XOR \\ C$ 定点数乘除运算 原码作为浮点数尾数的表示形式，需要计算机能实现定点原码小数的乘法运算。根据每次部分积是一位相乘得到还是两位相乘得到，有原码一位乘法和原码两位乘法；推广有原码多位乘法。 当我们谈到原码/补码的时候，我们是在谈论有符号数的运算。 原码乘法运算 用原码实现乘法运算时，符号位与数值位分开计算。因此，一位乘法的描述如下： 已知X的原码$X_{0}.X_{1}…X_{n}$，Y的原码$Y_{0}.Y_{1}…Y_{n}$。那么乘积Z的原码为$Z_{0}.Z_{1}…Z_{2n}$，其中小数点的位$Z_{0}=X_{0} \\ XOR \\ Y_{0}$，$Z_{1}…Z_{2n}=(0.X_{1}…X_{n})*(0.Y_{1}…Y_{n})$ 。 为什么明明是在讨论整数乘除，却出现了小数？ 可以不管小数点，事实上在机器内部也没有小数点，只是约定了一个小数点的位置，小数点约定在最左边就是定点小数乘法，约定在右边就是定点整数乘法。 所以可以将两个定点小数的数值部分看作两个无符号数的乘积。 举例： 我们只需要一个N位加法器来临时存储结果，2N位来存储最终结果。 原码两位乘法 补码乘法运算 用于进行带符号整数运算。 问题的缘起： \\([X*Y]_{补} \\neq [X]_{补} * [Y]_{补}\\) 所以不能用无符号整数乘法计算。 思路：由于加减运算符合这个“合并律”，所以只要将所求转换成对若干数的和求补即可。 Booth乘法是一种补码相乘算法，可以将数值位与符号位合在一起参与运算。 注意这里n-1是最高位，只是一种表示而已。 补码两位乘法 定点数除法运算 基本上同手算除法的思路一样。 由于除法的特性，必须做除前预处理：当被除数和除数都≠ 0，且商≠ 0时，才进一步进行除法运算。 此外我们还需要区分定点小数与定点整数的除法： 定点正整数（即无符号数 ）相除：在被除数的高位添n个0 定点正小数（即原码小数）相除：在被除数的低位添加n个0 这样，就将所有情况都统一为：一个2n位数除以一个n位数。 然后还需要注意：n位除法需要n+1步。 无符号数除法运算 恢复余数法 写的时候数一下：一共要sl R 5次。 需要注意：最后一步余数寄存器需要向右移动一位（并且不移动到商的地方） 但是这种方法很麻烦，所以一般采用： 不恢复余数法 下一次加什么由上一次加完后R的符号位决定。 最后一次只需要移动商的部分（左移），不需要移动余数！ 有符号数除法运算 和无符号数除法运算类似，也有恢复余数法和加减交替法，但是结合实际，只介绍加减交替法。 原码除法 复习一下原码表示：最高位表符号位，低位的所有表其绝对值的真值。 原码除法的思想是： 符号位和数值位分开处理： 商的数值部分由无符号数除法求得 商符由被除数和除数的符号确定：同号为0，异号为1 余数的符号同被除数的符号 举例： 这里由于是小数运算所以在低位补了0，注意整数是在高位补0。 一开始的右边是空的，是因为认为n位除n位永远不会溢出，先行左移了1位。 补码除法 思想： 直接用补码除法，符号和数值一起进行运算，商符直接在运算中产生 补码运算的不恢复余数法要点： 尤其要注意最后商和余数的修正，这是两个独立的过程。 举例：","headline":"CH6 运算方法","mainEntityOfPage":{"@type":"WebPage","@id":"/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html"},"url":"/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Step far." /><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"
+        async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe-lightbox.umd.min.js" async></script>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe.umd.min.js" async></script>
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/photoswipe.min.css"
+  rel="stylesheet"
+/>
+<style>
+  .pswp .pswp__container .pswp__img {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initPhotoSwipe() {
+    let customOptions = {};
+
+    try {
+      const data = ``.replaceAll("=>", ":");
+      customOptions = JSON.parse(data);
+    } catch (e) {
+      console.info("Invalid custom photo previewer options! " + e.message);
+    }
+
+    // Define object and gallery options
+    const options = Object.assign(
+      {
+        gallery: "section.main",
+        children: "a.photo-swipe",
+        photo_scale: 2,
+        // dynamic import is not supported in UMD version
+        pswpModule: PhotoSwipe,
+      },
+      customOptions
+    );
+
+    const galleryEl = document.querySelector(options.gallery);
+    if (!galleryEl) {
+      return;
+    }
+
+    const imgEls = [];
+    const els = galleryEl.querySelectorAll("img:not(.emoji)");
+    els.forEach((el) => {
+      if (el.src.trim() == "") {
+        return;
+      }
+      if (!imgEls.includes(el)) {
+        imgEls.push(el);
+      }
+    });
+
+    if (imgEls.length === 0) {
+      return;
+    }
+
+    imgEls.forEach((imgEl) => {
+      imgEl.outerHTML = `
+      <a class="photo-swipe"
+        href="${imgEl.src}"
+        data-pswp-width="${
+          Math.max(imgEl.naturalWidth, imgEl.width) * options.photo_scale
+        }"
+        data-pswp-height="${
+          Math.max(imgEl.naturalHeight, imgEl.height) * options.photo_scale
+        }"
+        data-pswp-caption="${imgEl.getAttribute("caption") || imgEl.alt}"
+        target="_blank">
+        ${imgEl.outerHTML}
+      </a>`;
+    });
+
+    // Initialize PhotoSwipe 5
+    var lightbox = new PhotoSwipeLightbox(options);
+
+    lightbox.init();
+  }
+
+  window.addEventListener("load", initPhotoSwipe);
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner"><span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Step far." src="" onerror="this.style.display='none'">
+  Step far.
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger"><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+</span></div>
+        </nav></div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CH6 运算方法</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <div class="post-meta">
+    <time class="dt-published" datetime="2023-11-14T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 14, 2023
+    </time>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div><div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="基本运算部件">基本运算部件</h2>
+
+<p>主要关注基本运算部件：加法器（串行→并行 ）→ 带标志加法器 → ALU。</p>
+
+<h3 id="串行进位加法器">串行进位加法器</h3>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114104333885.png" alt="image-20231114104333885" /></p>
+
+<p>就是若干个全加器的串联。</p>
+
+<h3 id="并行进位加法器">并行进位加法器</h3>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114104827541.png" alt="image-20231114104827541" /></p>
+
+<p>将两个加数送进FA，并行产生$P_{i},G_{i}$，然后将它们送入4位ALU，并行产生$C_{i}$，然后送回FA产生最终结果$F_{i}$。</p>
+
+<h4 id="局部进位加法器">局部进位加法器</h4>
+
+<p><strong>组内并行，组间串行：</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114105117224.png" alt="image-20231114105117224" /></p>
+
+<p><strong>16位两级先行进位加法器</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114105309746.png" alt="image-20231114105309746" /></p>
+
+<h3 id="算术逻辑部件alu">算术逻辑部件ALU</h3>
+
+<p>CPU有一个操作控制端（ALUop），用来决定ALU所执行的处理功能。</p>
+
+<p>ALUop的位数k决定了操作的种类数目。例如，当位数k为3时，ALU最多只有8种操作。</p>
+
+<p>ALU能够进行基本算术运算与逻辑运算：</p>
+
+<ul>
+  <li>无符号整数加、减</li>
+  <li>带符号整数加、减</li>
+  <li>与、或、非、异或等逻辑运算</li>
+</ul>
+
+<p>输出结果的同时设置标志位EFLAGS。</p>
+
+<h2 id="定点数运算">定点数运算</h2>
+
+<h3 id="定点数加减运算">定点数加减运算</h3>
+
+<p>均采用补码计算。</p>
+
+<p>补码的定义：假设n位二进制数，其中最高位为符号位，则<strong>对于负数X</strong>有：
+\(X_{补}=2^{n}+X\)
+对于有负数参与的运算，计算机中需要有一个电路实现：已知X与Y的补码，计算X+Y的补码和X-Y的补码。</p>
+
+<p>根据定义：
+\([X+Y]_{补}=2^{n}+X+Y=(2^{n}+X)+(2^{n}+Y)=X_{补}+Y_{补} \ \ \  (mod \ 2^{n}) \\
+[X-Y]_{补}=2^{n}+X-Y=(2^{n}+X)+(2^{n}-Y)=X_{补}+-Y_{补} \ \ \  (mod \ 2^{n})\)
+所以只需要关注减法：求这个数字的负数的补码即可，也即
+\(-B_{补}=\bar{B}_{补}+1\)
+<img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114201610800.png" alt="image-20231114201610800" /></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114201619927.png" alt="image-20231114201619927" /></p>
+
+<p><strong>EFLAGS的设置</strong></p>
+
+<p><strong>OF</strong></p>
+
+<p>考虑到两个同符号数相加才会产生溢出，所以当X和Y的最高位相同且不同于结果Z，则OF置1。</p>
+
+<p><strong>CF</strong></p>
+
+<p>进行加法的时候，如果最高位相加产生进位C，则CF置1；</p>
+
+<p>进行减法的时候，应该将C取反作为借位标志；</p>
+
+<p>综合起来可得：$CF=Sub \ XOR \ C$</p>
+
+<h3 id="定点数乘除运算">定点数乘除运算</h3>
+
+<p>原码作为浮点数尾数的表示形式，需要计算机能实现定点原码小数的乘法运算。根据每次部分积是一位相乘得到还是两位相乘得到，有<strong>原码一位乘法</strong>和<strong>原码两位乘法</strong>；推广有原码多位乘法。</p>
+
+<p><strong>当我们谈到原码/补码的时候，我们是在谈论有符号数的运算。</strong></p>
+
+<h4 id="原码乘法运算">原码乘法运算</h4>
+
+<p>用原码实现乘法运算时，符号位与数值位分开计算。因此，一位乘法的描述如下：</p>
+
+<p>已知X的原码$X_{0}.X_{1}…X_{n}$，Y的原码$Y_{0}.Y_{1}…Y_{n}$。那么乘积Z的原码为$Z_{0}.Z_{1}…Z_{2n}$，其中小数点的位$Z_{0}=X_{0} \ XOR \ Y_{0}$，$Z_{1}…Z_{2n}=(0.X_{1}…X_{n})*(0.Y_{1}…Y_{n})$ 。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114203927530.png" alt="image-20231114203927530" /></p>
+
+<p>为什么明明是在讨论整数乘除，却出现了小数？</p>
+
+<p>可以不管小数点，事实上在机器内部也没有小数点，只是约定了一个小数点的位置，<strong>小数点约定在最左边就是定点小数乘法，约定在右边就是定点整数乘法。</strong></p>
+
+<p>所以可以将两个定点小数的数值部分看作两个无符号数的乘积。</p>
+
+<p>举例：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114211243355.png" alt="image-20231114211243355" /></p>
+
+<p>我们只需要一个N位加法器来临时存储结果，2N位来存储最终结果。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114211433012.png" alt="image-20231114211433012" /></p>
+
+<p><strong>原码两位乘法</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114212116294.png" alt="image-20231114212116294" /></p>
+
+<h4 id="补码乘法运算">补码乘法运算</h4>
+
+<p>用于进行带符号整数运算。</p>
+
+<p>问题的缘起：
+\([X*Y]_{补} \neq [X]_{补} * [Y]_{补}\)
+所以不能用无符号整数乘法计算。</p>
+
+<p>思路：由于加减运算符合这个“合并律”，所以只要将所求转换成对若干数的和求补即可。</p>
+
+<p><strong>Booth乘法</strong>是一种补码相乘算法，可以将数值位与符号位合在一起参与运算。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114213059202.png" alt="image-20231114213059202" /></p>
+
+<p>注意这里n-1是最高位，只是一种表示而已。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114213723724.png" alt="image-20231114213723724" /></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114213654646.png" alt="image-20231114213654646" /></p>
+
+<p><strong>补码两位乘法</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114213846135.png" alt="image-20231114213846135" /></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231114213852908.png" alt="image-20231114213852908" /></p>
+
+<h3 id="定点数除法运算">定点数除法运算</h3>
+
+<p>基本上同手算除法的思路一样。</p>
+
+<p>由于除法的特性，必须做<strong>除前预处理</strong>：当被除数和除数都≠ 0，且商≠ 0时，才进一步进行除法运算。</p>
+
+<p>此外我们还需要区分定点小数与定点整数的除法：</p>
+
+<ul>
+  <li>定点正整数（即无符号数 ）相除：在被除数的高位添n个0</li>
+  <li>定点正小数（即原码小数）相除：在被除数的低位添加n个0</li>
+</ul>
+
+<p>这样，就将所有情况都统一为：一个2n位数除以一个n位数。</p>
+
+<p>然后还需要注意：<strong>n位除法需要n+1步</strong>。</p>
+
+<h4 id="无符号数除法运算">无符号数除法运算</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231117144356808.png" alt="image-20231117144356808" /></p>
+
+<h5 id="恢复余数法">恢复余数法</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231117144409251.png" alt="image-20231117144409251" /></p>
+
+<ul>
+  <li>
+    <p>写的时候数一下：一共要sl R 5次。</p>
+  </li>
+  <li>
+    <p>需要注意：最后一步余数寄存器需要向右移动一位（并且不移动到商的地方）</p>
+  </li>
+</ul>
+
+<p>但是这种方法很麻烦，所以一般采用：</p>
+
+<h5 id="不恢复余数法">不恢复余数法</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231117145814310.png" alt="image-20231117145814310" /></p>
+
+<ul>
+  <li>下一次加什么由上一次加完后R的符号位决定。</li>
+  <li>最后一次只需要移动商的部分（左移），不需要移动余数！</li>
+</ul>
+
+<h4 id="有符号数除法运算">有符号数除法运算</h4>
+
+<p>和无符号数除法运算类似，也有<strong>恢复余数法</strong>和<strong>加减交替法</strong>，但是结合实际，只介绍加减交替法。</p>
+
+<h5 id="原码除法">原码除法</h5>
+
+<p>复习一下原码表示：最高位表符号位，低位的所有表其绝对值的真值。</p>
+
+<p>原码除法的思想是：</p>
+
+<ul>
+  <li>符号位和数值位分开处理：
+    <ul>
+      <li>商的数值部分由无符号数除法求得</li>
+      <li>商符由被除数和除数的符号确定：同号为0，异号为1</li>
+    </ul>
+  </li>
+  <li>余数的符号同被除数的符号</li>
+</ul>
+
+<p>举例：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231117151353604.png" alt="image-20231117151353604" /></p>
+
+<p>这里由于是小数运算所以在低位补了0，注意整数是在高位补0。</p>
+
+<p>一开始的右边是空的，是因为认为n位除n位永远不会溢出，先行左移了1位。</p>
+
+<h5 id="补码除法">补码除法</h5>
+
+<p>思想：</p>
+
+<ul>
+  <li>直接用补码除法，符号和数值一起进行运算，商符直接在运算中产生</li>
+</ul>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231117151643112.png" alt="image-20231117151643112" /></p>
+
+<p>补码运算的不恢复余数法要点：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231117151718129.png" alt="image-20231117151718129" /></p>
+
+<p><strong>尤其要注意最后商和余数的修正，这是两个独立的过程。</strong></p>
+
+<p>举例：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/img/image-20231117151841743.png" alt="image-20231117151841743" /></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav"><a class="previous" href="/lecturenotes/2023/11/14/CH5-FPGA.html" title="CH5 FPGA">CH5 FPGA</a><a class="next" href="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html" title="多臂老虎机问题">多臂老虎机问题</a></div><div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH13-%E7%B1%BB%E7%BB%A7%E6%89%BF.html" title="CH13 类继承">
+            CH13 类继承<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/research/notes/2023/10/16/EDA4AI-Tutorial.html" title="EDA4AI Tutorial">
+            EDA4AI Tutorial<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html" title="CH6 运算方法">
+            CH6 运算方法<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html" title="CH2 数字逻辑基础">
+            CH2 数字逻辑基础<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li></ul>
+    </div><div class="post-comments"></div></section>
+</div>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner"><div>Unpublished Work <span class="copyleft">&copy;</span> 2017-2024 DragonK</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

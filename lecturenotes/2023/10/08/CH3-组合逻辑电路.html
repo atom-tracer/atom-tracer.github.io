@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CH3 组合逻辑电路 | Step far.</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="CH3 组合逻辑电路" />
+<meta name="author" content="DragonK" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="组合逻辑电路概述 数字逻辑电路可被看成是带有若干输入端和若干输出端的黑盒子。每个输入端和输出端只有高电平、低电平两种状态，对应1或0。 除了组合逻辑电路，还有被称为时序逻辑电路的电路类型，它们之间有很大差别： 组合逻辑电路的输出值仅依赖于当前输入值 时序逻辑电路的输出值不仅依赖输入值，还与当前状态（现态）有关。电路中存在存储部件或反馈结构 构成规则 每个元件本身是组合逻辑电路（逻辑门电路也是组合逻辑电路） 输出结点不能互连（不能将两个输出合并） 输出结点不能反馈到输入端（不能有回路） 逻辑电路图 逻辑电路图描述数字电路内部元件的结构及其相互连接关系。 逻辑电路图和逻辑表达式是一一对应关系，它们都是多个输入，一个输出。 而组合逻辑电路中的每个输出端对应一个逻辑表达式（一个逻辑电路图）。 一个真值表可能对应多个不同的逻辑表达式，从而对应多个不同的逻辑电路图，因而可以有多个不同的实现方式（功能相同，但电路所用的元器件不同、化简程度不同……） 任何逻辑表达式都可写成与、或、非三种基本运算的逻辑组合。 扇入、扇出系数 扇入系数：一个逻辑门所允许的输入端的最大数目 扇出系数：一个逻辑门输出端信号所能驱动的下一级输入端的最大数目 逻辑运算优先级 逻辑运算有优先级。 我们知道一个逻辑门的输出可以作为另一个逻辑门的输入，那么在根据逻辑表达式确定逻辑门间的连接关系时（尤其是没有括号时），需要根据优先级确定： 优先级顺序：非 &gt; 与/与非 &gt; 异或/同或 &gt; 或/或非 如果是n位逻辑运算，只需要在输入端/输出端标注位数即可。 多级组合逻辑电路 门延迟：信号通过逻辑门的时间，也就是从输入信号改变到输出信号改变的所用时间。 任何逻辑表达式都可以转换成与-或表达式和或-与表达式，因此，任何组合逻辑电路都可以是一个两级电路。 与-或表达式对应电路：第一级是若干个与门，第二级是一个或门。 在设计电路时，通常根据速度与成本的权衡来决定采用多少级电路。通常，级数越少，速度越快，但需要的逻辑门可能越多。 组合逻辑电路设计 无关项、非法值和高阻态 非法值 信号值不能被有效识别为高电平或低电平，处于不确定状态。通常发生在某个节点同时被高低电平驱动的时候，例如： 无关项 某些输入组合对应的输出值可以是任意值，某些输入组合不可能出现。这些输入组合对应的输出值在化简时可标识为d，表示可以取值0或1，具体数值根据化简的需要而定。 更改无关项的取值可简化电路从而降低成本，但也更易受干扰。 例如：8421自然BCD码输入时，大于1001的编码为无关项。 高阻态 高阻态Hi-Z，是输出处于非正常逻辑态的第三种电气态，好像和电路断开一样。 当逻辑电路输出是高阻态的时候，这个逻辑门仿佛和下级电路断开。 三态门：是一种重要的总线接口电路，也称三态缓冲器。三态门有一个使能端E（或者EN），它控制输出端是高阻态/正常通路。 E有效==三态门为通路；E无效==三态门输出为Hi-Z 一般来说，E为高电平时有效。若要表示E为低电平时有效，表示为$\bar{E}$，并在使能端加一个小圆圈。 三态门用途：可用于连接总线，多个三态输出连在一起等，例如： 典型组合逻辑部件设计 译码器和编码器 译码器（decoder） 一种多输入、多输出的组合电路。且输入端个数比输出端少。 输出端通常的形态是单热点编码。 一种最简单的译码器输入和输出关系是：若输入的二进制编码值是x，则第x条输出线为1，其余输出全为0。这是$n-2^{n}$译码器。例如2-4译码器，3-8译码器。 编码器（encoder） 编码器是译码器的反函数电路。 一般来说输入端个数大于输出端个数。 最常见的是$2^{n}-n$编码器（二进制编码器）。 互斥编码器 I0 I1 I2 I3 I4 I5 I6 I7 $O_{0}$ 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 1 优先权编码器 3位优先权编码器： 多个输入可同时为1，但只对优先级最高的输入进行编码输出假定优先级顺序为I0 &gt; I1 &gt; I2 &gt; I3 &gt; I4 &gt; I5 &gt; I6 &gt; I7，则： 多路选择器和多路分配器 多路选择器：多路输入、单路输出 多路分配器：单路输入、多路输出 这里每路是1位或多位。除了输入端还有选择控制端。 $2^{n}$路输入通常配有$n$位二进制数用作控制。当输入不是$2^{n}$的形式时，取$\lceil log_{2}(k) \rceil$位个控制端 多路选择器 这个4路选择器的主要思想是用S0和S1加上非门连接每个与门来控制这个与门另一端是否有效。 4路选择器的实现方式并不唯一，可以用两级门电路，多层级联或者三态门电路实现。 多路分配器 实现思路和多路选择器一致。 半加器和全加器 半加器 半加器（Half Adder，简称HA）：仅考虑加数和被加数，不考虑低位来的进位。 半加器一般只有两个输入。 全加器 全加器（Full Adder，简称FA）：输入为加数、被加数和低位进位Cin，输出为和F、进位Cout。 组合逻辑部件时序分析 信号通过连线和电路元件时会有一定时间的延迟 电路的延迟取决于电路内部的设计及外部特性，影响因素包括但不限于： 连线的长短、元件的数量 电路制造工艺、工作电压 环境噪声、温度等外在条件 高低电平的转换过渡时间 因此，任何组合逻辑电路从输入信号的改变，到随之引起的输出信号的改变，都有一定时间的延迟。 传输延迟和最小延迟 电路延迟可以用时序图来直观描述。时序图反映了电路的输入信号改变时输出信号的瞬时响应过程。 下降沿电路延迟$t_{pHL}$：输入变化引起相应输出从高到低变化的时间 上升沿电路延迟$t_{pLH}$：输入变化引起相应输出从低到高变化的时间 由于逻辑门电路具有最大延迟和最小延迟时序特征，所以通常取信号转换时间中间点来测量延迟时间（以反相器电路为例，如图） 组合逻辑电路的时序特征主要包括传输延迟（propagation delay）和最小延迟（contamination delay） 传输延迟$T_{pd}$：从输入端的变化开始到所有输出端得到最终稳定的信号所需的最长时间 最小延迟$T_{cd}$：从输入端的变化开始到任何一个输出开始发生改变所需的最短时间 一个组合电路在输入和输出之间经过的最长路径被称为关键路径。因此，组合电路的传输延迟就是关键路径上所有原件传输延迟之和，而最小延迟是最短路径上所有元件的最小延迟之和。 竞争和冒险 某个输入信号经过两条或两条以上的不同路径作用到同一输出端，由于各路径延迟不同，因而该输入信号对输出端会发生先后不同的影响，该现象称为竞争（race）。 由于竞争的存在，在输入信号变化的瞬间，输出端可能会出现不正确的尖峰信号，这种信号称为毛刺（glitch）。 出现毛刺的电路称为存在冒险（hazard） 冒险指的是出现毛刺信号的电路，信号不同步的现象称为竞争。 竞争存在不一定会引起毛刺？ 实际硬件电路中，只要一个门电路的多个输入端延时不同，就有可能产生竞争与冒险。 一种情况是：当一个逻辑门的两个输入端的信号同时向相反方向变化时，从变化开始，到达稳定状态所需的时间不同，产生竞争。 竞争与冒险的判定 可通过低通滤波或增加冗余项来修改逻辑设计等方式避免毛刺。 刺并不是对所有的输入都有危害，如触发器的D输入端，只要数据不出现在时钟的上长升沿，并满足数据的建立保持时间，就不会对系统造成危害（第四章有相关概念） 而当毛刺信号成为系统的控制信号，触发器的清零信号，预置信号，时钟信号，或锁存器的输入信号时就会产生逻辑错误。（后续有相关概念） 总结 数字逻辑电路由若干元件（可以是一个电路）和若干结点互连而成 组合逻辑电路的输出值仅依赖于当前输入值 组合逻辑电路可以是两级电路或多级电路，两级电路的传输时间短，但占用集成电路物理空间更多，需进行时空权衡 组合逻辑电路设计：功能分析-列表-化简-逻辑表达式-画图-评价 无关项指输出取值可任意的项，真值表中用d表示，可用于化简 非法值指同时被高、低电平驱动的输出结点的值。 高阻态是三态门输出结点的一种非正常逻辑态，相当于“断开” 典型组合逻辑部件：译码/编码器、多路选择/分配器、半加/全加器 传输延迟：关键路径上所有元件的传输延迟之和 最小延迟：最短路径上所有元件的最小延迟之和 竞争、冒险、毛刺：不同路径延迟作用在同一输出端而引起" />
+<meta property="og:description" content="组合逻辑电路概述 数字逻辑电路可被看成是带有若干输入端和若干输出端的黑盒子。每个输入端和输出端只有高电平、低电平两种状态，对应1或0。 除了组合逻辑电路，还有被称为时序逻辑电路的电路类型，它们之间有很大差别： 组合逻辑电路的输出值仅依赖于当前输入值 时序逻辑电路的输出值不仅依赖输入值，还与当前状态（现态）有关。电路中存在存储部件或反馈结构 构成规则 每个元件本身是组合逻辑电路（逻辑门电路也是组合逻辑电路） 输出结点不能互连（不能将两个输出合并） 输出结点不能反馈到输入端（不能有回路） 逻辑电路图 逻辑电路图描述数字电路内部元件的结构及其相互连接关系。 逻辑电路图和逻辑表达式是一一对应关系，它们都是多个输入，一个输出。 而组合逻辑电路中的每个输出端对应一个逻辑表达式（一个逻辑电路图）。 一个真值表可能对应多个不同的逻辑表达式，从而对应多个不同的逻辑电路图，因而可以有多个不同的实现方式（功能相同，但电路所用的元器件不同、化简程度不同……） 任何逻辑表达式都可写成与、或、非三种基本运算的逻辑组合。 扇入、扇出系数 扇入系数：一个逻辑门所允许的输入端的最大数目 扇出系数：一个逻辑门输出端信号所能驱动的下一级输入端的最大数目 逻辑运算优先级 逻辑运算有优先级。 我们知道一个逻辑门的输出可以作为另一个逻辑门的输入，那么在根据逻辑表达式确定逻辑门间的连接关系时（尤其是没有括号时），需要根据优先级确定： 优先级顺序：非 &gt; 与/与非 &gt; 异或/同或 &gt; 或/或非 如果是n位逻辑运算，只需要在输入端/输出端标注位数即可。 多级组合逻辑电路 门延迟：信号通过逻辑门的时间，也就是从输入信号改变到输出信号改变的所用时间。 任何逻辑表达式都可以转换成与-或表达式和或-与表达式，因此，任何组合逻辑电路都可以是一个两级电路。 与-或表达式对应电路：第一级是若干个与门，第二级是一个或门。 在设计电路时，通常根据速度与成本的权衡来决定采用多少级电路。通常，级数越少，速度越快，但需要的逻辑门可能越多。 组合逻辑电路设计 无关项、非法值和高阻态 非法值 信号值不能被有效识别为高电平或低电平，处于不确定状态。通常发生在某个节点同时被高低电平驱动的时候，例如： 无关项 某些输入组合对应的输出值可以是任意值，某些输入组合不可能出现。这些输入组合对应的输出值在化简时可标识为d，表示可以取值0或1，具体数值根据化简的需要而定。 更改无关项的取值可简化电路从而降低成本，但也更易受干扰。 例如：8421自然BCD码输入时，大于1001的编码为无关项。 高阻态 高阻态Hi-Z，是输出处于非正常逻辑态的第三种电气态，好像和电路断开一样。 当逻辑电路输出是高阻态的时候，这个逻辑门仿佛和下级电路断开。 三态门：是一种重要的总线接口电路，也称三态缓冲器。三态门有一个使能端E（或者EN），它控制输出端是高阻态/正常通路。 E有效==三态门为通路；E无效==三态门输出为Hi-Z 一般来说，E为高电平时有效。若要表示E为低电平时有效，表示为$\bar{E}$，并在使能端加一个小圆圈。 三态门用途：可用于连接总线，多个三态输出连在一起等，例如： 典型组合逻辑部件设计 译码器和编码器 译码器（decoder） 一种多输入、多输出的组合电路。且输入端个数比输出端少。 输出端通常的形态是单热点编码。 一种最简单的译码器输入和输出关系是：若输入的二进制编码值是x，则第x条输出线为1，其余输出全为0。这是$n-2^{n}$译码器。例如2-4译码器，3-8译码器。 编码器（encoder） 编码器是译码器的反函数电路。 一般来说输入端个数大于输出端个数。 最常见的是$2^{n}-n$编码器（二进制编码器）。 互斥编码器 I0 I1 I2 I3 I4 I5 I6 I7 $O_{0}$ 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 1 优先权编码器 3位优先权编码器： 多个输入可同时为1，但只对优先级最高的输入进行编码输出假定优先级顺序为I0 &gt; I1 &gt; I2 &gt; I3 &gt; I4 &gt; I5 &gt; I6 &gt; I7，则： 多路选择器和多路分配器 多路选择器：多路输入、单路输出 多路分配器：单路输入、多路输出 这里每路是1位或多位。除了输入端还有选择控制端。 $2^{n}$路输入通常配有$n$位二进制数用作控制。当输入不是$2^{n}$的形式时，取$\lceil log_{2}(k) \rceil$位个控制端 多路选择器 这个4路选择器的主要思想是用S0和S1加上非门连接每个与门来控制这个与门另一端是否有效。 4路选择器的实现方式并不唯一，可以用两级门电路，多层级联或者三态门电路实现。 多路分配器 实现思路和多路选择器一致。 半加器和全加器 半加器 半加器（Half Adder，简称HA）：仅考虑加数和被加数，不考虑低位来的进位。 半加器一般只有两个输入。 全加器 全加器（Full Adder，简称FA）：输入为加数、被加数和低位进位Cin，输出为和F、进位Cout。 组合逻辑部件时序分析 信号通过连线和电路元件时会有一定时间的延迟 电路的延迟取决于电路内部的设计及外部特性，影响因素包括但不限于： 连线的长短、元件的数量 电路制造工艺、工作电压 环境噪声、温度等外在条件 高低电平的转换过渡时间 因此，任何组合逻辑电路从输入信号的改变，到随之引起的输出信号的改变，都有一定时间的延迟。 传输延迟和最小延迟 电路延迟可以用时序图来直观描述。时序图反映了电路的输入信号改变时输出信号的瞬时响应过程。 下降沿电路延迟$t_{pHL}$：输入变化引起相应输出从高到低变化的时间 上升沿电路延迟$t_{pLH}$：输入变化引起相应输出从低到高变化的时间 由于逻辑门电路具有最大延迟和最小延迟时序特征，所以通常取信号转换时间中间点来测量延迟时间（以反相器电路为例，如图） 组合逻辑电路的时序特征主要包括传输延迟（propagation delay）和最小延迟（contamination delay） 传输延迟$T_{pd}$：从输入端的变化开始到所有输出端得到最终稳定的信号所需的最长时间 最小延迟$T_{cd}$：从输入端的变化开始到任何一个输出开始发生改变所需的最短时间 一个组合电路在输入和输出之间经过的最长路径被称为关键路径。因此，组合电路的传输延迟就是关键路径上所有原件传输延迟之和，而最小延迟是最短路径上所有元件的最小延迟之和。 竞争和冒险 某个输入信号经过两条或两条以上的不同路径作用到同一输出端，由于各路径延迟不同，因而该输入信号对输出端会发生先后不同的影响，该现象称为竞争（race）。 由于竞争的存在，在输入信号变化的瞬间，输出端可能会出现不正确的尖峰信号，这种信号称为毛刺（glitch）。 出现毛刺的电路称为存在冒险（hazard） 冒险指的是出现毛刺信号的电路，信号不同步的现象称为竞争。 竞争存在不一定会引起毛刺？ 实际硬件电路中，只要一个门电路的多个输入端延时不同，就有可能产生竞争与冒险。 一种情况是：当一个逻辑门的两个输入端的信号同时向相反方向变化时，从变化开始，到达稳定状态所需的时间不同，产生竞争。 竞争与冒险的判定 可通过低通滤波或增加冗余项来修改逻辑设计等方式避免毛刺。 刺并不是对所有的输入都有危害，如触发器的D输入端，只要数据不出现在时钟的上长升沿，并满足数据的建立保持时间，就不会对系统造成危害（第四章有相关概念） 而当毛刺信号成为系统的控制信号，触发器的清零信号，预置信号，时钟信号，或锁存器的输入信号时就会产生逻辑错误。（后续有相关概念） 总结 数字逻辑电路由若干元件（可以是一个电路）和若干结点互连而成 组合逻辑电路的输出值仅依赖于当前输入值 组合逻辑电路可以是两级电路或多级电路，两级电路的传输时间短，但占用集成电路物理空间更多，需进行时空权衡 组合逻辑电路设计：功能分析-列表-化简-逻辑表达式-画图-评价 无关项指输出取值可任意的项，真值表中用d表示，可用于化简 非法值指同时被高、低电平驱动的输出结点的值。 高阻态是三态门输出结点的一种非正常逻辑态，相当于“断开” 典型组合逻辑部件：译码/编码器、多路选择/分配器、半加/全加器 传输延迟：关键路径上所有元件的传输延迟之和 最小延迟：最短路径上所有元件的最小延迟之和 竞争、冒险、毛刺：不同路径延迟作用在同一输出端而引起" />
+<link rel="canonical" href="/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" />
+<meta property="og:url" content="/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" />
+<meta property="og:site_name" content="Step far." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-10-08T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CH3 组合逻辑电路" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DragonK"},"dateModified":"2023-10-08T00:00:00+00:00","datePublished":"2023-10-08T00:00:00+00:00","description":"组合逻辑电路概述 数字逻辑电路可被看成是带有若干输入端和若干输出端的黑盒子。每个输入端和输出端只有高电平、低电平两种状态，对应1或0。 除了组合逻辑电路，还有被称为时序逻辑电路的电路类型，它们之间有很大差别： 组合逻辑电路的输出值仅依赖于当前输入值 时序逻辑电路的输出值不仅依赖输入值，还与当前状态（现态）有关。电路中存在存储部件或反馈结构 构成规则 每个元件本身是组合逻辑电路（逻辑门电路也是组合逻辑电路） 输出结点不能互连（不能将两个输出合并） 输出结点不能反馈到输入端（不能有回路） 逻辑电路图 逻辑电路图描述数字电路内部元件的结构及其相互连接关系。 逻辑电路图和逻辑表达式是一一对应关系，它们都是多个输入，一个输出。 而组合逻辑电路中的每个输出端对应一个逻辑表达式（一个逻辑电路图）。 一个真值表可能对应多个不同的逻辑表达式，从而对应多个不同的逻辑电路图，因而可以有多个不同的实现方式（功能相同，但电路所用的元器件不同、化简程度不同……） 任何逻辑表达式都可写成与、或、非三种基本运算的逻辑组合。 扇入、扇出系数 扇入系数：一个逻辑门所允许的输入端的最大数目 扇出系数：一个逻辑门输出端信号所能驱动的下一级输入端的最大数目 逻辑运算优先级 逻辑运算有优先级。 我们知道一个逻辑门的输出可以作为另一个逻辑门的输入，那么在根据逻辑表达式确定逻辑门间的连接关系时（尤其是没有括号时），需要根据优先级确定： 优先级顺序：非 &gt; 与/与非 &gt; 异或/同或 &gt; 或/或非 如果是n位逻辑运算，只需要在输入端/输出端标注位数即可。 多级组合逻辑电路 门延迟：信号通过逻辑门的时间，也就是从输入信号改变到输出信号改变的所用时间。 任何逻辑表达式都可以转换成与-或表达式和或-与表达式，因此，任何组合逻辑电路都可以是一个两级电路。 与-或表达式对应电路：第一级是若干个与门，第二级是一个或门。 在设计电路时，通常根据速度与成本的权衡来决定采用多少级电路。通常，级数越少，速度越快，但需要的逻辑门可能越多。 组合逻辑电路设计 无关项、非法值和高阻态 非法值 信号值不能被有效识别为高电平或低电平，处于不确定状态。通常发生在某个节点同时被高低电平驱动的时候，例如： 无关项 某些输入组合对应的输出值可以是任意值，某些输入组合不可能出现。这些输入组合对应的输出值在化简时可标识为d，表示可以取值0或1，具体数值根据化简的需要而定。 更改无关项的取值可简化电路从而降低成本，但也更易受干扰。 例如：8421自然BCD码输入时，大于1001的编码为无关项。 高阻态 高阻态Hi-Z，是输出处于非正常逻辑态的第三种电气态，好像和电路断开一样。 当逻辑电路输出是高阻态的时候，这个逻辑门仿佛和下级电路断开。 三态门：是一种重要的总线接口电路，也称三态缓冲器。三态门有一个使能端E（或者EN），它控制输出端是高阻态/正常通路。 E有效==三态门为通路；E无效==三态门输出为Hi-Z 一般来说，E为高电平时有效。若要表示E为低电平时有效，表示为$\\bar{E}$，并在使能端加一个小圆圈。 三态门用途：可用于连接总线，多个三态输出连在一起等，例如： 典型组合逻辑部件设计 译码器和编码器 译码器（decoder） 一种多输入、多输出的组合电路。且输入端个数比输出端少。 输出端通常的形态是单热点编码。 一种最简单的译码器输入和输出关系是：若输入的二进制编码值是x，则第x条输出线为1，其余输出全为0。这是$n-2^{n}$译码器。例如2-4译码器，3-8译码器。 编码器（encoder） 编码器是译码器的反函数电路。 一般来说输入端个数大于输出端个数。 最常见的是$2^{n}-n$编码器（二进制编码器）。 互斥编码器 I0 I1 I2 I3 I4 I5 I6 I7 $O_{0}$ 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 1 优先权编码器 3位优先权编码器： 多个输入可同时为1，但只对优先级最高的输入进行编码输出假定优先级顺序为I0 &gt; I1 &gt; I2 &gt; I3 &gt; I4 &gt; I5 &gt; I6 &gt; I7，则： 多路选择器和多路分配器 多路选择器：多路输入、单路输出 多路分配器：单路输入、多路输出 这里每路是1位或多位。除了输入端还有选择控制端。 $2^{n}$路输入通常配有$n$位二进制数用作控制。当输入不是$2^{n}$的形式时，取$\\lceil log_{2}(k) \\rceil$位个控制端 多路选择器 这个4路选择器的主要思想是用S0和S1加上非门连接每个与门来控制这个与门另一端是否有效。 4路选择器的实现方式并不唯一，可以用两级门电路，多层级联或者三态门电路实现。 多路分配器 实现思路和多路选择器一致。 半加器和全加器 半加器 半加器（Half Adder，简称HA）：仅考虑加数和被加数，不考虑低位来的进位。 半加器一般只有两个输入。 全加器 全加器（Full Adder，简称FA）：输入为加数、被加数和低位进位Cin，输出为和F、进位Cout。 组合逻辑部件时序分析 信号通过连线和电路元件时会有一定时间的延迟 电路的延迟取决于电路内部的设计及外部特性，影响因素包括但不限于： 连线的长短、元件的数量 电路制造工艺、工作电压 环境噪声、温度等外在条件 高低电平的转换过渡时间 因此，任何组合逻辑电路从输入信号的改变，到随之引起的输出信号的改变，都有一定时间的延迟。 传输延迟和最小延迟 电路延迟可以用时序图来直观描述。时序图反映了电路的输入信号改变时输出信号的瞬时响应过程。 下降沿电路延迟$t_{pHL}$：输入变化引起相应输出从高到低变化的时间 上升沿电路延迟$t_{pLH}$：输入变化引起相应输出从低到高变化的时间 由于逻辑门电路具有最大延迟和最小延迟时序特征，所以通常取信号转换时间中间点来测量延迟时间（以反相器电路为例，如图） 组合逻辑电路的时序特征主要包括传输延迟（propagation delay）和最小延迟（contamination delay） 传输延迟$T_{pd}$：从输入端的变化开始到所有输出端得到最终稳定的信号所需的最长时间 最小延迟$T_{cd}$：从输入端的变化开始到任何一个输出开始发生改变所需的最短时间 一个组合电路在输入和输出之间经过的最长路径被称为关键路径。因此，组合电路的传输延迟就是关键路径上所有原件传输延迟之和，而最小延迟是最短路径上所有元件的最小延迟之和。 竞争和冒险 某个输入信号经过两条或两条以上的不同路径作用到同一输出端，由于各路径延迟不同，因而该输入信号对输出端会发生先后不同的影响，该现象称为竞争（race）。 由于竞争的存在，在输入信号变化的瞬间，输出端可能会出现不正确的尖峰信号，这种信号称为毛刺（glitch）。 出现毛刺的电路称为存在冒险（hazard） 冒险指的是出现毛刺信号的电路，信号不同步的现象称为竞争。 竞争存在不一定会引起毛刺？ 实际硬件电路中，只要一个门电路的多个输入端延时不同，就有可能产生竞争与冒险。 一种情况是：当一个逻辑门的两个输入端的信号同时向相反方向变化时，从变化开始，到达稳定状态所需的时间不同，产生竞争。 竞争与冒险的判定 可通过低通滤波或增加冗余项来修改逻辑设计等方式避免毛刺。 刺并不是对所有的输入都有危害，如触发器的D输入端，只要数据不出现在时钟的上长升沿，并满足数据的建立保持时间，就不会对系统造成危害（第四章有相关概念） 而当毛刺信号成为系统的控制信号，触发器的清零信号，预置信号，时钟信号，或锁存器的输入信号时就会产生逻辑错误。（后续有相关概念） 总结 数字逻辑电路由若干元件（可以是一个电路）和若干结点互连而成 组合逻辑电路的输出值仅依赖于当前输入值 组合逻辑电路可以是两级电路或多级电路，两级电路的传输时间短，但占用集成电路物理空间更多，需进行时空权衡 组合逻辑电路设计：功能分析-列表-化简-逻辑表达式-画图-评价 无关项指输出取值可任意的项，真值表中用d表示，可用于化简 非法值指同时被高、低电平驱动的输出结点的值。 高阻态是三态门输出结点的一种非正常逻辑态，相当于“断开” 典型组合逻辑部件：译码/编码器、多路选择/分配器、半加/全加器 传输延迟：关键路径上所有元件的传输延迟之和 最小延迟：最短路径上所有元件的最小延迟之和 竞争、冒险、毛刺：不同路径延迟作用在同一输出端而引起","headline":"CH3 组合逻辑电路","mainEntityOfPage":{"@type":"WebPage","@id":"/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html"},"url":"/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Step far." /><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"
+        async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe-lightbox.umd.min.js" async></script>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe.umd.min.js" async></script>
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/photoswipe.min.css"
+  rel="stylesheet"
+/>
+<style>
+  .pswp .pswp__container .pswp__img {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initPhotoSwipe() {
+    let customOptions = {};
+
+    try {
+      const data = ``.replaceAll("=>", ":");
+      customOptions = JSON.parse(data);
+    } catch (e) {
+      console.info("Invalid custom photo previewer options! " + e.message);
+    }
+
+    // Define object and gallery options
+    const options = Object.assign(
+      {
+        gallery: "section.main",
+        children: "a.photo-swipe",
+        photo_scale: 2,
+        // dynamic import is not supported in UMD version
+        pswpModule: PhotoSwipe,
+      },
+      customOptions
+    );
+
+    const galleryEl = document.querySelector(options.gallery);
+    if (!galleryEl) {
+      return;
+    }
+
+    const imgEls = [];
+    const els = galleryEl.querySelectorAll("img:not(.emoji)");
+    els.forEach((el) => {
+      if (el.src.trim() == "") {
+        return;
+      }
+      if (!imgEls.includes(el)) {
+        imgEls.push(el);
+      }
+    });
+
+    if (imgEls.length === 0) {
+      return;
+    }
+
+    imgEls.forEach((imgEl) => {
+      imgEl.outerHTML = `
+      <a class="photo-swipe"
+        href="${imgEl.src}"
+        data-pswp-width="${
+          Math.max(imgEl.naturalWidth, imgEl.width) * options.photo_scale
+        }"
+        data-pswp-height="${
+          Math.max(imgEl.naturalHeight, imgEl.height) * options.photo_scale
+        }"
+        data-pswp-caption="${imgEl.getAttribute("caption") || imgEl.alt}"
+        target="_blank">
+        ${imgEl.outerHTML}
+      </a>`;
+    });
+
+    // Initialize PhotoSwipe 5
+    var lightbox = new PhotoSwipeLightbox(options);
+
+    lightbox.init();
+  }
+
+  window.addEventListener("load", initPhotoSwipe);
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner"><span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Step far." src="" onerror="this.style.display='none'">
+  Step far.
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger"><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+</span></div>
+        </nav></div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CH3 组合逻辑电路</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <div class="post-meta">
+    <time class="dt-published" datetime="2023-10-08T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Oct 08, 2023
+    </time>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div><div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="组合逻辑电路概述">组合逻辑电路概述</h2>
+
+<p>数字逻辑电路可被看成是带有若干输入端和若干输出端的黑盒子。每个输入端和输出端只有高电平、低电平两种状态，对应1或0。</p>
+
+<p>除了组合逻辑电路，还有被称为<strong>时序逻辑电路</strong>的电路类型，它们之间有很大差别：</p>
+
+<ul>
+  <li><strong>组合逻辑电路的输出值仅依赖于当前输入值</strong></li>
+  <li>时序逻辑电路的输出值不仅依赖输入值，还与当前状态（现态）有关。电路中存在存储部件或反馈结构</li>
+</ul>
+
+<h3 id="构成规则">构成规则</h3>
+
+<ul>
+  <li>每个元件本身是组合逻辑电路（逻辑门电路也是组合逻辑电路）</li>
+  <li>输出结点不能互连（不能将两个输出合并）</li>
+  <li>输出结点不能反馈到输入端（不能有回路）</li>
+</ul>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008151509870.png" alt="image-20231008151509870" /></p>
+
+<h3 id="逻辑电路图">逻辑电路图</h3>
+
+<p>逻辑电路图描述数字电路内部元件的结构及其相互连接关系。</p>
+
+<p><strong>逻辑电路图</strong>和<strong>逻辑表达式</strong>是<strong>一一对应</strong>关系，它们都是多个输入，一个输出。</p>
+
+<p>而组合逻辑电路中的每个输出端对应一个逻辑表达式（一个逻辑电路图）。</p>
+
+<p><strong>一个真值表可能对应多个不同的逻辑表达式，从而对应多个不同的逻辑电路图，因而可以有多个不同的实现方式（功能相同，但电路所用的元器件不同、化简程度不同……）</strong></p>
+
+<p>任何逻辑表达式都可写成与、或、非三种基本运算的逻辑组合。</p>
+
+<h4 id="扇入扇出系数">扇入、扇出系数</h4>
+
+<ul>
+  <li>扇入系数：一个逻辑门所允许的输入端的最大数目</li>
+  <li>扇出系数：一个逻辑门输出端信号所能驱动的下一级输入端的最大数目</li>
+</ul>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008152058435.png" alt="image-20231008152058435" /></p>
+
+<h4 id="逻辑运算优先级">逻辑运算优先级</h4>
+
+<p>逻辑运算有优先级。</p>
+
+<p>我们知道一个逻辑门的输出可以作为另一个逻辑门的输入，那么在根据逻辑表达式确定逻辑门间的连接关系时（尤其是没有括号时），需要根据优先级确定：</p>
+
+<p><strong>优先级顺序：非 &gt; 与/与非 &gt; 异或/同或 &gt; 或/或非</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008152425774.png" alt="image-20231008152425774" /></p>
+
+<p>如果是n位逻辑运算，只需要在输入端/输出端标注位数即可。<img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008152458993.png" alt="image-20231008152458993" /></p>
+
+<h3 id="多级组合逻辑电路">多级组合逻辑电路</h3>
+
+<p>门延迟：信号通过逻辑门的时间，也就是从输入信号改变到输出信号改变的所用时间。</p>
+
+<p>任何逻辑表达式都可以转换成与-或表达式和或-与表达式，<strong>因此，任何组合逻辑电路都可以是一个两级电路。</strong></p>
+
+<p>与-或表达式对应电路：第一级是若干个与门，第二级是一个或门。</p>
+
+<p>在设计电路时，通常根据速度与成本的权衡来决定采用多少级电路。通常，级数越少，速度越快，但需要的逻辑门可能越多。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008153205280.png" alt="image-20231008153205280" /></p>
+
+<h3 id="组合逻辑电路设计">组合逻辑电路设计</h3>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008153231003.png" alt="image-20231008153231003" /></p>
+
+<h3 id="无关项非法值和高阻态">无关项、非法值和高阻态</h3>
+
+<h4 id="非法值">非法值</h4>
+
+<p>信号值不能被有效识别为高电平或低电平，处于不确定状态。通常发生在某个节点同时被高低电平驱动的时候，例如：<img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008153506017.png" alt="image-20231008153506017" /></p>
+
+<h4 id="无关项">无关项</h4>
+
+<p>某些输入组合对应的输出值可以是任意值，某些输入组合不可能出现。<strong>这些输入组合对应的输出值在化简时可标识为d，表示可以取值0或1，具体数值根据化简的需要而定。</strong></p>
+
+<p>更改无关项的取值可简化电路从而降低成本，但也更易受干扰。</p>
+
+<p>例如：8421自然BCD码输入时，大于1001的编码为无关项。</p>
+
+<h4 id="高阻态">高阻态</h4>
+
+<p>高阻态Hi-Z，是输出处于非正常逻辑态的第三种电气态，好像和电路断开一样。</p>
+
+<p>当逻辑电路输出是高阻态的时候，这个逻辑门仿佛和下级电路断开。</p>
+
+<p>三态门：是一种重要的总线接口电路，也称三态缓冲器。三态门有一个使能端E（或者EN），它控制输出端是高阻态/正常通路。</p>
+
+<p>E有效==三态门为通路；E无效==三态门输出为Hi-Z</p>
+
+<p>一般来说，E为高电平时有效。若要表示E为低电平时有效，表示为$\bar{E}$，并在使能端加一个小圆圈。</p>
+
+<p>三态门用途：可用于连接总线，多个三态输出连在一起等，例如：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008160451131.png" alt="image-20231008160451131" /></p>
+
+<h2 id="典型组合逻辑部件设计">典型组合逻辑部件设计</h2>
+
+<h3 id="译码器和编码器">译码器和编码器</h3>
+
+<h4 id="译码器decoder">译码器（decoder）</h4>
+
+<p>一种多输入、多输出的组合电路。且输入端个数比输出端少。</p>
+
+<p>输出端通常的形态是单热点编码。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008162512583.png" alt="image-20231008162512583" /></p>
+
+<p>一种最简单的译码器输入和输出关系是：若输入的二进制编码值是x，则第x条输出线为1，其余输出全为0。这是$n-2^{n}$译码器。例如2-4译码器，3-8译码器。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008162301379.png" alt="image-20231008162301379" /></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008162423656.png" alt="image-20231008162423656" /></p>
+
+<h4 id="编码器encoder">编码器（encoder）</h4>
+
+<p>编码器是译码器的反函数电路。</p>
+
+<p>一般来说输入端个数大于输出端个数。</p>
+
+<p>最常见的是$2^{n}-n$编码器（二进制编码器）。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008162602275.png" alt="image-20231008162602275" /></p>
+
+<h5 id="互斥编码器">互斥编码器</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008163045182.png" alt="image-20231008163045182" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>I0</strong></th>
+      <th><strong>I1</strong></th>
+      <th><strong>I2</strong></th>
+      <th><strong>I3</strong></th>
+      <th><strong>I4</strong></th>
+      <th><strong>I5</strong></th>
+      <th><strong>I6</strong></th>
+      <th><strong>I7</strong></th>
+      <th>$O_{0}$</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+
+<h5 id="优先权编码器">优先权编码器</h5>
+
+<p>3位优先权编码器：</p>
+
+<p>多个输入可同时为1，但只对优先级最高的输入进行编码输出假定优先级顺序为I0 &gt; I1 &gt; I2 &gt; I3 &gt; I4 &gt; I5 &gt; I6 &gt; I7，则：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008163315191.png" alt="image-20231008163315191" /></p>
+
+<h3 id="多路选择器和多路分配器">多路选择器和多路分配器</h3>
+
+<p><strong>多路选择器：多路输入、单路输出</strong></p>
+
+<p><strong>多路分配器：单路输入、多路输出</strong></p>
+
+<p>这里每路是1位或多位。除了输入端还有选择控制端。</p>
+
+<p>$2^{n}$路输入通常配有$n$位二进制数用作控制。当输入不是$2^{n}$的形式时，取$\lceil log_{2}(k) \rceil$位个控制端</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008163548985.png" alt="image-20231008163548985" /></p>
+
+<h4 id="多路选择器">多路选择器</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008164150485.png" alt="image-20231008164150485" /></p>
+
+<p>这个4路选择器的主要思想是用S0和S1加上非门连接每个与门来控制这个与门另一端是否有效。</p>
+
+<p>4路选择器的实现方式并不唯一，可以用两级门电路，多层级联或者三态门电路实现。</p>
+
+<h4 id="多路分配器">多路分配器</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008164900630.png" alt="image-20231008164900630" /></p>
+
+<p>实现思路和多路选择器一致。</p>
+
+<h3 id="半加器和全加器">半加器和全加器</h3>
+
+<h4 id="半加器">半加器</h4>
+
+<p>半加器（Half Adder，简称HA）：仅考虑加数和被加数，不考虑低位来的进位。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008165206011.png" alt="image-20231008165206011" /></p>
+
+<p>半加器一般只有两个输入。</p>
+
+<h4 id="全加器">全加器</h4>
+
+<p>全加器（Full Adder，简称FA）：输入为加数、被加数和低位进位Cin，输出为和F、进位Cout。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008165300883.png" alt="image-20231008165300883" /></p>
+
+<h2 id="组合逻辑部件时序分析">组合逻辑部件时序分析</h2>
+
+<p>信号通过连线和电路元件时会有一定时间的延迟</p>
+
+<p>电路的延迟取决于电路内部的设计及外部特性，影响因素包括但不限于：</p>
+
+<ul>
+  <li>连线的长短、元件的数量</li>
+  <li>电路制造工艺、工作电压</li>
+  <li>环境噪声、温度等外在条件</li>
+  <li>高低电平的转换过渡时间</li>
+</ul>
+
+<p>因此，任何组合逻辑电路从输入信号的改变，到随之引起的输出信号的改变，都有一定时间的延迟。</p>
+
+<h3 id="传输延迟和最小延迟">传输延迟和最小延迟</h3>
+
+<p>电路延迟可以用时序图来直观描述。时序图反映了电路的输入信号改变时输出信号的<strong>瞬时响应过程</strong>。</p>
+
+<ul>
+  <li>下降沿电路延迟$t_{pHL}$：输入变化引起相应输出从高到低变化的时间</li>
+  <li>上升沿电路延迟$t_{pLH}$：输入变化引起相应输出从低到高变化的时间</li>
+</ul>
+
+<p>由于逻辑门电路具有<strong>最大延迟</strong>和<strong>最小延迟</strong>时序特征，所以通常取信号转换时间中间点来测量延迟时间（以反相器电路为例，如图）</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008170143037.png" alt="image-20231008170143037" /></p>
+
+<p>组合逻辑电路的时序特征主要包括传输延迟（propagation delay）和最小延迟（contamination delay）</p>
+
+<ul>
+  <li>传输延迟$T_{pd}$：从输入端的变化开始到<strong>所有输出端</strong>得到最终稳定的信号所需的最长时间</li>
+  <li>最小延迟$T_{cd}$：从输入端的变化开始到<strong>任何一个输出</strong>开始发生改变所需的最短时间</li>
+</ul>
+
+<p>一个组合电路在输入和输出之间经过的最长路径被称为关键路径。因此，组合电路的传输延迟就是关键路径上所有原件传输延迟之和，而最小延迟是最短路径上所有元件的最小延迟之和。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008170720242.png" alt="image-20231008170720242" /></p>
+
+<h3 id="竞争和冒险">竞争和冒险</h3>
+
+<p>某个输入信号经过两条或两条以上的不同路径作用到<strong>同一</strong>输出端，由于各路径延迟不同，因而该输入信号对输出端会发生先后不同的影响，该现象称为竞争（race）。</p>
+
+<p>由于竞争的存在，在输入信号变化的瞬间，输出端可能会出现不正确的尖峰信号，这种信号称为毛刺（glitch）。</p>
+
+<p>出现毛刺的电路称为存在冒险（hazard）</p>
+
+<p><strong>冒险指的是出现毛刺信号的电路，信号不同步的现象称为竞争。</strong></p>
+
+<p><em>竞争存在不一定会引起毛刺？</em></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008171008142.png" alt="image-20231008171008142" /></p>
+
+<p>实际硬件电路中，只要一个门电路的多个输入端延时不同，就有可能产生竞争与冒险。</p>
+
+<p>一种情况是：当一个逻辑门的两个输入端的信号同时向相反方向变化时，从变化开始，到达稳定状态所需的时间不同，产生竞争。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008171150593.png" alt="image-20231008171150593" /></p>
+
+<h4 id="竞争与冒险的判定">竞争与冒险的判定</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008171225227.png" alt="image-20231008171225227" /></p>
+
+<p>可通过低通滤波或增加冗余项来修改逻辑设计等方式避免毛刺。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008171302571.png" alt="image-20231008171302571" /></p>
+
+<p>刺并不是对所有的输入都有危害，如触发器的D输入端，只要数据不出现在时钟的上长升沿，并满足数据的建立保持时间，就不会对系统造成危害（第四章有相关概念）</p>
+
+<p>而当毛刺信号成为系统的控制信号，触发器的清零信号，预置信号，时钟信号，或锁存器的输入信号时就会产生逻辑错误。（后续有相关概念）</p>
+
+<h2 id="总结">总结</h2>
+
+<ul>
+  <li>数字逻辑电路由若干元件（可以是一个电路）和若干结点互连而成</li>
+  <li>组合逻辑电路的输出值仅依赖于当前输入值</li>
+  <li>组合逻辑电路可以是两级电路或多级电路，两级电路的传输时间短，但占用集成电路物理空间更多，需进行时空权衡</li>
+  <li>组合逻辑电路设计：功能分析-列表-化简-逻辑表达式-画图-评价</li>
+  <li>无关项指输出取值可任意的项，真值表中用d表示，可用于化简</li>
+  <li>非法值指同时被高、低电平驱动的输出结点的值。</li>
+  <li>高阻态是三态门输出结点的一种非正常逻辑态，相当于“断开”</li>
+  <li>典型组合逻辑部件：译码/编码器、多路选择/分配器、半加/全加器</li>
+  <li>传输延迟：关键路径上所有元件的传输延迟之和</li>
+  <li>最小延迟：最短路径上所有元件的最小延迟之和</li>
+  <li>竞争、冒险、毛刺：不同路径延迟作用在同一输出端而引起</li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav"><a class="previous" href="/lecturenotes/2023/09/01/%E9%87%91%E8%9E%8D%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0.html" title="金融大数据处理技术笔记">金融大数据处理技术笔记</a><a class="next" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html" title="CH2 数字逻辑基础">CH2 数字逻辑基础</a></div><div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html" title="CH11 使用类">
+            CH11 使用类<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/lecturenotes/2023/10/12/CH4-%E6%97%B6%E5%BA%8F%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" title="CH4 时序逻辑电路">
+            CH4 时序逻辑电路<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH7-%E5%87%BD%E6%95%B0.html" title="CH7 函数">
+            CH7 函数<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/research/notes/2023/10/16/EDA4AI-Tutorial.html" title="EDA4AI Tutorial">
+            EDA4AI Tutorial<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li></ul>
+    </div><div class="post-comments"></div></section>
+</div>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner"><div>Unpublished Work <span class="copyleft">&copy;</span> 2017-2024 DragonK</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

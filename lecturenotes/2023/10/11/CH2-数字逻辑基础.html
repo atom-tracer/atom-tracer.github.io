@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CH2 数字逻辑基础 | Step far.</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="CH2 数字逻辑基础" />
+<meta name="author" content="DragonK" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="逻辑门和数字抽象 逻辑门 概念 逻辑门电路(logic gate)是最基础的数字电路，具有允许或禁止信号传输的功能，也称为门电路。 逻辑门电路具有一个或多个输入信号，一个输出信号。 输入信号、输出信号称为逻辑变量（取值为0或1）。 输入信号和输出信号之间的逻辑关系使用真值表或者逻辑表达式来描述。 逻辑表达式：用逻辑运算符来连接逻辑变量 真值表：二维表，按顺序列出所有可能的输入组合和该输入组合对应的输出信号值 基本逻辑门 AND OR NOT NAND（与非） NOR（或非） XOR（异或，两个输入不同时为1） NXOR（同或，两个输入相同时为1） 符号： 数字抽象 数字抽象（逻辑采样）：将某个物理量的实际值集（实值）映射为两个子集，对应于两个状态或两个逻辑值0和1。 本质：从连续到离散的映射，分段函数。 0和1不表示数值的大小，而表示两种相反的状态。如电平高与低、电路导通与截止、灯亮与灭，开关的开与关。 在数字系统中，将一定范围内的电压映射到两个状态：高态（high）和低态（low），并用0和1来表示。 在正逻辑下，高电平H对应1，低电平L对应0，负逻辑相反。 假设CMOS逻辑电路工作在5V下，那么CMOS逻辑电路将0-1.5V解释为低电平（逻辑0），3.5-5V解释为高电平，而1.5-3.5间被认为是不确定状态。 CMOS参数 高低电平范围的具体数值由CMOS性质决定，其中一些重要的参数如下： $V_{IHmin}$：确保能被识别为高态的最小输入电压值 $V_{ILmax}$：确保能被识别为低态的最大输入电压值 $V_{OHmin}$：输出为高态时的最小输出电压值（略低于Vcc） $V_{OHmax}$：输出为低态时的最大输出电压值（略高于0V） 供电轨道： VCC/VDD称为电源电压，典型值为5.0V±10% GND称为地线，0V 直流噪声容限 直流噪声容限（DC noise margin）是一种对噪声程度的度量，表示多大的噪声会使输出电压被破坏，成为不可被输入端识别的值。 高态直流噪声容限$NM_{H}=V_{OHmin}-V_{IHmin}$ 低态直流噪声容限$NM_{L}=V_{ILmax}-V_{OLmax}$ CMOS晶体管 MOS，金属氧化物半导体场效应晶体管，也称三极晶体管。 MOS晶体管分为NMOS和PMOS： N沟道型NMOS，杂质有磷或锑等(Negative) P沟道型PMOS，杂质有硼或铟等(Positive) 这主要取决于其中包含的移动电荷的正负。NMOS中移动的是负电荷，PMOS中移动的是正电荷。当电荷聚集在一起就形成一个沟渠，允许电流通过。 我们常说“一对CMOS晶体管”，是因为它们一般成对使用（一个NMOS和PMOS），但不能说一个CMOS晶体管。 MOS晶体管可被模型化为一种3端子压控电阻导体，将电压加到一个端子，来控制其他两个端子间的电阻。 工作原理 栅极和源极之间电压$V_{gs}$控制源极和漏极间电阻$R_{ds}$的大小。$V_{gs}$等于Gate与Source电位之差。 NMOS的Source在下（认为接地），PMOS的Source在上（认为接工作电源）。所以通常来说，NMOS的Gate为高电平即导通，PMOS的Gate为低电平即导通。 CMOS如何构成？ CMOS（Complementary Metal-Oxide Semiconductor）以互补的形式共用一对NMOS和PMOS晶体管。 栅极和漏极共用，分别连接输入和输出。通过改变栅极的输入电压值（使得Q1和Q2只会有一个导通），从而改变漏极的输出电压值。Gate就像一个开关。 CMOS实现基本逻辑门 非门（一对CMOS） 与非门（两对CMOS） 或非门（两对CMOS） k输入与非门/或非门 与门（与非+非） 或门同理。 缓冲器 两级非门实现缓冲器，将一个“弱”信号转换为具有相同逻辑值的“强”信号。 传输门 传输门（transmission gate）由一对CMOS晶体管以及控制信号EN构成。 信号EN（使能端）用于控制晶体管的导通与截止, 其功能相当于一个逻辑控制开关。 当EN为高态时，若传输的是低态信号，则NMOS管导通；否则是PMOS管导通。若EN为低态时，两个MOS管都截止。 传输门的传播延迟非常短、电路简单，可双向传输。 CMOS电气特性 受电气特性的限制，输入端不能无限制增加。一般输入端数目小于等于5，不超过8个。 转换时间transition time ：逻辑电路的输入信号（或输出信号）从一种状态转换到另一种状态所需的时间 上升时间rise time：从低态到高态。 下降时间fall time：从高态到低态。 传播延迟(tp，propagation delay)是指从输入信号变化到引起输出信号变化所需的时间。 信号通路signal path：是指一个特定输入信号到逻辑元件的特定输出信号所经历的电气通路。 $t_{pHL}$：输入变化引起相应输出从高到低变化的时间。 $t_{pLH}$：输入变化引起相应输出低到高变化的时间。 数字电路在输出信号保持不变时的功率损耗称为静态功耗，通常CMOS电路的静态功耗很低，常忽略。 在输出信号高低状态转换时的功率损耗称为动态功耗。主要来源： 输出端上的电容性负载$C_{L}$ CMOS电路内部的功耗电容$C_{PD}$ 在CMOS电路的应用中， 动态功耗是总功率的主要成分。 布尔代数 布尔代数是一种二值代数系统。 逻辑运算：在布尔代数中，有与、或、非三种基本逻辑运算。 逻辑表达式：用逻辑运算符将逻辑量连接起来的代数式。其运算结果是一个逻辑值（不强调输入和输出），例如A+B 逻辑函数：表明输入和输出变量之间的逻辑关系，例如C=A+B 公理系统 对偶定律 运算顺序不变 单变量定理 二、三变量定理 其中特别要注意T8和T9，可以由T9推出T8 n变量定理 这里主要注意T14（与对偶相关）和T15，它们在电路简化中有重要应用。 逻辑关系描述 逻辑函数 逻辑函数是反映输入变量和输出变量之间逻辑关系的表达式。 真值表和波形图 真值表：用二维表的形式列出一个逻辑函数所有的输入组合和对应的输出值。 波形图描绘了逻辑函数输出变量对于输入变量的变化所产生的响应。在理想状态下，忽略时间延迟。 横轴表示时间 纵向用横线的高低来表示逻辑值大小 完整的波形图至少需要列出所有的输入组合和所对应的输出值。 逻辑函数的标准表示 乘积项：包含1个或1个以上逻辑变量的与项。 求和项：包含1个或1个以上逻辑变量的或项。 “与-或”表达式或积之和表达式(Sum of Product，SOP)：多个乘积项的或运算。与-或指的是先与后或。 “或-与”表达式或和之积表达式(Product of Sum，POS）：多个求和项的与运算。 标准乘积项（标准求和项）：每个逻辑变量出现且仅出现一次的乘积项（求和项）。 标准项中每个变量可以以原变量或反变量的形式出现。对于非标准项，可利用布尔代数的互补律扩充缺失的逻辑变量从而转换为标准项。例如 $A \cdot B=A \cdot B \cdot C+A \cdot B \cdot \bar{C}$。 标准乘积项也称为最小项，每个最小项对应真值表中一个输入组合，赋值该输入组合后，最小项的运算结果为1。 若某输入组合对应的二进制数值为i，则用$[m_{i}$表示该最小项，i称为该最小项的编号。例如：$\bar{A} \cdot \bar{B} \cdot C$对应$m_{i}$。 标准求和项也称为最大项，每个最大项对应真值表中一个输入组合，赋值该输入组合后，最大项的运算结果为0。 若某输入组合对应的二进制数值为i，则用$M_{i}$表示该最小项，i称为该最小项的编号。例如：$\bar{A} + \bar{B} + C$对应$M_{6}$。 标准和/最小项列表：函数输出为1对应输入组合对应的最小项之和。 标准积/最大项列表：函数输出为0对应输入组合对应的最大项之积。 函数的最小项列表和最大项列表等价且可相互转换。 这是标准表示，并非最简表示。 逻辑函数的化简与变换 化简目的： 减少输入变量的数目 减少逻辑门的数目 减小电路规模 通常从真值表或标准范式开始化简，通常不考虑输入反相器的成本。 代数法 如果表达式的层级超过了两级，则先转换为两级。 如有整体取反运算，则先转换为单变量取反运算。 利用互补律T5：$\bar{X}+X=1$ ，可消去一个变量。 利用吸收律T9：$X+X \cdot Y=X$和$X+\bar{X} \cdot Y=X+Y$，可消去乘积项中一个因子。 利用组合律T10：$X \cdot Y+X \cdot Y=X$和$(X+Y) \cdot (X+\bar{Y})=X$，可消去一个变量。 利用一致律T11，可消去冗余的乘积项。 Con：没有规律，技巧性很强，难以判断是否最简。 卡诺图 概念 卡诺图把能化简的最小项通过相邻项合并的可视化方式标识出来。 若两个“1单元”相邻，则表示两个最小项仅1个变量相反。根据T10，这两个最小项可合并为一个乘积项，并消去那个具有相反取值的变量。 相邻$2^{i}$个1单元可以合并（而不是2n！） 必须注意格雷码的编码方式：这决定了最左和最右是逻辑相邻的，所以画圈可以跨越左右边界。 卡诺图化简： 蕴涵项是一个乘积项，覆盖了逻辑函数的1个或多个最小项。 质蕴涵项：不能被逻辑函数的其它蕴涵项所覆盖的蕴涵项。（这里必须区分好不同概念：覆盖指的是完全覆盖，比如$Y \cdot Z$覆盖了$\bar{X} \cdot Y \cdot Z$和$X \cdot Y \cdot Z$） 实质蕴涵项：覆盖的最小项中至少有一个最小项是没有被其他质蕴涵项所覆盖的质蕴涵项。 具体步骤： 先找尽可能大的圈。 找实质蕴含项。 从剩下的最小项中再找质蕴含项。 上面我们得到的是与或表达式（积之和表达式）。我们也可以利用对偶性原理，来得到最简和之积表达式，只需要标注“0单元”并执行相同步骤。 这一思想和下面的“与非-与非”表达式有类似之处。 逻辑函数变换–实际电路实现方式 通过前述定理，可以变换逻辑函数，使得它功能相同，符号不同： 因为我们要考虑电路在实际运行时的开销，需要考虑执行速度，所以要利用一些逻辑变换，来减小理论开销。例如： 与非门/或非门比与门/或门的执行速度快（因为利用的CMOS数量不一样）。因此我们可以将与-或表达式转换为“与非-与非”表达式。 将“与-或”表达式整体两次取反，然后运用德摩根定律转换下层的取反运算，就可以得到“与非-与非”表达式使用与非门替代与门和或门来实现逻辑函数。 更一般地： 这里的意思是：任何两级电路，在两级中间加两个反相门，然后中间切一刀，两组反相门归到上一级和下一级，再进行化简（等效）。 这样做的好处是可以用与非门代替与门，或非门代替或门，从而降低（底层）逻辑门层级数量，实现提速。 然而需要注意的是，图中是一种较为理想的情况，我们把所有与门/非门都进行了替换，然而如果第一级有与非门，则替换后它会变成与门，这指出这种方法不能保证一定提速。 暂时我们不用考虑上述复杂的情况。" />
+<meta property="og:description" content="逻辑门和数字抽象 逻辑门 概念 逻辑门电路(logic gate)是最基础的数字电路，具有允许或禁止信号传输的功能，也称为门电路。 逻辑门电路具有一个或多个输入信号，一个输出信号。 输入信号、输出信号称为逻辑变量（取值为0或1）。 输入信号和输出信号之间的逻辑关系使用真值表或者逻辑表达式来描述。 逻辑表达式：用逻辑运算符来连接逻辑变量 真值表：二维表，按顺序列出所有可能的输入组合和该输入组合对应的输出信号值 基本逻辑门 AND OR NOT NAND（与非） NOR（或非） XOR（异或，两个输入不同时为1） NXOR（同或，两个输入相同时为1） 符号： 数字抽象 数字抽象（逻辑采样）：将某个物理量的实际值集（实值）映射为两个子集，对应于两个状态或两个逻辑值0和1。 本质：从连续到离散的映射，分段函数。 0和1不表示数值的大小，而表示两种相反的状态。如电平高与低、电路导通与截止、灯亮与灭，开关的开与关。 在数字系统中，将一定范围内的电压映射到两个状态：高态（high）和低态（low），并用0和1来表示。 在正逻辑下，高电平H对应1，低电平L对应0，负逻辑相反。 假设CMOS逻辑电路工作在5V下，那么CMOS逻辑电路将0-1.5V解释为低电平（逻辑0），3.5-5V解释为高电平，而1.5-3.5间被认为是不确定状态。 CMOS参数 高低电平范围的具体数值由CMOS性质决定，其中一些重要的参数如下： $V_{IHmin}$：确保能被识别为高态的最小输入电压值 $V_{ILmax}$：确保能被识别为低态的最大输入电压值 $V_{OHmin}$：输出为高态时的最小输出电压值（略低于Vcc） $V_{OHmax}$：输出为低态时的最大输出电压值（略高于0V） 供电轨道： VCC/VDD称为电源电压，典型值为5.0V±10% GND称为地线，0V 直流噪声容限 直流噪声容限（DC noise margin）是一种对噪声程度的度量，表示多大的噪声会使输出电压被破坏，成为不可被输入端识别的值。 高态直流噪声容限$NM_{H}=V_{OHmin}-V_{IHmin}$ 低态直流噪声容限$NM_{L}=V_{ILmax}-V_{OLmax}$ CMOS晶体管 MOS，金属氧化物半导体场效应晶体管，也称三极晶体管。 MOS晶体管分为NMOS和PMOS： N沟道型NMOS，杂质有磷或锑等(Negative) P沟道型PMOS，杂质有硼或铟等(Positive) 这主要取决于其中包含的移动电荷的正负。NMOS中移动的是负电荷，PMOS中移动的是正电荷。当电荷聚集在一起就形成一个沟渠，允许电流通过。 我们常说“一对CMOS晶体管”，是因为它们一般成对使用（一个NMOS和PMOS），但不能说一个CMOS晶体管。 MOS晶体管可被模型化为一种3端子压控电阻导体，将电压加到一个端子，来控制其他两个端子间的电阻。 工作原理 栅极和源极之间电压$V_{gs}$控制源极和漏极间电阻$R_{ds}$的大小。$V_{gs}$等于Gate与Source电位之差。 NMOS的Source在下（认为接地），PMOS的Source在上（认为接工作电源）。所以通常来说，NMOS的Gate为高电平即导通，PMOS的Gate为低电平即导通。 CMOS如何构成？ CMOS（Complementary Metal-Oxide Semiconductor）以互补的形式共用一对NMOS和PMOS晶体管。 栅极和漏极共用，分别连接输入和输出。通过改变栅极的输入电压值（使得Q1和Q2只会有一个导通），从而改变漏极的输出电压值。Gate就像一个开关。 CMOS实现基本逻辑门 非门（一对CMOS） 与非门（两对CMOS） 或非门（两对CMOS） k输入与非门/或非门 与门（与非+非） 或门同理。 缓冲器 两级非门实现缓冲器，将一个“弱”信号转换为具有相同逻辑值的“强”信号。 传输门 传输门（transmission gate）由一对CMOS晶体管以及控制信号EN构成。 信号EN（使能端）用于控制晶体管的导通与截止, 其功能相当于一个逻辑控制开关。 当EN为高态时，若传输的是低态信号，则NMOS管导通；否则是PMOS管导通。若EN为低态时，两个MOS管都截止。 传输门的传播延迟非常短、电路简单，可双向传输。 CMOS电气特性 受电气特性的限制，输入端不能无限制增加。一般输入端数目小于等于5，不超过8个。 转换时间transition time ：逻辑电路的输入信号（或输出信号）从一种状态转换到另一种状态所需的时间 上升时间rise time：从低态到高态。 下降时间fall time：从高态到低态。 传播延迟(tp，propagation delay)是指从输入信号变化到引起输出信号变化所需的时间。 信号通路signal path：是指一个特定输入信号到逻辑元件的特定输出信号所经历的电气通路。 $t_{pHL}$：输入变化引起相应输出从高到低变化的时间。 $t_{pLH}$：输入变化引起相应输出低到高变化的时间。 数字电路在输出信号保持不变时的功率损耗称为静态功耗，通常CMOS电路的静态功耗很低，常忽略。 在输出信号高低状态转换时的功率损耗称为动态功耗。主要来源： 输出端上的电容性负载$C_{L}$ CMOS电路内部的功耗电容$C_{PD}$ 在CMOS电路的应用中， 动态功耗是总功率的主要成分。 布尔代数 布尔代数是一种二值代数系统。 逻辑运算：在布尔代数中，有与、或、非三种基本逻辑运算。 逻辑表达式：用逻辑运算符将逻辑量连接起来的代数式。其运算结果是一个逻辑值（不强调输入和输出），例如A+B 逻辑函数：表明输入和输出变量之间的逻辑关系，例如C=A+B 公理系统 对偶定律 运算顺序不变 单变量定理 二、三变量定理 其中特别要注意T8和T9，可以由T9推出T8 n变量定理 这里主要注意T14（与对偶相关）和T15，它们在电路简化中有重要应用。 逻辑关系描述 逻辑函数 逻辑函数是反映输入变量和输出变量之间逻辑关系的表达式。 真值表和波形图 真值表：用二维表的形式列出一个逻辑函数所有的输入组合和对应的输出值。 波形图描绘了逻辑函数输出变量对于输入变量的变化所产生的响应。在理想状态下，忽略时间延迟。 横轴表示时间 纵向用横线的高低来表示逻辑值大小 完整的波形图至少需要列出所有的输入组合和所对应的输出值。 逻辑函数的标准表示 乘积项：包含1个或1个以上逻辑变量的与项。 求和项：包含1个或1个以上逻辑变量的或项。 “与-或”表达式或积之和表达式(Sum of Product，SOP)：多个乘积项的或运算。与-或指的是先与后或。 “或-与”表达式或和之积表达式(Product of Sum，POS）：多个求和项的与运算。 标准乘积项（标准求和项）：每个逻辑变量出现且仅出现一次的乘积项（求和项）。 标准项中每个变量可以以原变量或反变量的形式出现。对于非标准项，可利用布尔代数的互补律扩充缺失的逻辑变量从而转换为标准项。例如 $A \cdot B=A \cdot B \cdot C+A \cdot B \cdot \bar{C}$。 标准乘积项也称为最小项，每个最小项对应真值表中一个输入组合，赋值该输入组合后，最小项的运算结果为1。 若某输入组合对应的二进制数值为i，则用$[m_{i}$表示该最小项，i称为该最小项的编号。例如：$\bar{A} \cdot \bar{B} \cdot C$对应$m_{i}$。 标准求和项也称为最大项，每个最大项对应真值表中一个输入组合，赋值该输入组合后，最大项的运算结果为0。 若某输入组合对应的二进制数值为i，则用$M_{i}$表示该最小项，i称为该最小项的编号。例如：$\bar{A} + \bar{B} + C$对应$M_{6}$。 标准和/最小项列表：函数输出为1对应输入组合对应的最小项之和。 标准积/最大项列表：函数输出为0对应输入组合对应的最大项之积。 函数的最小项列表和最大项列表等价且可相互转换。 这是标准表示，并非最简表示。 逻辑函数的化简与变换 化简目的： 减少输入变量的数目 减少逻辑门的数目 减小电路规模 通常从真值表或标准范式开始化简，通常不考虑输入反相器的成本。 代数法 如果表达式的层级超过了两级，则先转换为两级。 如有整体取反运算，则先转换为单变量取反运算。 利用互补律T5：$\bar{X}+X=1$ ，可消去一个变量。 利用吸收律T9：$X+X \cdot Y=X$和$X+\bar{X} \cdot Y=X+Y$，可消去乘积项中一个因子。 利用组合律T10：$X \cdot Y+X \cdot Y=X$和$(X+Y) \cdot (X+\bar{Y})=X$，可消去一个变量。 利用一致律T11，可消去冗余的乘积项。 Con：没有规律，技巧性很强，难以判断是否最简。 卡诺图 概念 卡诺图把能化简的最小项通过相邻项合并的可视化方式标识出来。 若两个“1单元”相邻，则表示两个最小项仅1个变量相反。根据T10，这两个最小项可合并为一个乘积项，并消去那个具有相反取值的变量。 相邻$2^{i}$个1单元可以合并（而不是2n！） 必须注意格雷码的编码方式：这决定了最左和最右是逻辑相邻的，所以画圈可以跨越左右边界。 卡诺图化简： 蕴涵项是一个乘积项，覆盖了逻辑函数的1个或多个最小项。 质蕴涵项：不能被逻辑函数的其它蕴涵项所覆盖的蕴涵项。（这里必须区分好不同概念：覆盖指的是完全覆盖，比如$Y \cdot Z$覆盖了$\bar{X} \cdot Y \cdot Z$和$X \cdot Y \cdot Z$） 实质蕴涵项：覆盖的最小项中至少有一个最小项是没有被其他质蕴涵项所覆盖的质蕴涵项。 具体步骤： 先找尽可能大的圈。 找实质蕴含项。 从剩下的最小项中再找质蕴含项。 上面我们得到的是与或表达式（积之和表达式）。我们也可以利用对偶性原理，来得到最简和之积表达式，只需要标注“0单元”并执行相同步骤。 这一思想和下面的“与非-与非”表达式有类似之处。 逻辑函数变换–实际电路实现方式 通过前述定理，可以变换逻辑函数，使得它功能相同，符号不同： 因为我们要考虑电路在实际运行时的开销，需要考虑执行速度，所以要利用一些逻辑变换，来减小理论开销。例如： 与非门/或非门比与门/或门的执行速度快（因为利用的CMOS数量不一样）。因此我们可以将与-或表达式转换为“与非-与非”表达式。 将“与-或”表达式整体两次取反，然后运用德摩根定律转换下层的取反运算，就可以得到“与非-与非”表达式使用与非门替代与门和或门来实现逻辑函数。 更一般地： 这里的意思是：任何两级电路，在两级中间加两个反相门，然后中间切一刀，两组反相门归到上一级和下一级，再进行化简（等效）。 这样做的好处是可以用与非门代替与门，或非门代替或门，从而降低（底层）逻辑门层级数量，实现提速。 然而需要注意的是，图中是一种较为理想的情况，我们把所有与门/非门都进行了替换，然而如果第一级有与非门，则替换后它会变成与门，这指出这种方法不能保证一定提速。 暂时我们不用考虑上述复杂的情况。" />
+<link rel="canonical" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html" />
+<meta property="og:url" content="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html" />
+<meta property="og:site_name" content="Step far." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-10-11T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CH2 数字逻辑基础" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"DragonK"},"dateModified":"2023-10-11T00:00:00+00:00","datePublished":"2023-10-11T00:00:00+00:00","description":"逻辑门和数字抽象 逻辑门 概念 逻辑门电路(logic gate)是最基础的数字电路，具有允许或禁止信号传输的功能，也称为门电路。 逻辑门电路具有一个或多个输入信号，一个输出信号。 输入信号、输出信号称为逻辑变量（取值为0或1）。 输入信号和输出信号之间的逻辑关系使用真值表或者逻辑表达式来描述。 逻辑表达式：用逻辑运算符来连接逻辑变量 真值表：二维表，按顺序列出所有可能的输入组合和该输入组合对应的输出信号值 基本逻辑门 AND OR NOT NAND（与非） NOR（或非） XOR（异或，两个输入不同时为1） NXOR（同或，两个输入相同时为1） 符号： 数字抽象 数字抽象（逻辑采样）：将某个物理量的实际值集（实值）映射为两个子集，对应于两个状态或两个逻辑值0和1。 本质：从连续到离散的映射，分段函数。 0和1不表示数值的大小，而表示两种相反的状态。如电平高与低、电路导通与截止、灯亮与灭，开关的开与关。 在数字系统中，将一定范围内的电压映射到两个状态：高态（high）和低态（low），并用0和1来表示。 在正逻辑下，高电平H对应1，低电平L对应0，负逻辑相反。 假设CMOS逻辑电路工作在5V下，那么CMOS逻辑电路将0-1.5V解释为低电平（逻辑0），3.5-5V解释为高电平，而1.5-3.5间被认为是不确定状态。 CMOS参数 高低电平范围的具体数值由CMOS性质决定，其中一些重要的参数如下： $V_{IHmin}$：确保能被识别为高态的最小输入电压值 $V_{ILmax}$：确保能被识别为低态的最大输入电压值 $V_{OHmin}$：输出为高态时的最小输出电压值（略低于Vcc） $V_{OHmax}$：输出为低态时的最大输出电压值（略高于0V） 供电轨道： VCC/VDD称为电源电压，典型值为5.0V±10% GND称为地线，0V 直流噪声容限 直流噪声容限（DC noise margin）是一种对噪声程度的度量，表示多大的噪声会使输出电压被破坏，成为不可被输入端识别的值。 高态直流噪声容限$NM_{H}=V_{OHmin}-V_{IHmin}$ 低态直流噪声容限$NM_{L}=V_{ILmax}-V_{OLmax}$ CMOS晶体管 MOS，金属氧化物半导体场效应晶体管，也称三极晶体管。 MOS晶体管分为NMOS和PMOS： N沟道型NMOS，杂质有磷或锑等(Negative) P沟道型PMOS，杂质有硼或铟等(Positive) 这主要取决于其中包含的移动电荷的正负。NMOS中移动的是负电荷，PMOS中移动的是正电荷。当电荷聚集在一起就形成一个沟渠，允许电流通过。 我们常说“一对CMOS晶体管”，是因为它们一般成对使用（一个NMOS和PMOS），但不能说一个CMOS晶体管。 MOS晶体管可被模型化为一种3端子压控电阻导体，将电压加到一个端子，来控制其他两个端子间的电阻。 工作原理 栅极和源极之间电压$V_{gs}$控制源极和漏极间电阻$R_{ds}$的大小。$V_{gs}$等于Gate与Source电位之差。 NMOS的Source在下（认为接地），PMOS的Source在上（认为接工作电源）。所以通常来说，NMOS的Gate为高电平即导通，PMOS的Gate为低电平即导通。 CMOS如何构成？ CMOS（Complementary Metal-Oxide Semiconductor）以互补的形式共用一对NMOS和PMOS晶体管。 栅极和漏极共用，分别连接输入和输出。通过改变栅极的输入电压值（使得Q1和Q2只会有一个导通），从而改变漏极的输出电压值。Gate就像一个开关。 CMOS实现基本逻辑门 非门（一对CMOS） 与非门（两对CMOS） 或非门（两对CMOS） k输入与非门/或非门 与门（与非+非） 或门同理。 缓冲器 两级非门实现缓冲器，将一个“弱”信号转换为具有相同逻辑值的“强”信号。 传输门 传输门（transmission gate）由一对CMOS晶体管以及控制信号EN构成。 信号EN（使能端）用于控制晶体管的导通与截止, 其功能相当于一个逻辑控制开关。 当EN为高态时，若传输的是低态信号，则NMOS管导通；否则是PMOS管导通。若EN为低态时，两个MOS管都截止。 传输门的传播延迟非常短、电路简单，可双向传输。 CMOS电气特性 受电气特性的限制，输入端不能无限制增加。一般输入端数目小于等于5，不超过8个。 转换时间transition time ：逻辑电路的输入信号（或输出信号）从一种状态转换到另一种状态所需的时间 上升时间rise time：从低态到高态。 下降时间fall time：从高态到低态。 传播延迟(tp，propagation delay)是指从输入信号变化到引起输出信号变化所需的时间。 信号通路signal path：是指一个特定输入信号到逻辑元件的特定输出信号所经历的电气通路。 $t_{pHL}$：输入变化引起相应输出从高到低变化的时间。 $t_{pLH}$：输入变化引起相应输出低到高变化的时间。 数字电路在输出信号保持不变时的功率损耗称为静态功耗，通常CMOS电路的静态功耗很低，常忽略。 在输出信号高低状态转换时的功率损耗称为动态功耗。主要来源： 输出端上的电容性负载$C_{L}$ CMOS电路内部的功耗电容$C_{PD}$ 在CMOS电路的应用中， 动态功耗是总功率的主要成分。 布尔代数 布尔代数是一种二值代数系统。 逻辑运算：在布尔代数中，有与、或、非三种基本逻辑运算。 逻辑表达式：用逻辑运算符将逻辑量连接起来的代数式。其运算结果是一个逻辑值（不强调输入和输出），例如A+B 逻辑函数：表明输入和输出变量之间的逻辑关系，例如C=A+B 公理系统 对偶定律 运算顺序不变 单变量定理 二、三变量定理 其中特别要注意T8和T9，可以由T9推出T8 n变量定理 这里主要注意T14（与对偶相关）和T15，它们在电路简化中有重要应用。 逻辑关系描述 逻辑函数 逻辑函数是反映输入变量和输出变量之间逻辑关系的表达式。 真值表和波形图 真值表：用二维表的形式列出一个逻辑函数所有的输入组合和对应的输出值。 波形图描绘了逻辑函数输出变量对于输入变量的变化所产生的响应。在理想状态下，忽略时间延迟。 横轴表示时间 纵向用横线的高低来表示逻辑值大小 完整的波形图至少需要列出所有的输入组合和所对应的输出值。 逻辑函数的标准表示 乘积项：包含1个或1个以上逻辑变量的与项。 求和项：包含1个或1个以上逻辑变量的或项。 “与-或”表达式或积之和表达式(Sum of Product，SOP)：多个乘积项的或运算。与-或指的是先与后或。 “或-与”表达式或和之积表达式(Product of Sum，POS）：多个求和项的与运算。 标准乘积项（标准求和项）：每个逻辑变量出现且仅出现一次的乘积项（求和项）。 标准项中每个变量可以以原变量或反变量的形式出现。对于非标准项，可利用布尔代数的互补律扩充缺失的逻辑变量从而转换为标准项。例如 $A \\cdot B=A \\cdot B \\cdot C+A \\cdot B \\cdot \\bar{C}$。 标准乘积项也称为最小项，每个最小项对应真值表中一个输入组合，赋值该输入组合后，最小项的运算结果为1。 若某输入组合对应的二进制数值为i，则用$[m_{i}$表示该最小项，i称为该最小项的编号。例如：$\\bar{A} \\cdot \\bar{B} \\cdot C$对应$m_{i}$。 标准求和项也称为最大项，每个最大项对应真值表中一个输入组合，赋值该输入组合后，最大项的运算结果为0。 若某输入组合对应的二进制数值为i，则用$M_{i}$表示该最小项，i称为该最小项的编号。例如：$\\bar{A} + \\bar{B} + C$对应$M_{6}$。 标准和/最小项列表：函数输出为1对应输入组合对应的最小项之和。 标准积/最大项列表：函数输出为0对应输入组合对应的最大项之积。 函数的最小项列表和最大项列表等价且可相互转换。 这是标准表示，并非最简表示。 逻辑函数的化简与变换 化简目的： 减少输入变量的数目 减少逻辑门的数目 减小电路规模 通常从真值表或标准范式开始化简，通常不考虑输入反相器的成本。 代数法 如果表达式的层级超过了两级，则先转换为两级。 如有整体取反运算，则先转换为单变量取反运算。 利用互补律T5：$\\bar{X}+X=1$ ，可消去一个变量。 利用吸收律T9：$X+X \\cdot Y=X$和$X+\\bar{X} \\cdot Y=X+Y$，可消去乘积项中一个因子。 利用组合律T10：$X \\cdot Y+X \\cdot Y=X$和$(X+Y) \\cdot (X+\\bar{Y})=X$，可消去一个变量。 利用一致律T11，可消去冗余的乘积项。 Con：没有规律，技巧性很强，难以判断是否最简。 卡诺图 概念 卡诺图把能化简的最小项通过相邻项合并的可视化方式标识出来。 若两个“1单元”相邻，则表示两个最小项仅1个变量相反。根据T10，这两个最小项可合并为一个乘积项，并消去那个具有相反取值的变量。 相邻$2^{i}$个1单元可以合并（而不是2n！） 必须注意格雷码的编码方式：这决定了最左和最右是逻辑相邻的，所以画圈可以跨越左右边界。 卡诺图化简： 蕴涵项是一个乘积项，覆盖了逻辑函数的1个或多个最小项。 质蕴涵项：不能被逻辑函数的其它蕴涵项所覆盖的蕴涵项。（这里必须区分好不同概念：覆盖指的是完全覆盖，比如$Y \\cdot Z$覆盖了$\\bar{X} \\cdot Y \\cdot Z$和$X \\cdot Y \\cdot Z$） 实质蕴涵项：覆盖的最小项中至少有一个最小项是没有被其他质蕴涵项所覆盖的质蕴涵项。 具体步骤： 先找尽可能大的圈。 找实质蕴含项。 从剩下的最小项中再找质蕴含项。 上面我们得到的是与或表达式（积之和表达式）。我们也可以利用对偶性原理，来得到最简和之积表达式，只需要标注“0单元”并执行相同步骤。 这一思想和下面的“与非-与非”表达式有类似之处。 逻辑函数变换–实际电路实现方式 通过前述定理，可以变换逻辑函数，使得它功能相同，符号不同： 因为我们要考虑电路在实际运行时的开销，需要考虑执行速度，所以要利用一些逻辑变换，来减小理论开销。例如： 与非门/或非门比与门/或门的执行速度快（因为利用的CMOS数量不一样）。因此我们可以将与-或表达式转换为“与非-与非”表达式。 将“与-或”表达式整体两次取反，然后运用德摩根定律转换下层的取反运算，就可以得到“与非-与非”表达式使用与非门替代与门和或门来实现逻辑函数。 更一般地： 这里的意思是：任何两级电路，在两级中间加两个反相门，然后中间切一刀，两组反相门归到上一级和下一级，再进行化简（等效）。 这样做的好处是可以用与非门代替与门，或非门代替或门，从而降低（底层）逻辑门层级数量，实现提速。 然而需要注意的是，图中是一种较为理想的情况，我们把所有与门/非门都进行了替换，然而如果第一级有与非门，则替换后它会变成与门，这指出这种方法不能保证一定提速。 暂时我们不用考虑上述复杂的情况。","headline":"CH2 数字逻辑基础","mainEntityOfPage":{"@type":"WebPage","@id":"/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html"},"url":"/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Step far." /><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"
+        async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe-lightbox.umd.min.js" async></script>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe.umd.min.js" async></script>
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/photoswipe.min.css"
+  rel="stylesheet"
+/>
+<style>
+  .pswp .pswp__container .pswp__img {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initPhotoSwipe() {
+    let customOptions = {};
+
+    try {
+      const data = ``.replaceAll("=>", ":");
+      customOptions = JSON.parse(data);
+    } catch (e) {
+      console.info("Invalid custom photo previewer options! " + e.message);
+    }
+
+    // Define object and gallery options
+    const options = Object.assign(
+      {
+        gallery: "section.main",
+        children: "a.photo-swipe",
+        photo_scale: 2,
+        // dynamic import is not supported in UMD version
+        pswpModule: PhotoSwipe,
+      },
+      customOptions
+    );
+
+    const galleryEl = document.querySelector(options.gallery);
+    if (!galleryEl) {
+      return;
+    }
+
+    const imgEls = [];
+    const els = galleryEl.querySelectorAll("img:not(.emoji)");
+    els.forEach((el) => {
+      if (el.src.trim() == "") {
+        return;
+      }
+      if (!imgEls.includes(el)) {
+        imgEls.push(el);
+      }
+    });
+
+    if (imgEls.length === 0) {
+      return;
+    }
+
+    imgEls.forEach((imgEl) => {
+      imgEl.outerHTML = `
+      <a class="photo-swipe"
+        href="${imgEl.src}"
+        data-pswp-width="${
+          Math.max(imgEl.naturalWidth, imgEl.width) * options.photo_scale
+        }"
+        data-pswp-height="${
+          Math.max(imgEl.naturalHeight, imgEl.height) * options.photo_scale
+        }"
+        data-pswp-caption="${imgEl.getAttribute("caption") || imgEl.alt}"
+        target="_blank">
+        ${imgEl.outerHTML}
+      </a>`;
+    });
+
+    // Initialize PhotoSwipe 5
+    var lightbox = new PhotoSwipeLightbox(options);
+
+    lightbox.init();
+  }
+
+  window.addEventListener("load", initPhotoSwipe);
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner"><span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Step far." src="" onerror="this.style.display='none'">
+  Step far.
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger"><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+</span></div>
+        </nav></div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CH2 数字逻辑基础</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <div class="post-meta">
+    <time class="dt-published" datetime="2023-10-11T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Oct 11, 2023
+    </time>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div><div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="逻辑门和数字抽象">逻辑门和数字抽象</h2>
+
+<h3 id="逻辑门">逻辑门</h3>
+
+<h4 id="概念">概念</h4>
+
+<p>逻辑门电路(logic gate)是最基础的数字电路，具有允许或禁止信号传输的功能，也称为门电路。</p>
+
+<p>逻辑门电路具有<strong>一个或多个输入信号，一个输出信号</strong>。</p>
+
+<p>输入信号、输出信号称为逻辑变量（取值为0或1）。</p>
+
+<hr />
+
+<p>输入信号和输出信号之间的逻辑关系使用<strong>真值表</strong>或者<strong>逻辑表达式</strong>来描述。</p>
+
+<ul>
+  <li>逻辑表达式：用逻辑运算符来连接逻辑变量</li>
+  <li>真值表：二维表，按顺序列出所有可能的输入组合和该输入组合对应的输出信号值</li>
+</ul>
+
+<h4 id="基本逻辑门">基本逻辑门</h4>
+
+<ul>
+  <li>AND</li>
+  <li>OR</li>
+  <li>NOT</li>
+  <li>NAND（与非）</li>
+  <li>NOR（或非）</li>
+  <li>XOR（异或，两个输入不同时为1）</li>
+  <li>NXOR（同或，两个输入相同时为1）</li>
+</ul>
+
+<p>符号：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/faef32a1b747d55f6b75e1324ebb4ca3.png" alt="faef32a1b747d55f6b75e1324ebb4ca3" /></p>
+
+<h3 id="数字抽象">数字抽象</h3>
+
+<p>数字抽象（逻辑采样）：将某个物理量的实际值集（实值）映射为两个子集，对应于两个状态或两个逻辑值0和1。</p>
+
+<p>本质：从连续到离散的映射，分段函数。</p>
+
+<p><strong>0和1不表示数值的大小，而表示两种相反的状态。</strong>如电平高与低、电路导通与截止、灯亮与灭，开关的开与关。</p>
+
+<p>在数字系统中，将一定范围内的电压映射到两个状态：高态（high）和低态（low），并用0和1来表示。</p>
+
+<p>在正逻辑下，高电平H对应1，低电平L对应0，负逻辑相反。</p>
+
+<p>假设CMOS逻辑电路工作在5V下，那么CMOS逻辑电路将0-1.5V解释为低电平（逻辑0），3.5-5V解释为高电平，而1.5-3.5间被认为是<strong>不确定状态</strong>。</p>
+
+<h4 id="cmos参数">CMOS参数</h4>
+
+<p>高低电平范围的具体数值由CMOS性质决定，其中一些重要的参数如下：</p>
+
+<p>$V_{IHmin}$：确保能被识别为高态的最小输入电压值</p>
+
+<p>$V_{ILmax}$：确保能被识别为低态的最大输入电压值</p>
+
+<p>$V_{OHmin}$：输出为高态时的最小输出电压值（略低于Vcc）</p>
+
+<p>$V_{OHmax}$：输出为低态时的最大输出电压值（略高于0V）</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008230842600.png" alt="image-20231008230842600" /></p>
+
+<p>供电轨道：</p>
+
+<ul>
+  <li>VCC/VDD称为电源电压，典型值为5.0V±10%</li>
+  <li>GND称为地线，0V</li>
+</ul>
+
+<h4 id="直流噪声容限">直流噪声容限</h4>
+
+<p>直流噪声容限（DC noise margin）是一种对噪声程度的度量，表示多大的噪声会使输出电压被破坏，成为不可被输入端识别的值。</p>
+
+<p>高态直流噪声容限$NM_{H}=V_{OHmin}-V_{IHmin}$</p>
+
+<p>低态直流噪声容限$NM_{L}=V_{ILmax}-V_{OLmax}$</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008231230654.png" alt="image-20231008231230654" /></p>
+
+<h3 id="cmos晶体管">CMOS晶体管</h3>
+
+<p>MOS，金属氧化物半导体场效应晶体管，也称三极晶体管。</p>
+
+<p>MOS晶体管分为NMOS和PMOS：</p>
+
+<ul>
+  <li>N沟道型NMOS，杂质有磷或锑等(Negative)</li>
+  <li>P沟道型PMOS，杂质有硼或铟等(Positive)</li>
+</ul>
+
+<p>这主要取决于其中包含的移动电荷的正负。NMOS中移动的是负电荷，PMOS中移动的是正电荷。当电荷聚集在一起就形成一个沟渠，允许电流通过。</p>
+
+<p>我们常说“一对CMOS晶体管”，是因为它们一般成对使用（一个NMOS和PMOS），但不能说一个CMOS晶体管。</p>
+
+<p>MOS晶体管可被模型化为一种3端子压控电阻导体，将电压加到一个端子，来控制其他两个端子间的电阻。</p>
+
+<h4 id="工作原理">工作原理</h4>
+
+<p>栅极和源极之间电压$V_{gs}$控制源极和漏极间电阻$R_{ds}$的大小。$V_{gs}$等于Gate与Source电位之差。</p>
+
+<p>NMOS的Source在下（认为接地），PMOS的Source在上（认为接工作电源）。<strong>所以通常来说，NMOS的Gate为高电平即导通，PMOS的Gate为低电平即导通。</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008233041705.png" alt="image-20231008233041705" /></p>
+
+<p>CMOS如何构成？</p>
+
+<p>CMOS（Complementary Metal-Oxide Semiconductor）以互补的形式共用一对NMOS和PMOS晶体管。</p>
+
+<p><strong>栅极和漏极共用，分别连接输入和输出。</strong>通过改变栅极的输入电压值（使得Q1和Q2只会有一个导通），从而改变漏极的输出电压值。Gate就像一个开关。</p>
+
+<h4 id="cmos实现基本逻辑门">CMOS实现基本逻辑门</h4>
+
+<h5 id="非门一对cmos">非门（一对CMOS）</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008234505460.png" alt="image-20231008234505460" /></p>
+
+<h5 id="与非门两对cmos">与非门（两对CMOS）</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008234614225.png" alt="image-20231008234614225" /></p>
+
+<h5 id="或非门两对cmos">或非门（两对CMOS）</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008234632819.png" alt="image-20231008234632819" /></p>
+
+<h5 id="k输入与非门或非门">k输入与非门/或非门</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008234922120.png" alt="image-20231008234922120" /></p>
+
+<h5 id="与门与非非">与门（与非+非）</h5>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008234955964.png" alt="image-20231008234955964" /></p>
+
+<p>或门同理。</p>
+
+<h5 id="缓冲器">缓冲器</h5>
+
+<p>两级非门实现缓冲器，将一个“弱”信号转换为具有相同逻辑值的“强”信号。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008235523419.png" alt="image-20231008235523419" /></p>
+
+<h5 id="传输门">传输门</h5>
+
+<p>传输门（transmission gate）由一对CMOS晶体管以及控制信号EN构成。</p>
+
+<ul>
+  <li>
+    <p>信号EN（使能端）用于控制晶体管的导通与截止, 其功能相当于一个逻辑控制开关。</p>
+  </li>
+  <li>
+    <p>当EN为高态时，若传输的是低态信号，则NMOS管导通；否则是PMOS管导通。若EN为低态时，两个MOS管都截止。</p>
+  </li>
+</ul>
+
+<p><strong>传输门的传播延迟非常短、电路简单，可双向传输。</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008235736768.png" alt="image-20231008235736768" /></p>
+
+<h4 id="cmos电气特性">CMOS电气特性</h4>
+
+<p>受电气特性的限制，输入端不能无限制增加。一般输入端数目小于等于5，不超过8个。</p>
+
+<p>转换时间transition time ：逻辑电路的输入信号（或输出信号）从一种状态转换到另一种状态所需的时间</p>
+
+<ul>
+  <li>上升时间rise time：从低态到高态。</li>
+  <li>下降时间fall time：从高态到低态。</li>
+</ul>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231008235830166.png" alt="image-20231008235830166" /></p>
+
+<ul>
+  <li>
+    <p>传播延迟(tp，propagation delay)是指从输入信号变化到引起输出信号变化所需的时间。</p>
+  </li>
+  <li>信号通路signal path：是指一个特定输入信号到逻辑元件的特定输出信号所经历的电气通路。</li>
+  <li>$t_{pHL}$：输入变化引起相应输出从高到低变化的时间。</li>
+  <li>$t_{pLH}$：输入变化引起相应输出低到高变化的时间。</li>
+</ul>
+
+<p>数字电路在输出信号保持不变时的功率损耗称为静态功耗，通常CMOS电路的静态功耗很低，常忽略。</p>
+
+<p>在输出信号高低状态转换时的功率损耗称为动态功耗。主要来源：</p>
+
+<ul>
+  <li>
+    <p>输出端上的电容性负载$C_{L}$</p>
+  </li>
+  <li>
+    <p>CMOS电路内部的功耗电容$C_{PD}$</p>
+  </li>
+</ul>
+
+<p>在CMOS电路的应用中， 动态功耗是总功率的主要成分。</p>
+
+<h2 id="布尔代数">布尔代数</h2>
+
+<p>布尔代数是一种二值代数系统。</p>
+
+<ul>
+  <li>逻辑运算：在布尔代数中，有与、或、非三种基本逻辑运算。</li>
+  <li>逻辑表达式：用逻辑运算符将逻辑量连接起来的代数式。其运算结果是一个逻辑值（不强调输入和输出），例如A+B</li>
+  <li>逻辑函数：表明输入和输出变量之间的逻辑关系，例如C=A+B</li>
+</ul>
+
+<h3 id="公理系统">公理系统</h3>
+
+<h4 id="对偶定律">对偶定律</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231009000929828.png" alt="image-20231009000929828" /></p>
+
+<p><strong>运算顺序不变</strong></p>
+
+<h4 id="单变量定理">单变量定理</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011101508292.png" alt="image-20231011101508292" /></p>
+
+<h4 id="二三变量定理">二、三变量定理</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011101835607.png" alt="image-20231011101835607" /></p>
+
+<p><strong>其中特别要注意T8和T9，可以由T9推出T8</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011102132653.png" alt="image-20231011102132653" /></p>
+
+<h4 id="n变量定理">n变量定理</h4>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011102017640.png" alt="image-20231011102017640" /></p>
+
+<p>这里主要注意T14（与对偶相关）和T15，它们在电路简化中有重要应用。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011102320415.png" alt="image-20231011102320415" /></p>
+
+<h2 id="逻辑关系描述">逻辑关系描述</h2>
+
+<h4 id="逻辑函数">逻辑函数</h4>
+
+<p>逻辑函数是反映输入变量和输出变量之间逻辑关系的表达式。</p>
+
+<h4 id="真值表和波形图">真值表和波形图</h4>
+
+<p>真值表：用二维表的形式列出一个逻辑函数所有的输入组合和对应的输出值。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011102759231.png" alt="image-20231011102759231" /></p>
+
+<p>波形图描绘了逻辑函数输出变量对于输入变量的变化所产生的响应。在理想状态下，忽略时间延迟。</p>
+
+<ul>
+  <li>
+    <p>横轴表示时间</p>
+  </li>
+  <li>
+    <p>纵向用横线的高低来表示逻辑值大小</p>
+  </li>
+</ul>
+
+<p><strong>完整的波形图</strong>至少需要列出<strong>所有</strong>的输入组合和所对应的输出值。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011102917113.png" alt="image-20231011102917113" /></p>
+
+<h4 id="逻辑函数的标准表示">逻辑函数的标准表示</h4>
+
+<ul>
+  <li><strong>乘积项</strong>：包含1个或1个以上逻辑变量的与项。</li>
+  <li><strong>求和项</strong>：包含1个或1个以上逻辑变量的或项。</li>
+  <li><strong>“与-或”表达式</strong>或<strong>积之和表达式</strong>(Sum of Product，SOP)：多个乘积项的或运算。<strong>与-或指的是先与后或。</strong></li>
+  <li>
+    <p><strong>“或-与”表达式</strong>或<strong>和之积表达式</strong>(Product of Sum，POS）：多个求和项的与运算。</p>
+  </li>
+  <li>
+    <p><strong>标准乘积项（标准求和项）</strong>：每个逻辑变量出现且仅出现一次的乘积项（求和项）。</p>
+
+    <p>标准项中每个变量可以以原变量或反变量的形式出现。对于非标准项，<strong>可利用布尔代数的互补律扩充缺失的逻辑变量从而转换为标准项</strong>。例如 $A \cdot B=A \cdot B \cdot C+A \cdot B \cdot \bar{C}$。</p>
+
+    <ul>
+      <li>
+        <p><strong>标准乘积项</strong>也称为<strong>最小项</strong>，<strong>每个最小项对应真值表中一个输入组合，赋值该输入组合后，最小项的运算结果为1。</strong></p>
+
+        <p>若某输入组合对应的二进制数值为i，则用$[m_{i}$表示该最小项，i称为该最小项的编号。例如：$\bar{A} \cdot \bar{B} \cdot C$对应$m_{i}$。</p>
+      </li>
+      <li>
+        <p><strong>标准求和项</strong>也称为<strong>最大项</strong>，<strong>每个最大项对应真值表中一个输入组合，赋值该输入组合后，最大项的运算结果为0。</strong></p>
+
+        <p>若某输入组合对应的二进制数值为i，则用$M_{i}$表示该最小项，i称为该最小项的编号。例如：$\bar{A} + \bar{B} + C$对应$M_{6}$。</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>标准和/最小项列表：函数输出为1对应输入组合对应的最小项之和。</p>
+  </li>
+  <li>标准积/最大项列表：函数输出为0对应输入组合对应的最大项之积。</li>
+</ul>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011104505210.png" alt="image-20231011104505210" /></p>
+
+<p><strong>函数的最小项列表和最大项列表等价且可相互转换。</strong></p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011104741397.png" alt="image-20231011104741397" /></p>
+
+<p><strong>这是标准表示，并非最简表示。</strong></p>
+
+<h2 id="逻辑函数的化简与变换">逻辑函数的化简与变换</h2>
+
+<p>化简目的：</p>
+
+<ul>
+  <li>减少输入变量的数目</li>
+  <li>减少逻辑门的数目</li>
+  <li>减小电路规模</li>
+</ul>
+
+<p>通常从真值表或标准范式开始化简，通常不考虑输入反相器的成本。</p>
+
+<h3 id="代数法">代数法</h3>
+
+<ul>
+  <li>
+    <p>如果表达式的层级超过了两级，则先转换为两级。</p>
+  </li>
+  <li>
+    <p>如有整体取反运算，则先转换为单变量取反运算。</p>
+  </li>
+</ul>
+
+<p>利用互补律T5：$\bar{X}+X=1$ ，可消去一个变量。</p>
+
+<p>利用吸收律T9：$X+X \cdot Y=X$和$X+\bar{X} \cdot Y=X+Y$，可消去乘积项中一个因子。</p>
+
+<p>利用组合律T10：$X \cdot Y+X \cdot Y=X$和$(X+Y) \cdot (X+\bar{Y})=X$，可消去一个变量。</p>
+
+<p>利用一致律T11，可消去冗余的乘积项。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011105332138.png" alt="image-20231011105332138" /></p>
+
+<p>Con：没有规律，技巧性很强，难以判断是否最简。</p>
+
+<h3 id="卡诺图">卡诺图</h3>
+
+<h4 id="概念-1">概念</h4>
+
+<p>卡诺图把能化简的最小项通过相邻项合并的可视化方式标识出来。</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011105525704.png" alt="image-20231011105525704" /></p>
+
+<ul>
+  <li>
+    <p>若两个“1单元”相邻，<strong>则表示两个最小项仅1个变量相反</strong>。根据T10，<strong>这两个最小项可合并为一个乘积项</strong>，并消去那个具有相反取值的变量。</p>
+  </li>
+  <li>相邻$2^{i}$个1单元可以合并（而不是2n！）</li>
+  <li><strong>必须注意格雷码的编码方式：这决定了最左和最右是逻辑相邻的，所以画圈可以跨越左右边界。</strong></li>
+</ul>
+
+<p>卡诺图化简：</p>
+
+<ul>
+  <li><strong>蕴涵项</strong>是一个乘积项，覆盖了逻辑函数的1个或多个最小项。</li>
+  <li><strong>质蕴涵项</strong>：不能被逻辑函数的其它蕴涵项所<strong>覆盖</strong>的蕴涵项。（这里必须区分好不同概念：覆盖指的是完全覆盖，比如$Y \cdot Z$覆盖了$\bar{X} \cdot Y \cdot Z$和$X \cdot Y \cdot Z$）</li>
+  <li><strong>实质蕴涵项</strong>：覆盖的最小项中至少有一个最小项是没有被其他质蕴涵项所覆盖的质蕴涵项。</li>
+</ul>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011110314273.png" alt="image-20231011110314273" /></p>
+
+<p>具体步骤：</p>
+
+<ul>
+  <li>先找尽可能大的圈。</li>
+  <li>找实质蕴含项。</li>
+  <li>从剩下的最小项中再找质蕴含项。</li>
+</ul>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011111817455.png" alt="image-20231011111817455" /></p>
+
+<p>上面我们得到的是与或表达式（积之和表达式）。我们也可以利用对偶性原理，来得到最简和之积表达式，只需要标注“0单元”并执行相同步骤。</p>
+
+<p>这一思想和下面的“与非-与非”表达式有类似之处。</p>
+
+<h3 id="逻辑函数变换实际电路实现方式">逻辑函数变换–实际电路实现方式</h3>
+
+<p>通过前述定理，可以变换逻辑函数，使得它功能相同，符号不同：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011112258991.png" alt="image-20231011112258991" /></p>
+
+<p>因为我们要考虑电路在实际运行时的开销，需要考虑执行速度，所以要利用一些逻辑变换，来减小理论开销。例如：</p>
+
+<ul>
+  <li>
+    <p><strong>与非门/或非门比与门/或门的执行速度快（因为利用的CMOS数量不一样）。</strong>因此我们可以将与-或表达式转换为“与非-与非”表达式。</p>
+
+    <p>将“与-或”表达式整体两次取反，然后运用德摩根定律转换下层的取反运算，就可以得到“与非-与非”表达式使用与非门替代与门和或门来实现逻辑函数。</p>
+
+    <p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011112456623.png" alt="image-20231011112456623" /></p>
+  </li>
+</ul>
+
+<p>更一般地：</p>
+
+<p><img src="https://repo-for-md.oss-cn-beijing.aliyuncs.com/uPic/image-20231011112647132.png" alt="image-20231011112647132" /></p>
+
+<p>这里的意思是：任何两级电路，在两级中间加两个反相门，然后中间切一刀，两组反相门归到上一级和下一级，再进行化简（等效）。</p>
+
+<p><strong>这样做的好处是可以用与非门代替与门，或非门代替或门，从而降低（底层）逻辑门层级数量，实现提速。</strong></p>
+
+<p>然而需要注意的是，图中是一种较为理想的情况，我们把所有与门/非门都进行了替换，然而如果第一级有与非门，则替换后它会变成与门，<strong>这指出这种方法不能保证一定提速。</strong></p>
+
+<p>暂时我们不用考虑上述复杂的情况。</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav"><a class="previous" href="/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" title="CH3 组合逻辑电路">CH3 组合逻辑电路</a><a class="next" href="/lecturenotes/2023/10/12/CH4-%E6%97%B6%E5%BA%8F%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" title="CH4 时序逻辑电路">CH4 时序逻辑电路</a></div><div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li class="">
+          <a class="post-link" href="/learning/notes/2023/11/19/%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E7%AE%97%E6%B3%95.html" title="时序差分算法">
+            时序差分算法<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH8-%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" title="CH8 函数进阶">
+            CH8 函数进阶<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html" title="CH4 复合类型">
+            CH4 复合类型<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li><li class="">
+          <a class="post-link" href="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html" title="CH11 使用类">
+            CH11 使用类<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+        </li></ul>
+    </div><div class="post-comments"></div></section>
+</div>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner"><div>Unpublished Work <span class="copyleft">&copy;</span> 2017-2024 DragonK</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

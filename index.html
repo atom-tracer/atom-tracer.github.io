@@ -1,0 +1,3469 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Home | Step far.</title>
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="Home" />
+<meta name="author" content="DragonK" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+<link rel="canonical" href="/" />
+<meta property="og:url" content="/" />
+<meta property="og:site_name" content="Step far." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Home" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"DragonK"},"description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","headline":"Home","name":"Step far.","url":"/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="canonical" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Step far." /><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"
+        async></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe-lightbox.umd.min.js" async></script>
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/umd/photoswipe.umd.min.js" async></script>
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/photoswipe/5.3.7/photoswipe.min.css"
+  rel="stylesheet"
+/>
+<style>
+  .pswp .pswp__container .pswp__img {
+    background-color: white;
+  }
+</style>
+
+<script>
+  function initPhotoSwipe() {
+    let customOptions = {};
+
+    try {
+      const data = ``.replaceAll("=>", ":");
+      customOptions = JSON.parse(data);
+    } catch (e) {
+      console.info("Invalid custom photo previewer options! " + e.message);
+    }
+
+    // Define object and gallery options
+    const options = Object.assign(
+      {
+        gallery: "section.main",
+        children: "a.photo-swipe",
+        photo_scale: 2,
+        // dynamic import is not supported in UMD version
+        pswpModule: PhotoSwipe,
+      },
+      customOptions
+    );
+
+    const galleryEl = document.querySelector(options.gallery);
+    if (!galleryEl) {
+      return;
+    }
+
+    const imgEls = [];
+    const els = galleryEl.querySelectorAll("img:not(.emoji)");
+    els.forEach((el) => {
+      if (el.src.trim() == "") {
+        return;
+      }
+      if (!imgEls.includes(el)) {
+        imgEls.push(el);
+      }
+    });
+
+    if (imgEls.length === 0) {
+      return;
+    }
+
+    imgEls.forEach((imgEl) => {
+      imgEl.outerHTML = `
+      <a class="photo-swipe"
+        href="${imgEl.src}"
+        data-pswp-width="${
+          Math.max(imgEl.naturalWidth, imgEl.width) * options.photo_scale
+        }"
+        data-pswp-height="${
+          Math.max(imgEl.naturalHeight, imgEl.height) * options.photo_scale
+        }"
+        data-pswp-caption="${imgEl.getAttribute("caption") || imgEl.alt}"
+        target="_blank">
+        ${imgEl.outerHTML}
+      </a>`;
+    });
+
+    // Initialize PhotoSwipe 5
+    var lightbox = new PhotoSwipeLightbox(options);
+
+    lightbox.init();
+  }
+
+  window.addEventListener("load", initPhotoSwipe);
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner"><span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Step far." src="" onerror="this.style.display='none'">
+  Step far.
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewBox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger"><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/">HOME</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+</span></div>
+        </nav></div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img"><div style="background-image: url(/assets/images/banners/home.jpeg)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/home.jpeg"></div>
+    <div class="wrapper">
+      <div class="page-banner-inner"><div class="page-banner-default">
+            <h1 class="page-banner-heading">
+              Step Far.
+            </h1>
+            <h2 class="page-banner-subheading">
+              Here see the world.
+            </h2>
+          </div></div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="articles">
+  
+
+  
+
+  
+
+
+
+
+<div class="pagination">
+  <!-- Post list links -->
+  <ul class="post-list z-image-style">
+    <!-- Top list item --><!-- Normal list item -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH9-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4.html">
+      CH9 内存模型和名称空间<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH9-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH9-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4.html">
+      <p>CH9 内存模型和名称空间
+
+单独编译
+
+程序的组成
+
+程序应该分为三部分：
+
+
+  头文件：包含结构声明和使用这些结构的函数的原型。
+  源代码文件：包含与结构有关的函数的代码。
+  源代码文件：包含调用与结构相关的函数的代码。
+
+
+头文件中应该包含什么？
+
+
+  函数原型。
+  使用#define或const定义的符号常量。
+  结构声明。
+  类声明。
+  模板声明。
+  内联函数。
+
+
+引用时使用include "mylib.h"而不是include &lt;mylib.h&gt;：
+
+
+  对于后者：会到存储标准头文件的主机系统的文件系统中查找。
+  对于前者：到当前的工作目录或源代码目录（或其他目录，这取决于编译器）。如果没有找到的话再区标准库中找。
+
+
+存储持续性、作用域... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH8-%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html">
+      CH8 函数进阶<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH8-%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH8-%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6.html">
+      <p>CH8 函数进阶
+
+引用变量
+
+引用是已定义的变量的别名（另一个名称）。
+
+int rats;
+int &amp; rodents rats;//makes rodents an alias for rats
+
+
+请注意，语句中的&amp;运算符不是地址运算符，而是将rodents的类型声明为int&amp;,即指向int变量
+的引用。
+
+引用看上去很像伪装表示的指针（其中，*解除引用运算符被隐式理解）。实际上，引用还是
+不同于指针的。除了表示法不同外，还有其他的差别。例如，差别之一是，必须在声明引用时将其初始化，而不能像指针那样，先声明，再赋值：
+
+int rat;
+int rodent;
+rodent rat;//No,you can't do this.
+
+
+注意：必须在声明引用... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH7-%E5%87%BD%E6%95%B0.html">
+      CH7 函数<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH7-%E5%87%BD%E6%95%B0.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH7-%E5%87%BD%E6%95%B0.html">
+      <p>CH7 函数
+
+函数指针
+
+与数据项相似，函数也有地址。函数的地址是存储其机器语言代码的内存的开始地址。
+
+使用函数指针三步骤：
+
+
+  获取函数的地址
+  声明一个函数指针
+  使用函数指针来调用函数
+
+
+获取函数的地址
+
+获取函数的地址很简单：只要使用函数名（后面不跟参数）即可。也就是说，如果thik()是一个函数，
+则thik就是该函数的地址。要将函数作为参数进行传递，必须传递函数名。
+
+process(think); //passes address of think()to process()
+thought(think()); //passes return value of think()to thought()
+
+
+声明函数指针
+
+声明指向某种数据类型的指针时，必须指定... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH5-%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">
+      CH5 表达式<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH5-%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH5-%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">
+      <p>CH5 表达式
+
+类型别名
+
+C++为类型建立别名的方式有两种。
+
+
+  一种是使用预处理器
+#define BYTE char //preprocessor replaces BYTE with char
+这样，预处理器将在编译程序时用char替换所有的BYTE,从而使BYTE成为char的别名，
+  第二种方法是使用C++和C的关键字typedef来创建别名。例如；要将byte作为char的别名，可以这样做：
+typedef char byte;//makes-byte an alfas forchar
+
+
+下面是通用格式：
+typedef typeName aliasName;
+
+换句话说，如果要将aliasName作为某种类型的别名，可以声明aliasName,如同将alias... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html">
+      CH4 复合类型<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH4-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B.html">
+      <p>CH4 复合类型
+
+字符串的输入
+
+cin使用空白（空格、制表符和换行符）来确定字符串的结束位置，这意味着cin在获取字符数组输入时只读取一个单词。读取该单词后，cin将该字符串放到数组中，并自动在结尾添加空字符。
+
+读取一行
+
+
+  
+    面向行的输入：getline()
+
+    
+      
+        getline()函数读取整行，它使用通过回车键输入的换行符来确定输入结尾。
+      
+      
+        例如，假设要使用getline()将姓名读入到一个包含20个元素的name数组中。可以使用这样的函数调用：
+cin.getline (name,20);
+这将把一行读入到name数组中，如果这行包含的字符不超过19个。
+      
+      
+ ... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH13-%E7%B1%BB%E7%BB%A7%E6%89%BF.html">
+      CH13 类继承<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH13-%E7%B1%BB%E7%BB%A7%E6%89%BF.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH13-%E7%B1%BB%E7%BB%A7%E6%89%BF.html">
+      <p>CH13 类继承
+
+面向对象编程的主要目的之是提供可重用的代码。
+
+C++提供了比修改代码更好的方法来扩展和修改类。这种方法叫作类继承，它能够从已有的类派生出新的类，而派生类继承了原有类（称为基类）的特征，包括方法。
+
+下面是可以通过继承完成的一些工作：
+
+
+  可以在已有类的基础上添加功能。例如，对于数组类，可以添加数学运算。
+  可以给类添加数据。例如，对于字符串类，可以派生出一个类，一并添加指定字符串显示颜色的数据成员。
+  可以修改类方法的行为。例如，对于代表提供给飞机乘客的服务的Passenger类，可以派生出提供更高级别服务的FirstClassPassenger类。
+
+
+简单的基类及其派生
+
+class RatedPlayer: public TableTennisPla... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH12-%E7%B1%BB%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.html">
+      CH12 类和动态内存分配<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH12-%E7%B1%BB%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH12-%E7%B1%BB%E5%92%8C%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.html">
+      <p>CH12 类和动态内存分配
+
+动态内存和类
+
+静态数据成员的初始化使用作用域运算符来指出静态成员所属的类。
+
+类的静态成员初始化只能在方法文件中进行。这是因为类声明位于头文件中，程序可能将头文件包括在其他几个文件中。
+
+如果在头文件中进行初始化，将出现多个初始化语句副本，从而引发错误。
+
+对于不能在类声明中初始化静态数据成员的一种例外情况（见第10章）是，静态数据成员为整型或枚举型const。
+
+特殊成员函数
+
+具体地说，C+自动提供了下面这些成员函数：
+
+
+  默认构造函数，如果没有定义任何构造函数：
+  默认析构函数，如果没有定义；
+  复制构造函数，如果没有定义：
+  赋值运算符，如果没有定义：
+  地址运算符，如果没有定义。
+  移动构造函数（C++11新增）
+  移动赋值运算... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html">
+      CH11 使用类<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH11-%E4%BD%BF%E7%94%A8%E7%B1%BB.html">
+      <p>CH11 使用类
+
+运算符重载
+
+基本
+
+
+  只能重载部分的、已经存在的运算符。
+  重载方式就像定义了一个特殊成员函数，因为这个运算符也是由对象调用的。
+  不同的运算符的运算顺序不同。一般而言，左侧的操作数是调用对象。
+  最好同时提供const和非const版本的运算符重载。因为const对象不能使用非const版本的重载运算符（即便这个重载运算符没有改变什么，但是计算机不相信你）。
+
+
+例如，添加加法运算符：
+
+class Time
+{
+private:
+    int hours;
+    int minutes;
+public:
+    Time();
+    Time (int h,int m=0);
+    void AddMin(int m)
+    void Ad... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/csnotes/2024/02/11/CH10-%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB.html">
+      CH10 对象和类<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Feb 11, 2024</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/csnotes/2024/02/11/CH10-%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/csnotes/2024/02/11/CH10-%E5%AF%B9%E8%B1%A1%E5%92%8C%E7%B1%BB.html">
+      <p>CH10 对象和类
+
+类定义和类声明
+
+通常，C++程序员将接口（类定义）放在头文件中，并将实现（类方法的代码）放在源代码中。
+
+一般在头文件中指的是类声明，需要注意：
+
+
+  所有成员的声明都必须在类的内部（头文件中），包括数据成员和方法成员。
+    
+      也就是说，不能在外部实现一个没有在类定义时出现过的方法。
+    
+  
+  在声明时便可加入成员方法的实现，这种定义位于类声明中的函数都将自动成为内联函数。（适用于短小函数）
+    
+      在类声明中定义方法等同于用原型替换方法定义，然后在类声明的后面将定义改写为内联函数。（这和下面在外部使用inline定义成员函数的作用等价）
+    
+  
+  在类的外部定义成员函数时需要同时提供类名和函数名：Stock:... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#C++笔记">#C++笔记</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/learning/notes/2023/11/19/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B.html">
+      马尔可夫决策过程<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Nov 19, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/learning/notes/2023/11/19/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/learning/notes/2023/11/19/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B.html">
+      <p>与多臂老虎机问题不同，马尔可夫决策过程包含状态信息以及状态之间的转移机制。
+
+当且仅当某时刻的状态只取决于上一时刻的状态时，一个随机过程被称为具有马尔可夫性质（Markov property）。
+
+我们用二元组$\langle \mathcal{S},\mathcal{P} \rangle$描述马尔可夫过程。前者是有限状态空间，后者是状态转移矩阵。
+
+在马尔可夫过程的基础上加入奖励函数r和折扣因子γ，就可以得到马尔可夫奖励过程（Markov reward process），这是一个四元组，多出来的两个元素含义为：
+
+
+  r是奖励函数，某个状态s的奖励$r(s)$指转移到该状态时可以获得奖励的期望。
+  γ是折扣因子（discount factor），γ的取值范围为[0,1)。引入折扣... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#Reinforce_Learning LAMDA">#Reinforce_Learning LAMDA</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/learning/notes/2023/11/19/%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E7%AE%97%E6%B3%95.html">
+      时序差分算法<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Nov 19, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/learning/notes/2023/11/19/%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E7%AE%97%E6%B3%95.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/learning/notes/2023/11/19/%E6%97%B6%E5%BA%8F%E5%B7%AE%E5%88%86%E7%AE%97%E6%B3%95.html">
+      <p>Introduction
+
+动态规划算法要求马尔可夫决策过程是已知的，即要求与智能体交互的环境是完全已知的（例如迷宫或者给定规则的网格世界）。在此条件下，智能体其实并不需要和环境真正交互来采样数据，直接用动态规划算法就可以解出最优价值或策略。
+
+但这在大部分场景下并不现实，机器学习的主要方法都是在数据分布未知的情况下针对具体的数据点来对模型做出更新的。对于大部分强化学习现实场景（例如电子游戏或者一些复杂物理环境），其马尔可夫决策过程的状态转移概率是无法写出来的，也就无法直接进行动态规划（当然，也不需要事先知道环境的奖励函数和状态转移函数）。在这种情况下，智能体只能和环境进行交互，通过采样到的数据来学习，这类学习方法统称为无模型的强化学习（model-free reinforcement... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#Reinforce_Learning LAMDA">#Reinforce_Learning LAMDA</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/learning/notes/2023/11/19/%E6%82%AC%E5%B4%96%E6%BC%AB%E6%AD%A5%E7%8E%AF%E5%A2%83-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%AE%97%E6%B3%95.html">
+      悬崖漫步环境——动态规划算法<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Nov 19, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/learning/notes/2023/11/19/%E6%82%AC%E5%B4%96%E6%BC%AB%E6%AD%A5%E7%8E%AF%E5%A2%83-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%AE%97%E6%B3%95.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/learning/notes/2023/11/19/%E6%82%AC%E5%B4%96%E6%BC%AB%E6%AD%A5%E7%8E%AF%E5%A2%83-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%AE%97%E6%B3%95.html">
+      <p>动态规划的基本思想是将待求解问题分解成若干个子问题，先求解子问题，然后从这些子问题的解得到目标问题的解。
+
+经典问题，例如背包问题和最短路径规划。
+
+基于动态规划的强化学习算法主要有两种：
+
+
+  
+    策略迭代（policy iteration），由两部分组成
+
+    
+      策略评估（policy evaluation）
+      策略提升（policy improvement）
+    
+
+    具体来说，策略迭代中的策略评估使用贝尔曼期望方程来得到一个策略的状态价值函数，这是一个动态规划的过程。
+  
+  
+    价值迭代（value iteration），直接使用贝尔曼最优方程来进行动态规划，得到最终的最优状态价值。
+  
+
+
+悬崖漫步是一个非常经典的强化学... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#Reinforce_Learning LAMDA">#Reinforce_Learning LAMDA</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/research/notes/2023/11/19/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html">
+      强化学习基础<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Nov 19, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/research/notes/2023/11/19/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/research/notes/2023/11/19/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html">
+      <p>概念
+
+强化学习是用来实现序贯决策的机器学习方法。
+
+决策和预测任务不同，决策往往会带来“后果”，因此决策者需要为未来负责，在未来的时间点做出进一步的决策。
+
+智能体
+
+代表做决策的机器。
+
+在每一轮交互中，智能体感知到环境目前所处的状态，经过自身的计算给出本轮的动作，将其作用到环境中；环境得到智能体的动作后，产生相应的即时奖励信号并发生相应的状态转移。智能体则在下一轮交互中感知到新的环境状态，依次类推。
+
+三要素：感知、决策和奖励
+
+
+  感知：智能体在某种程度上感知环境的状态，从而知道自己所处的现状。例如，下围棋的智能体感知当前的棋盘情况。
+  决策：智能体根据当前的状态计算出达到目标需要采取的动作的过程叫作决策。例如，针对当前的棋盘决定下一颗落子的位置。
+  奖励：环境根据状态和... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#Reinforce_Learning LAMDA">#Reinforce_Learning LAMDA</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html">
+      多臂老虎机问题<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Nov 19, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/learning/notes/2023/11/19/%E5%A4%9A%E8%87%82%E8%80%81%E8%99%8E%E6%9C%BA%E9%97%AE%E9%A2%98.html">
+      <p>关键词
+
+
+  试错型学习
+  探索与利用
+
+
+问题定义
+
+在多臂老虎机（multi-armed bandit，MAB）问题（见图 2-1）中，有一个拥有K根拉杆的老虎机，拉动每一根拉杆都对应一个关于奖励的概率分布R。
+
+我们每次拉动其中一根拉杆，就可以从该拉杆对应的奖励概率分布中获得一个奖励 。我们在各根拉杆的奖励概率分布未知的情况下，从头开始尝试，目标是在操作T次拉杆后获得尽可能高的累积奖励。
+
+由于奖励的概率分布是未知的，因此我们需要在“探索拉杆的获奖概率”和“根据经验选择获奖最多的拉杆”中进行权衡。“采用怎样的操作策略才能使获得的累积奖励最高”便是多臂老虎机问题。
+
+
+
+要素形式化描述
+
+多臂老虎机问题可以表示为一个元组$\langle \mathcal{A},\mathcal... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#Reinforce_Learning LAMDA">#Reinforce_Learning LAMDA</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html">
+      CH6 运算方法<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Nov 14, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/lecturenotes/2023/11/14/CH6-%E8%BF%90%E7%AE%97%E6%96%B9%E6%B3%95.html">
+      <p>基本运算部件
+
+主要关注基本运算部件：加法器（串行→并行 ）→ 带标志加法器 → ALU。
+
+串行进位加法器
+
+
+
+就是若干个全加器的串联。
+
+并行进位加法器
+
+
+
+将两个加数送进FA，并行产生$P_{i},G_{i}$，然后将它们送入4位ALU，并行产生$C_{i}$，然后送回FA产生最终结果$F_{i}$。
+
+局部进位加法器
+
+组内并行，组间串行：
+
+
+
+16位两级先行进位加法器
+
+
+
+算术逻辑部件ALU
+
+CPU有一个操作控制端（ALUop），用来决定ALU所执行的处理功能。
+
+ALUop的位数k决定了操作的种类数目。例如，当位数k为3时，ALU最多只有8种操作。
+
+ALU能够进行基本算术运算与逻辑运算：
+
+
+  无符号整数加、减
+  带符号整数加、减
+  与、或、非、异或等逻辑... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/lecturenotes/2023/11/14/CH5-FPGA.html">
+      CH5 FPGA<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Nov 14, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/lecturenotes/2023/11/14/CH5-FPGA.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/lecturenotes/2023/11/14/CH5-FPGA.html">
+      <p>可编程逻辑器件和FPGA设计
+
+可编程逻辑器件PLD
+
+概念
+
+固定逻辑芯片功能单一，不能随电路设计的需求而任意改变。
+
+固定逻辑芯片逐渐被可编程逻辑器件（Programmable Logic Device，PLD）取代。这是一种实现逻辑逻辑电路的通用器件。
+
+PLD包含多个逻辑单元，可根据需要通过编程开关连接进行编程，以构成不同功能的逻辑电路。
+
+PLD的结构主要由与阵列和或阵列构成。
+
+逻辑门数量在500以下的认为是简单PLD；集成度高，逻辑门数量在500以上的被认为是复杂PLD。
+
+PLD也有多种分类：
+
+
+
+PLD基础结构
+
+PLD结构框图
+
+
+
+
+  输入缓冲电路：用于接收外部信号并将其转换为适合PLD内部逻辑电路的电平和时序。它通常包括输入保护电路、电平转换电路和时序控制电... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/research/notes/2023/10/16/EDA4AI-Tutorial.html">
+      EDA4AI Tutorial<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Oct 16, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 11 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/research/notes/2023/10/16/EDA4AI-Tutorial.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/research/notes/2023/10/16/EDA4AI-Tutorial.html">
+      <p>DNN Deployment Flow：A Naive Approach
+
+DNN模型经过编译器进入硬件描述语言，这是指将深度神经网络模型转化为可以在特定硬件上执行的形式的过程。
+
+首先，我们有一个DNN模型，这是一个用于执行特定任务（例如图像分类，语音识别等）的算法模型。这个模型通常是用高级编程语言（例如Python）编写的，并使用了特定的深度学习框架（例如TensorFlow或PyTorch）。
+
+然后，我们使用一个编译器将这个模型转化为硬件描述语言（HDL）。硬件描述语言是一种专门用于描述数字逻辑电路和模拟电路的语言，例如VHDL或Verilog。编译器的工作就是将高级语言编写的程序转化为可以在特定硬件（例如GPU，FPGA，ASIC等）上运行的低级代码。
+
+这个过程的目的是为了... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#AI+EDA LAMDA">#AI+EDA LAMDA</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/lecturenotes/2023/10/12/CH4-%E6%97%B6%E5%BA%8F%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html">
+      CH4 时序逻辑电路<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Oct 12, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/lecturenotes/2023/10/12/CH4-%E6%97%B6%E5%BA%8F%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/lecturenotes/2023/10/12/CH4-%E6%97%B6%E5%BA%8F%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html">
+      <p>时序逻辑电路概述
+
+时序逻辑：输出结果不仅取决于当前时刻的输入值，而且取决于电路过去时刻的行为（当前状态、现态、旧状态）。
+
+
+  
+    电路中有存储元件，用于存储逻辑信号的值，表示电路过去时刻的行为（当前状态、现态、旧状态）
+  
+  
+    当电路输入值发生变化时，新的输入值可能使得电路保持当前状态，也可能使得电路状态发生改变，进入新的状态
+
+    （理解这一点非常重要！有助于从硬件层面理解为什么时序逻辑电路能够存储状态）
+  
+
+
+有限状态机
+
+有限状态机（Finite State Machine，FSM）是一种刻画状态以及状态转换的理论工具。
+
+状态图来描述：
+
+
+
+主要注意两点：状态、状态转换
+
+可以用数字逻辑实现一个有限状态机：
+
+
+  将状态进行二进制编码（输入，... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html">
+      CH2 数字逻辑基础<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Oct 11, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/lecturenotes/2023/10/11/CH2-%E6%95%B0%E5%AD%97%E9%80%BB%E8%BE%91%E5%9F%BA%E7%A1%80.html">
+      <p>逻辑门和数字抽象
+
+逻辑门
+
+概念
+
+逻辑门电路(logic gate)是最基础的数字电路，具有允许或禁止信号传输的功能，也称为门电路。
+
+逻辑门电路具有一个或多个输入信号，一个输出信号。
+
+输入信号、输出信号称为逻辑变量（取值为0或1）。
+
+
+
+输入信号和输出信号之间的逻辑关系使用真值表或者逻辑表达式来描述。
+
+
+  逻辑表达式：用逻辑运算符来连接逻辑变量
+  真值表：二维表，按顺序列出所有可能的输入组合和该输入组合对应的输出信号值
+
+
+基本逻辑门
+
+
+  AND
+  OR
+  NOT
+  NAND（与非）
+  NOR（或非）
+  XOR（异或，两个输入不同时为1）
+  NXOR（同或，两个输入相同时为1）
+
+
+符号：
+
+
+
+数字抽象
+
+数字抽象（逻辑采样）：将某个物理量的实际值集（... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html">
+      CH3 组合逻辑电路<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Oct 08, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/default-image.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/lecturenotes/2023/10/08/CH3-%E7%BB%84%E5%90%88%E9%80%BB%E8%BE%91%E7%94%B5%E8%B7%AF.html">
+      <p>组合逻辑电路概述
+
+数字逻辑电路可被看成是带有若干输入端和若干输出端的黑盒子。每个输入端和输出端只有高电平、低电平两种状态，对应1或0。
+
+除了组合逻辑电路，还有被称为时序逻辑电路的电路类型，它们之间有很大差别：
+
+
+  组合逻辑电路的输出值仅依赖于当前输入值
+  时序逻辑电路的输出值不仅依赖输入值，还与当前状态（现态）有关。电路中存在存储部件或反馈结构
+
+
+构成规则
+
+
+  每个元件本身是组合逻辑电路（逻辑门电路也是组合逻辑电路）
+  输出结点不能互连（不能将两个输出合并）
+  输出结点不能反馈到输入端（不能有回路）
+
+
+
+
+逻辑电路图
+
+逻辑电路图描述数字电路内部元件的结构及其相互连接关系。
+
+逻辑电路图和逻辑表达式是一一对应关系，它们都是多个输入，一个输出。
+
+而组合逻辑电路中的... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#数字逻辑与计算机组成">#数字逻辑与计算机组成</a></div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="post-item ">
+  <h2 class="post-title">
+    <a class="post-link" href="/lecturenotes/2023/09/01/%E9%87%91%E8%9E%8D%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0.html">
+      金融大数据处理技术笔记<span class="post-badges">
+  <span class="post-badge badge-top">TOP</span>
+  <span class="post-badge badge-new">NEW</span>
+</span>
+</a>
+  </h2>
+  <div class="post-meta">
+    <span class="post-date"><i class="fa fa-calendar"></i> Sep 01, 2023</span><span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+  </div>
+  <div class="post-excerpt"><a  class="post-image" href="/lecturenotes/2023/09/01/%E9%87%91%E8%9E%8D%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0.html" style="flex: 0 1 38.2%">
+      <div style="background-image: url(/assets/images/banners/toho.jpeg); height: 160px"></div>
+    </a><a class="post-text" href="/lecturenotes/2023/09/01/%E9%87%91%E8%9E%8D%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0.html">
+      <p>CH1 大数据
+
+三次信息化浪潮
+
+
+
+四种研究范式
+
+
+
+大数据
+
+定义
+
+大数据意指一个超大的、难以用现有常规的数据库管理技术和工具
+
+处理的数据集。
+
+5V特征
+
+
+  
+    Volume（大体量）：即可从数百TB到数十数百PB，甚至EB的规模
+  
+  Variety（多样性）：即大数据包括各种格式和形态的数据
+  Velocity（时效性）：即很多大数据需要在一定的时间限度下得到及时处理
+  Veracity（准确性）：即处理的结果要保证一定的准确性
+  Value（大价值）：即大数据包含很多深度的价值，大数据分析挖掘和利用将带来巨大的商业价值
+
+
+结构化/半结构化/非结构化
+
+
+  结构化数据：结构化数据是指在预定义的数据模型中组织的数据，通常存储在关系数据库中。它们有... <span class="read_more">Read More</span></p>
+    </a>
+  </div>
+  <div class="post-tags"><a class="post-tag" href="/tags.html#FBDP">#FBDP</a></div>
+</li>
+</ul>
+
+  <!-- Pagination links --></div>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="common-list">
+  <ul>
+    <li>
+      <a href="/index.html">
+        All<span>21</span>
+      </a>
+    </li>
+
+    
+      <li>
+        <a href="/categories.html#h-CSNotes">
+          CSNotes <span>9</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Learning">
+          Learning <span>4</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-LectureNotes">
+          LectureNotes <span>6</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Notes">
+          Notes <span>6</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Research">
+          Research <span>2</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner"><div>Unpublished Work <span class="copyleft">&copy;</span> 2017-2024 DragonK</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
